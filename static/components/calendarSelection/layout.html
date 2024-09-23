@@ -1,0 +1,49 @@
+<div id="dr-dimmer"></div>
+    
+    <div id="calendar" class="dr-modal" style="display: none">
+        <div class="dr-body">
+                <div class="dr-container-calendar">
+                        <div class="modal-top">
+                            <div>Rescheduling Appointment</div>
+                            <div class="dr-close-btn" onclick="onClickCloseCal()">X</div>
+                        </div>
+                        
+                        <div id="cal-nextbtn" class="dr-button-container-calendar">
+                            <button style="background-color: #EAB464;" id="dr-previous"
+                                    onclick="previous()">
+                                ‹   
+                            </button>
+                            <h3 style="color: #EAB464; width: 150px;" id="dr-monthAndYear"></h3>
+                            <button style="background-color: #EAB464;" id="dr-next"
+                                    onclick="next()">
+                                ›
+                            </button>
+                        </div>
+                        <table class="dr-table-calendar"
+                            id="dr-calendar"
+                            data-lang="en">
+                            <thead id="dr-thead-month"></thead>
+                            <!-- Table body for displaying the calendar -->
+                            <tbody id="dr-calendar-body"></tbody>
+                        </table>
+                        
+                        <div id="dr-event-section">
+                            <div class="dr-footer-container-calendar dr-set-time">
+                                <label for="dr-month1">Time: </label>
+                                <!-- Dropdowns to select a specific time -->
+                                <select id="dr-month1" class="dr-hoursChoices" onchange="">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="dr-footer-msg">
+                            * This will reset the appointment status to <b>pending</b> and remove the previous appointment date.
+                        </div>
+                        <div style="display: flex; justify-content: center">
+                            <button style="background-color: #EAB464;" class="dr-confirm-button">Reschedule</button>
+                        </div>
+                    
+                </div>
+                
+        </div>
+            <!-- Include the JavaScript file for the calendar functionality -->
+    </div>

@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>sandbox</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/bootstrap/css/bootstrap.min.css')}}">
+    <script src="{{ url_for('static',filename='assets/bootstrap/js/bootstrap.min.js')}}"></script>
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/sidebar.css')}}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <!--DONT DELETE: THIS AREA IS WHERE THE SIDE BAR WILL BE INSERTED-->
+    <div id="home-sidebar-insert-area"></div>
+
+    <div class="container-fluid">
+        <div id="content">
+            <div id="home-container">
+                <div id="home" class="container-fluid">
+                    <img src="{{ url_for('static',filename='g15.png')}}" />
+                    <h1 id="title-opening">ChatBotClinic</h1>
+                    <button id="changeButton" class="btn btn-primary fas fa-calendar" style="display: inline-block; width: 200px;"> Book</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--DONT DELETE-->
+    <script type="module">
+        import "/static/components/sidebar/script.js";
+        Sidebar(document.getElementById('home-sidebar-insert-area'))
+    </script>
+
+    <script>
+        
+        //Jquery
+        $(document).ready(function () {
+            function showConfirmationPrompt() {
+                if ($('#confirmation-prompt').length === 0) {
+                    const confirmationHTML = `
+                        <div id="confirmation-prompt">
+                            <p>Confirm symptom?</p>
+                            <div id="confirmation-prompt-button">
+                                <button id="confirmYes" class="btn btn-primary">Yes</button>
+                                <button id="confirmNo" class="btn btn-primary">No</button>
+                                <button id="backButton" class="btn btn-primary">Back</button>
+                            </div>
+                        </div>
+                    `;
+                    $('#home').append(confirmationHTML);
+                }
+            }
+
+            function clearCheckboxes() {
+                $('input[type="checkbox"]').prop('checked', false);
+                $('#confirmation-prompt').remove();
+            }
+
+            //code here
+            $('#home').on('click', '#changeButton', function () {
+                //loaded the static function for much cleaner code
+                $('#home').load('/static/patient/symptoms.html', function(){
+
+
+                    $('#contents').on('change', 'input[type="checkbox"]', function () {
+                        if ($(this).is(':checked')) {
+                            showConfirmationPrompt();
+                        } else {
+                            $('#confirmation-prompt').remove();
+                        }
+                    });
+                });
+
+               
+            });
+
+            $('#home').on('click', '#backButton', function () {
+                $('#home').html(`
+                    <img src="{{ url_for('static',filename='g15.png')}}" />
+                    <h1 id="title-opening">ChatBotClinic</h1>
+                    <button id="changeButton" class="btn btn-primary fas fa-calendar">Book</button>
+               
+                `);
+            });
+            
+            //dynamically load the confirmation of yes and no button
+            $('#home').on('click', '#confirmYes', function () {
+                alert('Symptom confirmed!');
+                $('#confirmation-prompt').remove();
+                $('#home').html(`
+                    <h1 id="title-third">Your initial diagnosis Result</h1>
+                    <div id="contents-response">
+                        <p>Your Initial Diagnosis is .......
+                            you can schedule your appointment through the calendar button    
+                        </p>
+                    </div> <br>
+                    <button class="btn btn-primary">
+                        <i onclick="openDatetimeSetter()" class="fas fa-calendar"></i>
+                    </button>
+                `);
+            });
+
+            $('#home').on('click', '#confirmNo', function () {
+                alert('Symptom not confirmed.');
+                $('#confirmation-prompt').remove();
+                clearCheckboxes();
+            });
+        });
+        
+        function openDatetimeSetter(){
+            $("#calendar").css('display','block')
+            $("#home").css('display', 'none')
+        }
+    </script>
+
+</body>
+
+</html>
