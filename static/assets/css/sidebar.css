@@ -14,6 +14,8 @@ body {
 }
 
 
+
+
 #title-second {
   font-size: 60px;
   color: #EAB464;
@@ -75,13 +77,9 @@ body {
 
 }
 
-#home button {
-  width: 12%;
-  height: 50px;
-  margin-top: 50px;
-  background-color: #EAB464;
-  font-size: 25px;
-}
+
+
+
 
 @media only screen and (max-width: 600px) {
   #home button {

@@ -93,13 +93,13 @@ class App:
                 return render_template('patient/schedule.html')
             except Exception as e:
                 return f"Error: {e}", 500
-            
-        @self.app.route('/history')
-        def history_home():
+        
+        @self.app.route('/chatbotpage')
+        def chatbotpage():
             if util.no_user_logged_in(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
-                return render_template('patient/history.html')
+                return render_template('patient/chatbotpage.html')
             except Exception as e:
                 return f"Error: {e}", 500
             
