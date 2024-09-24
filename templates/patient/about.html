@@ -15,33 +15,6 @@
     <!--DONT DELETE: THIS AREA IS WHERE THE SIDE BAR WILL BE INSERTED-->
     <div id="home-sidebar-insert-area"></div>
 
-    <div class="container-fluid">
-        <div id="mySidebar" class="sidebar">
-            <a class="closebtn" href="javascript:void(0)" onclick="closeExpansion()" style="font-size: 25px;">x</a>
-            <div class="profile-container">
-                <div class="profile-avatar-container">
-                    <img src="{{ url_for('static',filename='p-default-inverted.png')}}" class="user-icon" id="icon" alt="User Icon" />
-                </div>
-                <div>
-                    <div class="profile-name-container" id="userName"></div>
-                    <hr>
-                    <span onclick="logout()">Log out</span>
-                </div>
-            </div>
-            <div id="container-button">
-                <button class="btn btn-primary"><a href="/home">Home</a></button>
-                <button class="btn btn-primary"><a href="/schedule">Schedule</a></button>
-                <button class="btn btn-primary"><a href="/history">History</a></button>
-                <button class="btn btn-primary"><a href="/about">About</a></button>
-            </div>
-        </div>
-        <div id="main">
-            <button class="btn btn-primary openbtn" style="position: fixed" type="button" onclick="expand()">☰</button>
-        </div>
-        
-    </div>
-
-
     <!--Start-->
     <div id="about" class="container-fluid">
         <h1>About Us</h1>
@@ -56,9 +29,10 @@
         
     </div>
 </body>
+ <!--DONT DELETE-->
 <script type="module">
-import "/static/components/sidebar/script.js";
-Sidebar(document.getElementById('home-sidebar-insert-area'))
+    import "/static/components/sidebar/script.js";
+    Sidebar(document.getElementById('home-sidebar-insert-area'))
 </script>
 
 
