@@ -1,6 +1,7 @@
-.symptom-dropdown-menu {
+#symptoms-suggestion-list {
     max-height: 200px; /* Limit height */
     overflow-y: auto;  /* Scroll if needed */
+    width: 200px;
 }
 .symptom-tag {
     display: inline-block;
@@ -19,8 +20,8 @@
     text-align: center;
     margin-right: 5px;
     
-
 }
+
 
 .symptom-tag:hover{
     border-color: red;
@@ -32,7 +33,6 @@
 }
 
 #symptom-tags-container{
-    margin-bottom: 5px;
     margin-top: 5px;
 }
 

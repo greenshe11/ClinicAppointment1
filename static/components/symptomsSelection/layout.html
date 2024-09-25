@@ -1,13 +1,13 @@
 
-<div class="container mt-5 symptoms-selector-container">
+<div class="container symptoms-selector-container">
     <div id="symptom-tags-container">
-        <span class="symptom-tags-tip">(click on tag to remove)</span>
-        <br>
+        <i class="symptom-tags-tip">(you can select up to 5; click on tag to remove)</i>
         <div id="symptom-tags-list"></div>
     </div>
     <div class="dropdown">
-        <input type="text" id="textbox" class="form-control" placeholder="Find and select symptoms..." oninput="suggestSymptoms()" onfocus="suggestSymptoms()" autocomplete="off" aria-haspopup="true" aria-expanded="false" />
-        <ul id="symptoms-suggestion-list" class="dropdown-menu w-100 show">
+        <input type="text" id="textbox" class="form-control" placeholder="Find and select symptoms..." oninput="suggestSymptoms()" onfocus="suggestSymptoms()" autocomplete="off" aria-haspopup="true" aria-expanded="false" 
+        style="width: 100%;"/>
+        <ul id="symptoms-suggestion-list" class="dropdown-menu w-50 show">
         </ul>
     </div>
 </div>

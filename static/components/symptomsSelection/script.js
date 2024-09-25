@@ -256,12 +256,16 @@ class WordSuggestions{
 
   updateTags(element){
     element.childNodes.forEach(symptom => {
+    
       this.symptoms.push(symptom.textContent)
-    this.symptoms = [...new Set(this.symptoms)];
+      this.symptoms = [...new Set(this.symptoms)];
     });
   }
 
   addToSelectedSymptoms(element){
+    if (this.symptoms.length > 4 || (this.symptoms.includes(element.textContent))){
+      return
+    }
     console.log('selected', element.textContent)
     const targetElement = document.getElementById('symptom-tags-list')
     element.textContent
@@ -303,12 +307,15 @@ export async function symptomsSelection(element){
       'low temperature',
       'Over 40 degrees body temperature'
     ]
+    
   )
 
   // allow functions to be accessed to document, bind object to to method
   window.suggestSymptoms = ws.evaluateInput.bind(ws)
   window.addToSelectedSymptoms = ws.addToSelectedSymptoms.bind(ws)
   window.removeSymptomTag = ws.removeSymptomTag.bind(ws)
+  return ws
   
 }
 window.SymptomsSelection = symptomsSelection  
+console.log("GETTING SYMPTOMS COMPONTNE")
