@@ -11,6 +11,7 @@ from api.patient import patient_routes
 from api.appointments import appointment_routes
 from api.diagnosis import diagnosis_routes
 from api.sms import sms_routes
+from api.session import session_routes
 
 # utils
 from utilities import util_functions as util
@@ -112,6 +113,24 @@ class App:
             except Exception as e:
                 return f"Error: {e}", 500
             
+        @self.app.route('/chatbotpage/response/appointment')
+        def chatbotpageAppointment():
+            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+                return redirect('/home')
+            try:
+                return render_template('patient/chatbotpageAppointment.html')
+            except Exception as e:
+                return f"Error: {e}", 500
+            
+        @self.app.route('/chatbotpage/response/appointment/summary')
+        def chatbotpageSummary():
+            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+                return redirect('/home')
+            try:
+                return render_template('patient/chatbotpageSummary.html')
+            except Exception as e:
+                return f"Error: {e}", 500
+            
         @self.app.route('/about')
         def about_home():
             if util.no_user_logged_in(): #proceeds to schedule page if not logged in
@@ -140,14 +159,13 @@ class App:
             except Exception as e:
                 return f"Error: {e}", 500
             
-     
-            
     def create_api_routes(self):
         patient_routes(self, 'tblpatient')
         appointment_routes(self, 'tblappointment')
         diagnosis_routes(self, 'tbldiagnosis')
         sms_routes(self, 'tblsmsnotif')
-
+        session_routes(self)
+        
     def run(self):
         """Run the Flask application."""
         self.app.run(debug=True)

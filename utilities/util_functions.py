@@ -206,8 +206,8 @@ def get_session(label):
     Returns:
         returns anything inside session
     """
-    if label in session.keys():
-        return session[label]
+    if label in dict(session).keys():
+        return dict(session)[label]
     else:
         return None
 

@@ -4,7 +4,7 @@
         <div class="dr-body">
                 <div class="dr-container-calendar">
                         <div class="modal-top">
-                            <div>Rescheduling Appointment</div>
+                            <div id="modal-top-name"></div>
                             <div class="dr-close-btn" onclick="onClickCloseCal()">X</div>
                         </div>
                         
@@ -31,15 +31,15 @@
                             <div class="dr-footer-container-calendar dr-set-time">
                                 <label for="dr-month1">Time: </label>
                                 <!-- Dropdowns to select a specific time -->
-                                <select id="dr-month1" class="dr-hoursChoices" onchange="">
+                                <select id="dr-month1" class="dr-hoursChoices" onchange="onChangeTime(event)">
                                 </select>
                             </div>
                         </div>
-                        <div class="dr-footer-msg">
-                            * This will reset the appointment status to <b>pending</b> and remove the previous appointment date.
+                        <div class="dr-footer-msg" id="dr-footer-msg">
+                           
                         </div>
                         <div style="display: flex; justify-content: center">
-                            <button style="background-color: #EAB464;" class="dr-confirm-button">Reschedule</button>
+                            <button style="background-color: #EAB464;" class="dr-confirm-button" id="dr-confirm-button" onclick="onSetFunction()"></button>
                         </div>
                     
                 </div>

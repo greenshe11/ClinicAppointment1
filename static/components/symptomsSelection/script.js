@@ -264,30 +264,79 @@ class WordSuggestions{
     console.log(this.symptoms)
   }
 
-  addToSelectedSymptoms(element){
-    if (this.symptoms.length > 4 || (this.symptoms.includes(element.textContent))){
-      return
+  addToSelectedSymptomsFromSession(stringArray){
+    for (let i=0; i<stringArray.length; i++){
+      this.addToElement(stringArray[i])
     }
-    console.log('selected', element.textContent)
+  }
+  addToElement(name){
     const targetElement = document.getElementById('symptom-tags-list')
-    element.textContent
     let tag = document.createElement('div')
-    tag.textContent = element.textContent
+    tag.textContent = name
     tag.classList.add('symptom-tag')
     tag.onclick = () => {
       this.removeSymptomTag(targetElement, tag)
     }
+
     targetElement.append(tag)
     this.symptoms = []
     this.updateTags(targetElement)
     console.log(this.symptoms)
   }
+
+  addToSelectedSymptoms(element){
+    if (this.symptoms.length > 4 || (this.symptoms.includes(element.textContent))){
+      return
+    }
+    console.log('selected', element.textContent)
+    this.addToElement(element.textContent)
+    
+  }
 }
 
+
+/**
+ * GLOBALS
+ */
+let wordSuggestionObj = null
+
+async function storeSymptomsSession() {
+  try {
+      const response = await fetch('/api/session/storeSymptomsSelected', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"symptoms": wordSuggestionObj.symptoms}),
+      });
+
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+    
+
+  } catch (error) {
+
+  }
+}
+async function getSymptomsSession() {
+    const res = await fetch(`/api/session/getSymptomsSelected`)
+
+    const resJson = await res.json()
+    wordSuggestionObj.addToSelectedSymptomsFromSession(resJson['symptoms_selected'])
+
+    return resJson
+}
+
+/**COMPONENTS */
 import { Component } from "/static/components/script.js";
 
 // create component
 const _symptomsSelectionObj = new Component('/static/components/symptomsSelection/layout.html', '/static/components/symptomsSelection/styling.css')
+//*
+
 
 export async function symptomsSelection(element){
   
@@ -295,6 +344,7 @@ export async function symptomsSelection(element){
   await _symptomsSelectionObj.setToElement(element)
   
   // word bag
+  
   const ws = new WordSuggestions(
     [
       'Ringing of Ears',
@@ -310,12 +360,17 @@ export async function symptomsSelection(element){
       'Over 40 degrees body temperature'
     ]
     
+    
   )
+  // sets to global variables
+  wordSuggestionObj = ws
 
   // allow functions to be accessed to document, bind object to to method
   window.suggestSymptoms = ws.evaluateInput.bind(ws)
   window.addToSelectedSymptoms = ws.addToSelectedSymptoms.bind(ws)
   window.removeSymptomTag = ws.removeSymptomTag.bind(ws)
+  window.storeSymptomsSession = storeSymptomsSession
+  getSymptomsSession()
   return ws
   
 }

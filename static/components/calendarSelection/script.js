@@ -1,4 +1,4 @@
-
+// CALENDAR FUNCTIONS
 function getAppointments(month, year, day) {
     return fetch(`http://localhost:5000/api/appointments/forPatient?Appointment_Month=${month}&Appointment_Day=${day}&Appointment_Year=${year}`)
         .then(response => {
@@ -106,6 +106,13 @@ function timeChooser(hours) {
             initial += createChoice(hours[i]);
         }
         dropDown.innerHTML = initial;
+    try{
+        selected.time = document.getElementById('dr-month1').childNodes[0].value
+        console.log("SET INITIAL SELECTED TIME TO:", selected.time)
+    }catch(e){
+
+    }
+   
     } else {
         console.error('No elements found with the class name "dr-hoursChoices".');
     }
@@ -128,6 +135,11 @@ function sendFullDate(event){
     element.className = element == `${element.className} dr-date-active`? element.className : `${element.className} dr-date-active`;
     fetchAppointments(month, year, day, (data) => {timeChooser(getAvailableTime(data))});
     console.log(month, day, year);
+    
+    // global variables
+    selected.month = month
+    selected.day = day
+    selected.year = year
 }
 
 function isDateLessThanCurrent(year, month, day) {
@@ -224,9 +236,21 @@ function showCalendar(month, year, monthData) {
 function daysInMonth(iMonth, iYear) {
     return 32 - new Date(iYear, iMonth, 32).getDate();
 }
+//*
 
-// MODAL
+/**
+ * MODAL Calendar
+ */
+// GLOBALS
+export let selected = {month: null, date: null, year: null, time:null, monthName:null, timeName:null}
+let btn = null
+let dialogChat = null
+let purposeClass = null
+//
 
+/**
+ * shows calendar
+ */
 function onClickShowCal(){
     const calendar = document.getElementById('calendar')
     const dimmer = document.getElementById('dr-dimmer')
@@ -236,6 +260,9 @@ function onClickShowCal(){
     document.addEventListener('click', outsideClickListener);
 }
 
+/***
+ * Closes when pressed x button
+ */
 function onClickCloseCal(){
     const calendar = document.getElementById('calendar')
     const dimmer = document.getElementById('dr-dimmer')
@@ -249,12 +276,16 @@ function onClickCloseCal(){
     }, 400); // Wait for animation to finish before hiding
 }
 
+/**
+ * Closes when pressed outside
+ * @param {*} event 
+ */
 function outsideClickListener(event) {
     const calendar = document.getElementById('calendar');
     const modalContent = document.querySelector('.dr-body');
-    const btn = document.getElementById('dr-modal-btn')
-
-
+    //const btn = document.getElementById('dr-modal-btn')
+   
+    console.log('button',btn)
     // Close the modal if click is outside the modal content
     if (calendar.style.display === "block" && !calendar.contains(event.target) && !btn.contains(event.target)) {
         console.log("TRIGGERING")
@@ -262,31 +293,191 @@ function outsideClickListener(event) {
     }
 }
 
+/**
+ * Runs when changing time
+ * @param {*} event 
+ */
+function onChangeTime(event){
+    console.log("Changed to value:",event.target.value)
+    selected.time = event.target.value
+    console.log('SET TIME TO:', selected.time)
+}
 
+/**
+ * calculate the day between selected date and todays date
+ * @returns 
+ */
+function getDaysUntilAppointment() {
+    // Get today's date
+    const selectedDate = selected
+    const today = new Date();
+    
+    // Set the appointment date
+    const appointmentDate = new Date(selectedDate.year, selectedDate.month - 1, selectedDate.day);
+    
+    // Calculate the difference in milliseconds
+    const timeDifference = appointmentDate - today;
+    
+    // Convert milliseconds to days (1 day = 1000ms * 60s * 60m * 24h)
+    const daysUntilAppointment = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+    return daysUntilAppointment;
+}
+
+/**
+ * store session
+ */
+async function storeAppointmentSession() {
+    const res = await fetch(`/api/session/storeAppointmentDate?month=${selected.month}&day=${selected.day}&year=${selected.year}&time=${selected.time}&timeName=${selected.timeName}&monthName=${selected.monthName}`)
+    const resJson = await res.json()
+    console.log(resJson)
+    
+}
+
+/**
+ * gets session saved
+ * @returns 
+ */
+async function getAppointmentSession() {
+    const res = await fetch(`/api/session/getAppointmentDate`)
+
+    const resJson = await res.json()
+    console.log(resJson)
+    return resJson
+}
+
+
+/**
+ * Function when clicking main button
+ */
+function onSetFunction(){
+    // get date
+    // get time
+    // get Month Name
+    const getTimeName = (time) =>{
+        if (time<8){
+            return `${time}:00 PM`
+        }else{
+            return `${time}:00 AM`
+        }
+    }
+    let month = selected.month
+    let day = selected.day
+    let year = selected.year
+    let time = selected.time
+    let monthName = months[month]
+    let timeName = getTimeName(time)
+    selected.monthName = monthName
+    selected.timeName = timeName
+    purposeClass.onSetAdditionalFunction()
+
+}
+
+class Purpose{
+    constructor(){
+
+    }
+    initialRun(){
+        
+    }
+    onSetAdditionalFunction(){
+
+    }
+}
+
+
+/**
+ * PURPOSE SPECIFIC
+ */
+
+
+const cbpAppointment = new Purpose()
+cbpAppointment.initialRun = () => {
+    const recoverSession = async () => {
+        const session = await getAppointmentSession()
+        console.log(session)
+        const keys = Object.keys(session)
+        console.log('keys',keys)
+        let key = null
+        for (key in keys){
+            console.log(key)
+            selected[keys[key]] = session[keys[key]]
+        }
+        console.log(selected)
+        const allowance = getDaysUntilAppointment()
+        console.log(allowance)
+        if (allowance > 0){onSetFunction()}
+    }
+    recoverSession()
+}
+cbpAppointment.onSetAdditionalFunction = () => {
+    const month = selected.month
+    const day = selected.day
+    const year = selected.year
+    const time = selected.time
+    const monthName = selected.monthName
+    const timeName = selected.timeName
+    if (!(month || day || year || time)){
+        alert("Error: You need to set the time and date to make an appointment!")
+    } else{
+        onClickCloseCal()
+        const daysLeft = getDaysUntilAppointment()
+        
+        const msg = `Would you like to schedule an appointment on <b>${monthName} ${day}, ${year}</b> at <b>${timeName}</b> ? <i style="color: gray">(${daysLeft} day/s from now)</i>`
+        dialogChat.innerHTML = msg
+        storeAppointmentSession()
+
+        return selected
+    }
+    
+}
+
+//*
+
+
+// Component
 import { Component } from "/static/components/script.js";
 
 // create component
 const _calendarSelectionObj = new Component('/static/components/calendarSelection/layout.html', '/static/components/calendarSelection/styling.css')
+//*
 
+export async function CalendarSelection(element, elementButton, elementDialog, headerName=null, warningName=null, buttonName=null){
+    if (warningName == null){
+        warningName = '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.'
+    }
 
-export async function CalendarSelection(element){
-    
     // wait for element to be added to document
     await _calendarSelectionObj.setToElement(element)
+    document.getElementById('dr-footer-msg').innerHTML = warningName
+    document.getElementById('modal-top-name').innerHTML = headerName
+    document.getElementById('dr-confirm-button').innerHTML = buttonName
+    
     selectYear = document.getElementById("dr-year");
     selectMonth = document.getElementById("dr-month");
     monthAndYear = document.getElementById("dr-monthAndYear");
-        
- 
-    preShowCalendar(currentMonth, currentYear);
+    
 
-    // allow functions to be accessed to document, bind object to to method
+    // set global variables
+    btn = elementButton // btn for opening the modal
+    dialogChat = elementDialog // a custom dialog
+    //*
+
+    purposeClass = cbpAppointment
+    purposeClass.initialRun() 
+
+    preShowCalendar(currentMonth, currentYear); // show Calendar outisde
+    
+
+    // allow functions to be accessed to document html
     window.onClickCloseCal = onClickCloseCal
+    window.onSetFunction = onSetFunction
     window.outsideClickListener = outsideClickListener
     window.onClickShowCal = onClickShowCal
     window.showCalendar = showCalendar
     window.next = next
     window.previous = previous
+    window.onChangeTime = onChangeTime
     window.jump = jump
   }
   window.CalendarSelection = CalendarSelection

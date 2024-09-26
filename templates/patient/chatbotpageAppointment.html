@@ -14,8 +14,8 @@
 <body>
      <!--DONT DELETE: THIS AREA IS WHERE THE SIDE BAR WILL BE INSERTED-->
     <div id="home-sidebar-insert-area"></div>
-   
 
+    <div id="home-calendar-insert-area"></div>
 
      <div id="main-body">
           <div id="header">
@@ -27,10 +27,10 @@
                          <a class="nav-link" href="/chatbotpage">Symptoms</a>
                     </li>
                     <li class="nav-item mx-2">
-                         <a class="nav-link active bg-dark" href="/chatbotpage/response">Response</a>
+                         <a class="nav-link white" href="/chatbotpage/response">Response</a>
                     </li>
                     <li class="nav-item mx-2">
-                         <a class="nav-link disabled" href="#">Appointment</a>
+                         <a class="nav-link disabled active bg-dark" href="/chatbotpage/response/appointment">Appointment</a>
                     </li>
                     <li class="nav-item mx-2">
                          <a class="nav-link disabled" href="#">Summary</a>
@@ -41,31 +41,47 @@
           <div class="cbp-dialog-container" style="width: 50%; height: 400px; padding: 10px; padding-right: 20px;background-color: white; display: flex; align-items: center;  flex-direction: column">
                <img class="cbp-dialog-img" src="/static/assets/nurse.png" style="margin: 20px;"/>
                <div class="cbp-dialog" style="flex-direction: column">
+                    <p id="cbp-dialog-chat"> Please choose a date and time for your appointment.
+                    </p>
+                    <button id="cbp-set-date-btn"onclick="onClickShowCal()">Set Appointment</button>
                     
-                    <p>You may have a fever. You can take over-the-counter medicine: Biogesic 500mg once a day after eating. Appointment may not be needed based on your symptoms.
-                    </p>
-                    <p>But if you're worried, proceed to <b>Next</b> if you want to set an appointment date.
-                    </p>
                </div>
                
           </div>
      </div>
-     <div id="text-area" style="width: 50%; margin-left: 25%; margin-bottom: 20px;" >
+     <div id="text-area" style="width: 50%; margin-left: 25%; margin-bottom: 20px;">
           <div style="width:100%; height: 40px; background-color: white;"></div>
-          <button onclick="toAppointment()">Next</button>
+          <button onclick="toSummary()">Next</button>
      </div>
-    
+
+     <script type="module">
+          import {CalendarSelection, selected} from "/static/components/calendarSelection/script.js";
+          
+          CalendarSelection(document.getElementById(
+               'home-calendar-insert-area'), 
+               document.getElementById('cbp-set-date-btn'), 
+               document.getElementById('cbp-dialog-chat'),
+               'Choose Time and Date:',
+               '',
+               'Set Appointment',
+               )
+
+          window.toSummary = () => {
+               if (!(selected.month||selected.day||selected.year||selected.time)){
+                    alert("You first need to set an appointment to proceed.")
+               }
+               else{
+                    window.location.href = '/chatbotpage/response/appointment/summary'
+               }
+          }
+     </script>
+
      <!--DONT DELETE-->
      <script type="module">
           import "/static/components/sidebar/script.js";
           Sidebar(document.getElementById('home-sidebar-insert-area'))
      </script>
 
-     <script>
-          function toAppointment(){
-               window.location.href = '/chatbotpage/response/appointment'
-          }
-     </script>
 </body>
 
 </html>
