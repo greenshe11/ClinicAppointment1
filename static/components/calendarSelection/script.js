@@ -373,7 +373,13 @@ function onSetFunction(){
 
 }
 
-class Purpose{
+
+
+/**
+ * PURPOSE SPECIFIC
+ */
+
+class Purpose{ // blueprint
     constructor(){
 
     }
@@ -384,11 +390,6 @@ class Purpose{
 
     }
 }
-
-
-/**
- * PURPOSE SPECIFIC
- */
 
 
 const cbpAppointment = new Purpose()
@@ -442,7 +443,7 @@ import { Component } from "/static/components/script.js";
 const _calendarSelectionObj = new Component('/static/components/calendarSelection/layout.html', '/static/components/calendarSelection/styling.css')
 //*
 
-export async function CalendarSelection(element, elementButton, elementDialog, headerName=null, warningName=null, buttonName=null){
+export async function CalendarSelection(element, elementButton, elementDialog, headerName=null, warningName=null, buttonName=null, purpose='cbp-appointment'){
     if (warningName == null){
         warningName = '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.'
     }
@@ -463,7 +464,12 @@ export async function CalendarSelection(element, elementButton, elementDialog, h
     dialogChat = elementDialog // a custom dialog
     //*
 
-    purposeClass = cbpAppointment
+    // initial runs and `on set` varies by purpose
+    const classObjs = {
+        'cpb-appointment': cbpAppointment
+    }
+
+    purposeClass = classObjs[purpose]
     purposeClass.initialRun() 
 
     preShowCalendar(currentMonth, currentYear); // show Calendar outisde
