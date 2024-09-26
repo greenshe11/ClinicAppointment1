@@ -255,11 +255,13 @@ class WordSuggestions{
   }
 
   updateTags(element){
+    this.symptoms = []
     element.childNodes.forEach(symptom => {
     
       this.symptoms.push(symptom.textContent)
-      this.symptoms = [...new Set(this.symptoms)];
+      //this.symptoms = [...new Set(this.symptoms)];
     });
+    console.log(this.symptoms)
   }
 
   addToSelectedSymptoms(element){

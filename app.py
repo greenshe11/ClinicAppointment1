@@ -120,8 +120,7 @@ class App:
                 return render_template('patient/about.html')
             except Exception as e:
                 return f"Error: {e}", 500
-            
-       
+
         @self.app.route('/staff')
         def staff_home():
             if util.no_user_logged_in(): #proceeds to schedule page if not logged in
