@@ -1,10 +1,19 @@
+/***
+ * Creates psuedo components for reusability
+ */
 export class Component {
     constructor(layout, styling=null){
         this.layout = layout
         this.styling = styling
     }
 
+    /**
+     * reads html file and css file, and inserts it into the target html element.
+     * styling are inserted/appended to <head>
+     * @param {} element 
+     */
     async setToElement(element){
+
         const layoutText = await this._readFile(this.layout)
         const stylingText = await this._readFile(this.styling)
 
@@ -18,6 +27,11 @@ export class Component {
         console.log('component loaded')
     }
     
+    /**
+     * reads a file
+     * @param {*} src 
+     * @returns 
+     */
     async _readFile(src) {
         try {
             let text = ''
