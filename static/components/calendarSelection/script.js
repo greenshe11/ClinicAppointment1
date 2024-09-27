@@ -1,4 +1,5 @@
-// CALENDAR FUNCTIONS
+// CALENDAR 
+// retrieved from github
 function getAppointments(month, year, day) {
     return fetch(`http://localhost:5000/api/appointments/forPatient?Appointment_Month=${month}&Appointment_Day=${day}&Appointment_Year=${year}`)
         .then(response => {
@@ -325,7 +326,7 @@ function getDaysUntilAppointment() {
 }
 
 /**
- * store session
+ * store session; 
  */
 async function storeAppointmentSession() {
     const res = await fetch(`/api/session/storeAppointmentDate?month=${selected.month}&day=${selected.day}&year=${selected.year}&time=${selected.time}&timeName=${selected.timeName}&monthName=${selected.monthName}`)
@@ -354,6 +355,7 @@ function onSetFunction(){
     // get date
     // get time
     // get Month Name
+    // sets if PM or AM
     const getTimeName = (time) =>{
         if (time<8){
             return `${time}:00 PM`
@@ -361,6 +363,7 @@ function onSetFunction(){
             return `${time}:00 AM`
         }
     }
+    // selected comes from global variable object {}
     let month = selected.month
     let day = selected.day
     let year = selected.year
@@ -376,16 +379,18 @@ function onSetFunction(){
 
 
 /**
- * PURPOSE SPECIFIC
+ * PURPOSE SPECIFIC, ex. for patient set appointment/ rescheduling
  */
 
-class Purpose{ // blueprint
+class Purpose{ // blueprint/class
     constructor(){
 
     }
+    // Script to run initially, differs based on purpose
     initialRun(){
         
     }
+    // This will run after clicking the main button (onSetFunction); differes based on purpose
     onSetAdditionalFunction(){
 
     }
@@ -465,8 +470,9 @@ export async function CalendarSelection(element, elementButton, elementDialog, h
     //*
 
     // initial runs and `on set` varies by purpose
+    // cbp means for chatbot appointment
     const classObjs = {
-        'cpb-appointment': cbpAppointment
+        'cbp-appointment': cbpAppointment
     }
 
     purposeClass = classObjs[purpose]
