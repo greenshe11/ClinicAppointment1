@@ -1,7 +1,21 @@
-// CALENDAR 
-// retrieved from github
-function getAppointments(month, year, day) {
-    return fetch(`http://localhost:5000/api/appointments/forPatient?Appointment_Month=${month}&Appointment_Day=${day}&Appointment_Year=${year}`)
+/**
+ * @description fetches appointments from database based on any filter
+ * @param {Object} filter 
+ * @returns 
+ */
+export function getAppointmentsFilter(filter) {
+    const keys = Object.keys(filter) // gets keys of filter object
+    let parameters = '?' // initialization
+
+    for (let i=0; i<keys.length; i++){
+        let temp = `${keys[i]}=${filter[keys[i]]}`
+        parameters = parameters + temp
+        if (i<keys.length-1){ // add '&' if next loop is not the end of iteration
+            parameters = parameters + '&'
+        }
+    }
+
+    return fetch(`/api/appointments/forPatient${parameters}`) // fetching via api GET
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
@@ -17,52 +31,71 @@ function getAppointments(month, year, day) {
         });
 }
 
-function generate_year_range(start, end) {
-    let years = "";
-    for (let year = start; year <= end; year++) {
-        years += "<option value='" + year + "'>" + year + "</option>";
-    }
-    return years;
+/**
+ * @description gets appointments using month, year, and day as filter
+ * @param {Integer} month 
+ * @param {Integer} year 
+ * @param {Integer} day 
+ * @returns 
+ */
+function getAppointments(month, year, day) {
+    return fetch(`/api/appointments/forPatient?Appointment_Month=${month}&Appointment_Day=${day}&Appointment_Year=${year}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            return [];
+        });
 }
 
-// Initialize date-related variables
+
+/************ */
+/************ */
+// Initialize calendar related global variables
 let today = new Date();
 let currentMonth = today.getMonth();
 let currentYear = today.getFullYear();
 let selectYear = null
 let selectMonth = null
 
-let createYear = generate_year_range(1970, 2050);
-
-let calendar = document.getElementById("dr-calendar");
-
-let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-
 let monthAndYear = null
 
-
+/**
+ * @description onclick function to get into next month in calendar
+ */
 function next() {
-    timeChooser([])
-    currentYear = currentMonth === 11 ? currentYear + 1 : currentYear;
-    currentMonth = (currentMonth + 1) % 12;
-    preShowCalendar(currentMonth, currentYear);
+    timeChooser([]) // resets time 
+    selected.time = null
+    currentYear = currentMonth === 11 ? currentYear + 1 : currentYear; // go to next year is current month is december
+    currentMonth = (currentMonth + 1) % 12; // make current month to january when current month is december
+    preShowCalendar(currentMonth, currentYear); // re renders calendar
 }
 
+/**
+ * @description onclick function to get into previous month in calendar
+ */
 function previous() {
     timeChooser([])
+    selected.time = null
     currentYear = currentMonth === 0 ? currentYear - 1 : currentYear;
     currentMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     preShowCalendar(currentMonth, currentYear);
 }
 
-function jump() {
-    currentYear = parseInt(selectYear.value);
-    currentMonth = parseInt(selectMonth.value);
-    preShowCalendar(currentMonth, currentYear);
-}
-
+/**
+ * @description changes classes of elements with current class
+ * @param {String} newClass 
+ * @param {String} oldClass 
+ */
 function resetClassName(newClass, oldClass) {
     const elements = document.getElementsByClassName(oldClass);
     const elementsArray = Array.from(elements);
@@ -71,6 +104,11 @@ function resetClassName(newClass, oldClass) {
     });
 }
 
+/**
+ * @description gets available time for the current day
+ * @param {Object} data data for the appointments for that day
+ * @returns 
+ */
 function getAvailableTime(data){
     let hoursAll = [8,9,10,11,1,2,3,4];
     for (let i=0; i<data.length; i++){
@@ -80,21 +118,40 @@ function getAvailableTime(data){
             hoursAll.splice(index, 1);
         }
     }
+
+    
     return hoursAll;
 }
 
+/**
+ * @description gets appointment data and uses result as argument to the callback function. Used for getting available time with the data fetched.
+ * @param {INteger} month 
+ * @param {Integer} year 
+ * @param {Integer} day 
+ * @param {Function} callback 
+ */
 function fetchAppointments(month, year, day, callback){
     getAppointments(month, year, day).then(times => {
+        
         callback(times);
     });
 }
 
+/**
+ * @description sets ui to contain hours available for appointment
+ */
 function timeChooser(hours) {
     const dropDowns = document.getElementsByClassName("dr-hoursChoices");
+    const dropDown = dropDowns[0];
+    dropDown.innerHTML = '';
+    let initial = '';
+    if (hours.length  <= 0){
+        selected.time = null
+        return
+    }
+    
     if (dropDowns.length > 0) {
-        const dropDown = dropDowns[0];
-        dropDown.innerHTML = '';
-        let initial = '';
+        
         const createChoice = (time) => {
             let value = time;
             if (time >= 8) {
@@ -109,7 +166,6 @@ function timeChooser(hours) {
         dropDown.innerHTML = initial;
     try{
         selected.time = document.getElementById('dr-month1').childNodes[0].value
-        console.log("SET INITIAL SELECTED TIME TO:", selected.time)
     }catch(e){
 
     }
@@ -119,12 +175,18 @@ function timeChooser(hours) {
     }
 }
 
+/**
+ * @description onclick event when a day is selected in calendar.
+ * @param {OnclickEvent} event 
+ * @returns 
+ */
 function sendFullDate(event){
     resetClassName('dr-date-picker', 'dr-date-picker dr-date-active');
     const element = event.target.closest('td.dr-date-picker');
     const month = element.getAttribute('data-month');
     const day = element.getAttribute('data-day');
     const year = element.getAttribute('data-year');
+    
     let preReturn = false;
     if (month == null || month == 'null'){
         preReturn = true;
@@ -134,7 +196,9 @@ function sendFullDate(event){
     }
     if (preReturn) {return timeChooser([])}
     element.className = element == `${element.className} dr-date-active`? element.className : `${element.className} dr-date-active`;
-    fetchAppointments(month, year, day, (data) => {timeChooser(getAvailableTime(data))});
+    fetchAppointments(month, year, day, (data) => {
+        timeChooser(getAvailableTime(data))}); // gets appointments for that selected day and makes hours available visibile to ui
+    
     console.log(month, day, year);
     
     // global variables
@@ -153,6 +217,9 @@ function preShowCalendar(month, year){
     fetchAppointments(month+1, year, "null", (data)=>{showCalendar(month, year, data)});
 }
 
+/***
+ * copied from web
+ */
 function showCalendar(month, year, monthData) {
     let firstDay = new Date(year, month, 1).getDay();
     let tbl = document.getElementById("dr-calendar-body");
@@ -180,8 +247,9 @@ function showCalendar(month, year, monthData) {
         return count;
     }
 
-    const evaluateCount = () =>{
-        if (getFilledCount(date, year)>8){
+    const evaluateCount = (cell=null) =>{
+        console.log("Date Taken: ", getFilledCount(date,year), "Day:",date, "YEAR",year)
+        if (getFilledCount(date, year)>=8){
             cell.className = `${cell.className} dr-filled`;
             return true;
         }
@@ -203,9 +271,11 @@ function showCalendar(month, year, monthData) {
                 let cell = document.createElement("td");
                 cell.className = "dr-date-picker";
                 cell.innerHTML = "<a>" + date + "</a>";
-                cell.onclick = (event) => {sendFullDate(event)}
 
-                if (j==6 || j==0 || evaluateCount()){
+                cell.onclick = (event) => {
+                    sendFullDate(event)}
+
+                if (j==6 || j==0 || evaluateCount(cell)){
                     cell.setAttribute("data-day", null);
                     cell.setAttribute("data-month", null);
                     cell.setAttribute("data-year", null);
@@ -250,21 +320,36 @@ let purposeClass = null
 //
 
 /**
- * shows calendar
+ * @description shows calendar
  */
-function onClickShowCal(){
+export function onClickShowCal(month=null,year=null){
     const calendar = document.getElementById('calendar')
+    calendar.classList.add('active');
+    
     const dimmer = document.getElementById('dr-dimmer')
     calendar.style.display = "block"
     dimmer.style.display = "block"
-    calendar.classList.add('active');
+    
+
     document.addEventListener('click', outsideClickListener);
+    let month0 = currentMonth
+    let year0 = currentYear
+    if (month){
+        month0 = month
+    }
+    if (year){
+        year0 = year
+    }
+    if (month||year){
+        preShowCalendar(month0,year0)
+    }
 }
 
-/***
- * Closes when pressed x button
+/**
+ * @description Closes when pressed x button
  */
 function onClickCloseCal(){
+    
     const calendar = document.getElementById('calendar')
     const dimmer = document.getElementById('dr-dimmer')
     calendar.classList.remove('active')
@@ -278,7 +363,7 @@ function onClickCloseCal(){
 }
 
 /**
- * Closes when pressed outside
+ * @description Closes when pressed outside
  * @param {*} event 
  */
 function outsideClickListener(event) {
@@ -286,16 +371,28 @@ function outsideClickListener(event) {
     const modalContent = document.querySelector('.dr-body');
     //const btn = document.getElementById('dr-modal-btn')
    
-    console.log('button',btn)
     // Close the modal if click is outside the modal content
-    if (calendar.style.display === "block" && !calendar.contains(event.target) && !btn.contains(event.target)) {
-        console.log("TRIGGERING")
-        onClickCloseCal();
+    if (calendar.style.display === "block" && !calendar.contains(event.target)) {
+        let proceed = true
+        for (let i=0; i<btn.length; i++){
+            console.log(i)
+            console.log(btn[i])
+            if (btn[i].contains(event.target)){
+                proceed = false
+                console.log('true')
+            }
+            console.log(proceed)
+        }
+        
+        if (proceed){
+            onClickCloseCal();
+        }
+        
     }
 }
 
 /**
- * Runs when changing time
+ * @description Runs when changing time
  * @param {*} event 
  */
 function onChangeTime(event){
@@ -305,7 +402,7 @@ function onChangeTime(event){
 }
 
 /**
- * calculate the day between selected date and todays date
+ * @description calculate the day between selected date and todays date
  * @returns 
  */
 function getDaysUntilAppointment() {
@@ -326,9 +423,9 @@ function getDaysUntilAppointment() {
 }
 
 /**
- * store session; 
+ * @description store session; 
  */
-async function storeAppointmentSession() {
+export async function storeAppointmentSession() {
     const res = await fetch(`/api/session/storeAppointmentDate?month=${selected.month}&day=${selected.day}&year=${selected.year}&time=${selected.time}&timeName=${selected.timeName}&monthName=${selected.monthName}`)
     const resJson = await res.json()
     console.log(resJson)
@@ -336,10 +433,10 @@ async function storeAppointmentSession() {
 }
 
 /**
- * gets session saved
+ * @description gets session saved for appointment
  * @returns 
  */
-async function getAppointmentSession() {
+export async function getAppointmentSession() {
     const res = await fetch(`/api/session/getAppointmentDate`)
 
     const resJson = await res.json()
@@ -347,22 +444,40 @@ async function getAppointmentSession() {
     return resJson
 }
 
+/**
+ * @description gets stored session for client
+ * @returns Object
+ */
+export async function getSession(){
+    const res = await fetch(`/api/session`)
+
+    const resJson = await res.json()
+    console.log(resJson)
+    return resJson
+}
 
 /**
- * Function when clicking main button
+ * @description gets time name with AM or PM. 8 am to 5pm
+ * @param {*} time 
+ * @returns 
+ */
+export const getTimeName = (time) =>{
+    if (time<8){
+        return `${time}:00 PM`
+    }else{
+        return `${time}:00 AM`
+    }
+}
+
+/**
+ * @description Function when clicking main button
  */
 function onSetFunction(){
     // get date
     // get time
     // get Month Name
     // sets if PM or AM
-    const getTimeName = (time) =>{
-        if (time<8){
-            return `${time}:00 PM`
-        }else{
-            return `${time}:00 AM`
-        }
-    }
+    
     // selected comes from global variable object {}
     let month = selected.month
     let day = selected.day
@@ -396,8 +511,31 @@ class Purpose{ // blueprint/class
     }
 }
 
+const schedulesPatient = new Purpose()
+schedulesPatient.initialRun = () => { // no init scripts
+
+}
+// same as cbp appointment but will not store session and dont display and additional message
+schedulesPatient.onSetAdditionalFunction = () => {
+
+    const month = selected.month
+    const day = selected.day
+    const year = selected.year
+    const time = selected.time
+    const monthName = selected.monthName
+    const timeName = selected.timeName
+    if (!(time)){
+        alert("Error: You need to set the time and date to make an appointment!")
+    } else{
+        onClickCloseCal()
+        return selected
+    }
+}
 
 const cbpAppointment = new Purpose()
+/**
+ * @description recovers previous session and only recover session if previous date selected is on future
+ */
 cbpAppointment.initialRun = () => {
     const recoverSession = async () => {
         const session = await getAppointmentSession()
@@ -412,10 +550,14 @@ cbpAppointment.initialRun = () => {
         console.log(selected)
         const allowance = getDaysUntilAppointment()
         console.log(allowance)
-        if (allowance > 0){onSetFunction()}
+        if (allowance > 0){onSetFunction()} 
     }
     recoverSession()
 }
+/**
+ * @description this function is run after date is set.
+ * @returns 
+ */
 cbpAppointment.onSetAdditionalFunction = () => {
     const month = selected.month
     const day = selected.day
@@ -423,7 +565,7 @@ cbpAppointment.onSetAdditionalFunction = () => {
     const time = selected.time
     const monthName = selected.monthName
     const timeName = selected.timeName
-    if (!(month || day || year || time)){
+    if (!(time)){
         alert("Error: You need to set the time and date to make an appointment!")
     } else{
         onClickCloseCal()
@@ -448,15 +590,21 @@ import { Component } from "/static/components/script.js";
 const _calendarSelectionObj = new Component('/static/components/calendarSelection/layout.html', '/static/components/calendarSelection/styling.css')
 //*
 
-export async function CalendarSelection(element, elementButton, elementDialog, headerName=null, warningName=null, buttonName=null, purpose='cbp-appointment'){
-    if (warningName == null){
-        warningName = '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.'
-    }
-
+/**
+ * 
+ * @param {HTMLElement} element element by which the calendar wil be inserted
+ * @param {HTMLElement[]} elementButtons buttons elements that is used for opening calendar (for closing purposes) 
+ * @param {String} warningName warning message at footer
+ * @param {String} buttonName button name for onSet
+ * @param {String} purpose purpose of calendar selection, purposes are predefined and functions to be used vary based on this key   
+ *  @param {HTMLElement} elementDialog // only for cbp-appointment purpose: null if not needed // element where message
+ */
+export async function CalendarSelection(element, elementButtons,warningName=null, buttonName=null, purpose='cbp-appointment', elementDialog=null){
+   
     // wait for element to be added to document
     await _calendarSelectionObj.setToElement(element)
     document.getElementById('dr-footer-msg').innerHTML = warningName
-    document.getElementById('modal-top-name').innerHTML = headerName
+    document.getElementById('modal-top-name').innerHTML = "Select Time and Date"
     document.getElementById('dr-confirm-button').innerHTML = buttonName
     
     selectYear = document.getElementById("dr-year");
@@ -465,14 +613,15 @@ export async function CalendarSelection(element, elementButton, elementDialog, h
     
 
     // set global variables
-    btn = elementButton // btn for opening the modal
+    btn = elementButtons // btn for opening the modal
     dialogChat = elementDialog // a custom dialog
     //*
 
     // initial runs and `on set` varies by purpose
     // cbp means for chatbot appointment
     const classObjs = {
-        'cbp-appointment': cbpAppointment
+        'cbp-appointment': cbpAppointment,
+        'sched-patient': schedulesPatient
     }
 
     purposeClass = classObjs[purpose]
@@ -490,6 +639,6 @@ export async function CalendarSelection(element, elementButton, elementDialog, h
     window.next = next
     window.previous = previous
     window.onChangeTime = onChangeTime
-    window.jump = jump
+    
   }
   window.CalendarSelection = CalendarSelection

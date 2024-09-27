@@ -57,17 +57,17 @@
      <script type="module">
           import {CalendarSelection, selected} from "/static/components/calendarSelection/script.js";
           
-          CalendarSelection(document.getElementById(
-               'home-calendar-insert-area'), 
-               document.getElementById('cbp-set-date-btn'), 
-               document.getElementById('cbp-dialog-chat'),
-               'Choose Time and Date:',
-               '',
-               'Set Appointment',
-               'cbp-appointment'
+          CalendarSelection(
+               document.getElementById('home-calendar-insert-area'), // element where to insert calendar
+               [document.getElementById('cbp-set-date-btn')], // buttons used for opening calendar 
+               '', // warning footer
+               'Set Appointment', // button label
+               'cbp-appointment', //purpose
+               document.getElementById('cbp-dialog-chat') // element where to put dialog
                )
 
           window.toSummary = () => {
+               // An appointment data should be picked before pressing next.
                if (!(selected.month||selected.day||selected.year||selected.time)){
                     alert("You first need to set an appointment to proceed.")
                }

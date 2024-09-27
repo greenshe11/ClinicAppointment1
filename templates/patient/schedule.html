@@ -18,6 +18,8 @@
       <!--DONT DELETE: THIS AREA IS WHERE THE SIDE BAR WILL BE INSERTED-->
       <div id="home-sidebar-insert-area"></div>
 
+      <div id="sched-calendar-insert-area"></div>
+
     <div id="table" class="container-fluid">
         <h1>Schedules</h1>
         <div class="card shadow">
@@ -44,28 +46,15 @@
                     <table class="table my-0" id="dataTable">
                         <thead>
                             <tr>
-                                <th>Schedule Date</th>
                                 <th>Status</th>
+                                <th>Datetime</th>
                                 <th>Reschedule Date</th>
                                 <th>Chat History</th>
                                 <th>Cancel Appointment</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>Pending</td>
-                                <td>2008/11/28</td>
-                                <td><button class="btn btn-primary">Resched</button></td>
-                                <td><button class="btn btn-danger">View</button></td>
-                                <td><button class="btn btn-danger">Cancel</button></td>
-                            </tr>
-                            <tr>
-                                <td>Pending</td>
-                                <td>2009/09/10</td>
-                                <td><button onclick="onClickShowCal()" class="btn btn-primary resched">Resched</button></td>
-                                <td><button class="btn btn-danger">View</button></td>
-                                <td><button class="btn btn-danger">Cancel</button></td>
-                            </tr>
+                        <tbody id="sched-table-body">
+                            
                         </tbody>
                         <tfoot>
                             <tr>
@@ -104,5 +93,70 @@
     import "/static/components/sidebar/script.js";
     Sidebar(document.getElementById('home-sidebar-insert-area'))
 </script>
+
+<script type="module">
+    import {CalendarSelection, onClickShowCal, getAppointmentsFilter, getSession, getTimeName} from "/static/components/calendarSelection/script.js";
+    
+    
+    window.onClickShowCalendar = (event) => {
+        console.log(event.srcElement)
+        const month = event.srcElement.getAttribute('data-month') 
+        const year = event.srcElement.getAttribute('data-year')
+        onClickShowCal(month-1 , year) // shows calendar starting on date and year // subtract month num starts in 0
+    }
+
+    
+    const renderAppointments = async () => {
+        // first
+        const monthNamesAll = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        const tableBody = document.getElementById('sched-table-body') // get element for table body
+        const sessionData = await getSession() // get session data
+        const appointments = await getAppointmentsFilter({Patient_ID: sessionData.userId}) // get all appointments for user
+        let node = '' 
+        for (let i=0; i<appointments.length; i++){
+            const appointmentSpec = appointments[i]
+            const month = appointmentSpec.Appointment_Month
+            const year = appointmentSpec.Appointment_Year
+            const day = appointmentSpec.Appointment_Day
+            const status = appointmentSpec.Appointment_Confirmed
+            const time = appointmentSpec.Appointment_Time
+            const monthName = monthNamesAll[appointmentSpec.Appointment_Month - 1]
+            const combinedDate = `${monthName} ${day},${year}`
+            const timeName = getTimeName(time)
+
+            const getStatusDisplay = (statusCode) =>{ 
+                const color = ['black','green','red']
+                const name = ['Pending','Confirmed','Rejected']
+                return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
+            }
+            const code = `<tr>
+                <td>${getStatusDisplay(status)}</td>
+                <td>${combinedDate} ${timeName}</td>
+                <td><button data-month="${month}" data-year="${year}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched">Resched</button></td>
+                <td><button class="btn btn-success">View</button></td>
+                <td><button class="btn btn-danger">Cancel</button></td>
+            </tr>`
+            node = node + code
+
+        tableBody.innerHTML = node // sets node string as table body's inner html
+        console.log(document.getElementsByClassName('resched'))
+
+        // Initiate Component Only AFter table generation is done, to get all elements having resched class
+        CalendarSelection(
+            document.getElementById('sched-calendar-insert-area'), //element where calendar is inserted
+            document.getElementsByClassName('resched'), // elements that can show the calendar
+            '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.', // warning msg at bottom
+            'Reschedule', // Button Label
+            'sched-patient', // purpose
+         )
+        }
+
+    }
+
+    renderAppointments()
+    
+    
+</script>
+
 
 </html>
