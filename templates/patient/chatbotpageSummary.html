@@ -38,43 +38,86 @@
                </ul>
           </div>
           
-          <div class="cbp-dialog-container" style="width: 50%; height: 400px; padding: 10px; padding-right: 20px;background-color: white; display: flex; align-items: center;  flex-direction: column">
+          <div class="cbp-dialog-container" style="width: 50%; height: 600px; padding: 10px; padding-right: 20px;background-color: white; display: flex; align-items: center;  flex-direction: column">
                
                <div class="cbp-dialog" style="flex-direction: column">
-                    <p><b>Appointment Datetime:</b> November 21, 2024, 3:00 PM
+                    <p><b>Appointment Datetime: </b><span id="sum-datetime"></span>
                     </p>
-                    <p><b>Name:</b> Monkey D. Luffy
+                    <p><b>Name: </b><span id="sum-name"></span>
                     </p>
-                    <p><b>Email: </b>monkeyd@gmail.com
+                    <p><b>Email: </b><span id="sum-email"></span>
                     </p>
-                    <p><b>Contact No:</b> 09192248798
+                    <p><b>Contact No: </b><span id="sum-contact"></span>
                     </p>
-                    <p><b>Symptoms:</b> Headache, Vomiting, Nausea
+                    <p><b>Symptoms: </b><span id="sum-symptoms"></span>
                     </p>
-                    <p><b>Auto-generated Response:</b> You may have a fever. You can take over-the-counter medicine: Biogesic 500mg once a day after eating. Appointment may not be needed based on your symptoms.
+                    <p><b>Auto-generated Response: </b><span id="sum-response"></span>
                     </p>
-                    <p><i>A confirmation SMS will be sent to your number . Go to "Schedules" to see the status of your appointment.
+                    <hr>
+                    <p><i><u>Check your info above</u> and press <b>Send Request</b> below. Once request is received by the staff, a confirmation SMS will be sent to your number. <br> You can navigate to <b>Menu  → Schedules</b> to see the status of all your appointments.
                     </i>
                     </p>
                </div>
-               
           </div>
-     </div>
+     </div>    
      <div id="text-area" style="width: 50%; margin-left: 25%; margin-bottom: 20px;" >
           <div style="width:100%; height: 40px; background-color: white;"></div>
-          <button onclick="toHome()" style="width: 30%">Confirm</button>
+          <button id="cbp-send-request" style="width: 50%">Send Request</button>
      </div>
     
      <!--DONT DELETE-->
      <script type="module">
-          import "/static/components/sidebar/script.js";
-          Sidebar(document.getElementById('home-sidebar-insert-area'))
-     </script>
+          import {sidebar, getUserData} from "/static/components/sidebar/script.js";
+          import {getSession, getTimeName, createAppointment, getAppointments} from "/static/components/calendarSelection/script.js";
+    
+          sidebar(document.getElementById('home-sidebar-insert-area'))
+          const renderData = async () => {
+          
+               const sessionData = await getSession()
+               const userData = await getUserData().then((data)=>{return data[0]}) // gets only first result
+               const day = sessionData.appointment_day
+               const monthName = sessionData.appointment_monthName
+               const month = sessionData.appointment_month
+               const year = sessionData.appointment_year
+               const timeName = sessionData.appointment_timeName
+               const time = sessionData.appointment_time
+               const symptoms = sessionData.symptoms_selected
+               const symptomsString = symptoms.join(', ')
+               const userId = sessionData.userId
 
-     <script>
-          function toHome(){
-               window.location.href = '/chatbotpage'
+               document.getElementById('sum-datetime').innerHTML = `${monthName} ${day}, ${year}`
+               document.getElementById('sum-name').innerHTML = `${userData.PatientLastName}, ${userData.PatientName}`
+               document.getElementById('sum-email').innerHTML = `${userData.PatientEmail}`
+               document.getElementById('sum-contact').innerHTML = `${userData.PatientContactNo}`
+               document.getElementById('sum-symptoms').innerHTML = `${symptomsString}`
+               document.getElementById('sum-response').innerHTML = `(...)`
+              
+               const toHome = async () => {
+                    const value = await getAppointments(month, year, day) // check if theres existing appointments
+                    for (let i=0; i<value.length; i++){
+                         if (value[i].Appointment_Time == time){ // if there is an appointment with the same time
+                              alert("Selected date is not avaiable / is taken.")
+                              window.location.href = '/home' // go to home instead
+                              return null
+                         }
+                     }
+                    
+                    const newAppointment = await createAppointment(userId, day, month, time, year, 0)
+                   
+                    window.location.href = '/chatbotpage/success'
+               }
+
+               const sendButton = document.getElementById('cbp-send-request')
+               sendButton.onclick = toHome
+
+
+
+               
           }
+
+          
+          renderData()
+
      </script>
 </body>
 

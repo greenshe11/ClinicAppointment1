@@ -128,7 +128,7 @@ body {
   }
   
   .openbtn {
-
+    
     font-size: 20px;
     cursor: pointer;
     background-color: #111;
@@ -136,6 +136,10 @@ body {
     padding: 10px 15px;
     padding-left: 30px;
     border: none;
+    border-width: 3px;
+    border-style: solid;
+    border-color:black;
+    transition: border-color 1s ease; /* Adds smooth transition */
   }
   
   .openbtn:hover {
@@ -304,11 +308,11 @@ body {
     margin-top: 20px;
 }
 
-span {
+#sidebar-logout {
     color: rgba(255, 0, 0, 0.5);
 }
 
-span:hover {
+#sidebar-logout:hover {
     cursor: pointer;
     color: rgba(255, 0, 0, 1);
 }

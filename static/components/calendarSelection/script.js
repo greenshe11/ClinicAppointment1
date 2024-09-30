@@ -3,6 +3,30 @@
  * @param {Object} filter 
  * @returns 
  */
+export async function createAppointment(id, day, month, time, year, diagnosisCode){
+    const data = {
+        Patient_ID: id, 
+        Smsnotif_ID: 0,
+        Appointment_Day: day,
+        Appointment_Month: month,
+        Appointment_Time: time,
+        Appointment_Year: year,
+        Appointment_Confirmed: 0,
+        Symptoms_ID: 0,
+        Appointment_DiagnosisCode: diagnosisCode
+    }
+    const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        });
+    const resJson = await response.json()
+    console.log("createAppointment() ", resJson)
+    return resJson
+}
+
 export function getAppointmentsFilter(filter) {
     const keys = Object.keys(filter) // gets keys of filter object
     let parameters = '?' // initialization
@@ -38,7 +62,7 @@ export function getAppointmentsFilter(filter) {
  * @param {Integer} day 
  * @returns 
  */
-function getAppointments(month, year, day) {
+export async function getAppointments(month, year, day) {
     return fetch(`/api/appointments/forPatient?Appointment_Month=${month}&Appointment_Day=${day}&Appointment_Year=${year}`)
         .then(response => {
             if (!response.ok) {
@@ -550,6 +574,13 @@ cbpAppointment.initialRun = () => {
         console.log(selected)
         const allowance = getDaysUntilAppointment()
         console.log(allowance)
+        const value = await getAppointments(session.month, session.year, session.day)
+        for (let i=0; i<value.length; i++){
+            if (value[i].Appointment_Time == session.time){
+                return null
+            }
+        }
+       
         if (allowance > 0){onSetFunction()} 
     }
     recoverSession()

@@ -65,12 +65,14 @@
                const ss = await SymptomsSelection(document.getElementById('home-symptoms-insert-area'))
                window.toResponse = () =>{
                if (ss.symptoms.length < 1){
+                    
                     alert("Tip: You need to select at least 1 symptom.")
                     
                     return
                }
                storeSymptomsSession()
-               window.location.href = 'chatbotpage/response'
+               
+               window.location.href = '/chatbotpage/response'
           }
 
           }

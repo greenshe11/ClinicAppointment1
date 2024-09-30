@@ -23,38 +23,27 @@
     <div class="container-fluid">
         <div id="content">
             <div id="home-container">
-                <div id="home" class="container-fluid">
-                    <img src="{{ url_for('static',filename='g15.png')}}" />
-                    <h1 id="title-opening">ChatBotClinic</h1>
-                    <button onclick="toChatbot()" id="changeButton" class="btn btn-primary fas fa-calendar" style="display: inline-block; width: 200px;"><a style="text-decoration: none; color: white;"> Book</a></button>
+                <div id="home" class="container-fluid">>
+                    <h3 style="color:white">Appointment Request has been sent.</h3>
                 </div>
             </div>
         </div>
     </div>
     <script type="module">
-        //import "/static/components/symptomsSelection/script.js";
-        //SymptomsSelection(document.getElementById('home-symptoms-insert-area'))
+        import {sidebar, makeButtonBlink} from "/static/components/sidebar/script.js";
+        sidebar(document.getElementById('home-sidebar-insert-area'))
+        makeButtonBlink()
     </script>
-
-    <!--DONT DELETE-->
-    <script type="module">
-        import "/static/components/sidebar/script.js";
-        Sidebar(document.getElementById('home-sidebar-insert-area'))
-        window.onpopstate = function () {
-            // Push the state again to prevent going back
-    
-            window.location.href = '/'   
-            
-        };
-    </script>
-    
     <script>
         const toChatbot = () =>{
-            window.location.href="/chatbotpage" 
+            window.location.href="/home" 
         }
+        
+
         
     </script>
    
+ 
 </body>
 
 </html>
