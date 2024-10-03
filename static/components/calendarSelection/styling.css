@@ -5,7 +5,6 @@
     font-family: Arial, sans-serif;
     background-color: white;
     height: 80%;
-    width: 100%;
     top: 0; 
     background-color: rgba(255,255,255,0.8);
     margin: 0;
@@ -228,7 +227,15 @@ font-weight: bold;
     text-align: center;
     margin-left: 20px;
     margin-right: 20px;
+    color: #EAB464; 
+    width: 150px;
     
+}
+
+@media all and (max-width: 300px){
+    #dr-monthAndYear {
+        width: 80px;
+    }
 }
 
 /* Navigation buttons */
