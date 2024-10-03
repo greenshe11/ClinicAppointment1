@@ -148,7 +148,7 @@ a.white{
      width: 60%;
 }
 
-@media all and (max-width: 1300px){
+@media all and (max-width: 1000px){
      #table {
           width: 95%;
      }
