@@ -69,13 +69,13 @@ const closeExpansion = () => {
 
 const expand = () => {
     openNav();
-    document.getElementById('main').style.opacity = '0'
+    document.getElementById('main').style.opacity = '1'
 }
 
 import { Component } from "/static/components/script.js";
 
 // create component
-let blinkButton = false
+let blinkButton = false 
 let isGreen = true
 export const makeButtonBlink = () => {
     blinkButton = true

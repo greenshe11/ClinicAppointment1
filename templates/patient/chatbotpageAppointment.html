@@ -21,24 +21,24 @@
           <div id="header">
                <ul class="nav nav-pills">
                     <li class="nav-item mx-2">
-                         <a class="nav-link" aria-current="page" href="/home"><</a>
+                         <a class="nav-link tab" aria-current="page" href="/home"><</a>
                     </li>
                     <li class="nav-item mx-2">
-                         <a class="nav-link" href="/chatbotpage">Symptoms</a>
+                         <a class="nav-link tab" href="/chatbotpage">Symptoms</a>
                     </li>
                     <li class="nav-item mx-2">
-                         <a class="nav-link white" href="/chatbotpage/response">Response</a>
+                         <a class="nav-link white tab" href="/chatbotpage/response">Response</a>
                     </li>
                     <li class="nav-item mx-2">
-                         <a class="nav-link disabled active bg-dark" href="/chatbotpage/response/appointment">Appointment</a>
+                         <a class="nav-link disabled active bg-dark tab" href="/chatbotpage/response/appointment">Appointment</a>
                     </li>
                     <li class="nav-item mx-2">
-                         <a class="nav-link disabled" href="#">Summary</a>
+                         <a class="nav-link disabled tab" href="#">Summary</a>
                     </li>
                </ul>
           </div>
           
-          <div class="cbp-dialog-container" style="width: 50%; height: 400px; padding: 10px; padding-right: 20px;background-color: white; display: flex; align-items: center;  flex-direction: column">
+          <div class="cbp-dialog-container">
                <img class="cbp-dialog-img" src="/static/assets/nurse.png" style="margin: 20px;"/>
                <div class="cbp-dialog" style="flex-direction: column">
                     <p id="cbp-dialog-chat"> Please choose a date and time for your appointment.
@@ -49,7 +49,7 @@
                
           </div>
      </div>
-     <div id="text-area" style="width: 50%; margin-left: 25%; margin-bottom: 20px;">
+     <div id="text-area">
           <div style="width:100%; height: 40px; background-color: white;"></div>
           <button onclick="toSummary()">Next</button>
      </div>
@@ -82,6 +82,7 @@
      <script type="module">
           import "/static/components/sidebar/script.js";
           Sidebar(document.getElementById('home-sidebar-insert-area'))
+          
      </script>
 
 </body>

@@ -3,17 +3,7 @@ body {
     background-color: #212121;
   }
   
-  #title-opening {
-    font-size: 150px;
-    color: #EAB464;
-  }
-  
-  @media only screen and (max-width: 600px) {
-    #title-opening {
-      font-size: 60px;
-    }
-  }
-  
+
   
   #title-second {
     font-size: 60px;
@@ -57,10 +47,7 @@ body {
   }
   
   
-  #table {
-    width: 80%;
-  
-  }
+ 
   
   #table h1 {
     color: #EAB464;
@@ -84,7 +71,7 @@ body {
     font-size: 25px;
   }
   
-  @media only screen and (max-width: 600px) {
+  @media all and (max-width: 600px) {
     #home button {
       width: 60%;
       height: 70px;
@@ -348,4 +335,5 @@ body {
     font-size: 36px;
     margin-left: 50px;
 }
+
 

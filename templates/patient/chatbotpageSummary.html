@@ -38,9 +38,9 @@
                </ul>
           </div>
           
-          <div class="cbp-dialog-container" style="width: 50%; height: 600px; padding: 10px; padding-right: 20px;background-color: white; display: flex; align-items: center;  flex-direction: column">
+          <div class="cbp-dialog-container">
                
-               <div class="cbp-dialog" style="flex-direction: column">
+               <div class="cbp-dialog" style=" height: 100%; flex-direction: column;">
                     <p><b>Appointment Datetime: </b><span id="sum-datetime"></span>
                     </p>
                     <p><b>Name: </b><span id="sum-name"></span>
@@ -60,9 +60,8 @@
                </div>
           </div>
      </div>    
-     <div id="text-area" style="width: 50%; margin-left: 25%; margin-bottom: 20px;" >
-          <div style="width:100%; height: 40px; background-color: white;"></div>
-          <button id="cbp-send-request" style="width: 50%">Send Request</button>
+     <div id="text-area"  >
+          <button id="cbp-send-request" style="width: 100%">Send Request</button>
      </div>
     
      <!--DONT DELETE-->
@@ -71,6 +70,7 @@
           import {getSession, getTimeName, createAppointment, getAppointments} from "/static/components/calendarSelection/script.js";
     
           sidebar(document.getElementById('home-sidebar-insert-area'))
+          
           const renderData = async () => {
           
                const sessionData = await getSession()

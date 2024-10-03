@@ -2,17 +2,6 @@ body {
   background-color: #212121;
 }
 
-#title-opening {
-  font-size: 150px;
-  color: #EAB464;
-}
-
-@media only screen and (max-width: 600px) {
-  #title-opening {
-    font-size: 60px;
-  }
-}
-
 
 
 
@@ -58,10 +47,6 @@ body {
 }
 
 
-#table {
-  width: 80%;
-
-}
 
 #table h1 {
   color: #EAB464;
