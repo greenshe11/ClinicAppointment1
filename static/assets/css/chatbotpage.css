@@ -144,3 +144,12 @@ a.white{
   }
 }
 
+#table{
+     width: 60%;
+}
+
+@media all and (max-width: 1300px){
+     #table {
+          width: 95%;
+     }
+}
