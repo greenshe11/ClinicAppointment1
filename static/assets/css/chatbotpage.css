@@ -1,7 +1,7 @@
 body {
-     background-color: #212121;
-}
-
+     background: linear-gradient(to right, #00008b,  #87CEEB);
+     font-family: 'Roboto', sans-serif;
+   }
 
 @media all and (max-width: 600px){
      .tab {
@@ -9,8 +9,9 @@ body {
      }
 }
 
+
 #header {
-     background-color: #EAB464;
+     background-color: white;
      width: 50%;
      display: flex;
      margin-bottom: 20px;
@@ -70,13 +71,23 @@ body {
      background-color: white; 
      display: flex; 
      align-items: center;  
-     flex-direction: column
+     flex-direction: column;
+     
+     border-radius: 10px;
 }
 
 @media all and (max-width: 600px) {
      .cbp-dialog-container{
-          width: 95%;
+          width: 100%;
           padding: 2px;
+          border-radius: 0px;
+          
+     }
+}
+
+@media all and (max-width: 300px) {
+     .cbp-dialog-container{
+          height: 450px;
           
      }
 }
@@ -84,17 +95,17 @@ body {
 .cbp-dialog-img{
      height: 100px;
      object-fit: cover;
-     padding-left: 10px;
+     padding-right: 10px;
 }
 
-a.white{
+.white{
      color: white;
      font-style: normal;
      text-decoration: none;
 }
 
 #text-area button {
-     background: #EAB464;
+     background: blue;
      border-radius: 9px;
      height: 40px;
      box-sizing: border-box;
@@ -119,12 +130,21 @@ a.white{
      font-family: Inter,Helvetica,"Apple Color Emoji","Segoe UI Emoji",NotoColorEmoji,"Noto Color Emoji","Segoe UI Symbol","Android Emoji",EmojiSymbols,-apple-system,system-ui,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans",sans-serif;
      font-size: 16px;
      font-weight: 700;
-     color: white;
+     border-radius: 0px;
+     color: blue;
 }
 
+.li.nav-item{
+     border-radius: 0px;
+}
+}
 .nav li :hover {
-     background-color: #212121;
-     color: white;
+     border-style: solid;
+     border-width: 2px;
+     border-radius: 0px;
+     border-color: blue;
+     margin: -2px;
+     color: blue;
 }
 
 
@@ -135,7 +155,7 @@ a.white{
 
 .title-opening {
   font-size: 150px;
-  color: #EAB464;
+  color: white;
 }
 
 @media all and (max-width: 1000px) {
@@ -153,3 +173,4 @@ a.white{
           width: 95%;
      }
 }
+

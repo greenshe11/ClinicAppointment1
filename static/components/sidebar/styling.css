@@ -1,9 +1,4 @@
 
-body {
-    background-color: #212121;
-  }
-  
-
   
   #title-second {
     font-size: 60px;
@@ -67,8 +62,13 @@ body {
     width: 12%;
     height: 50px;
     margin-top: 50px;
-    background-color: #EAB464;
+    background-color: white;
     font-size: 25px;
+  }
+
+  #home button:hover {
+    border-color: blue;
+    border-width: 3px;
   }
   
   @media all and (max-width: 600px) {
@@ -87,38 +87,18 @@ body {
     width: 150px;
     font-size: 25px;
     transition: 0.3s;
-    background-color: #EAB464;
+    background-color: white;
   }
   
   
+ 
   
-  .sidebar {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: red;
-    overflow-x: hidden;
-    transition: 0.5s;
-    padding-top: 60px;
-  }
-  
-  
-  .sidebar .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
-  }
-  
+ 
   .openbtn {
     
     font-size: 20px;
     cursor: pointer;
-    background-color: #111;
+    background-color: rgb(77, 88, 140);
     color: white;
     padding: 10px 15px;
     padding-left: 30px;
@@ -127,10 +107,13 @@ body {
     border-style: solid;
     border-color:black;
     transition: border-color 1s ease; /* Adds smooth transition */
+    z-index: 1099;
   }
   
   .openbtn:hover {
-    background-color: #444;
+    background-color: white;
+    border-color: blue;
+    color: black;
   }
   
   #content {
@@ -274,7 +257,7 @@ body {
     flex-direction: row;
     align-items: center;
     border-bottom-width: 1px;
-    border-bottom-color: #817F7E;
+    border-bottom-color: gray;
     border-bottom-style: solid;
     margin-bottom: 20px;
 }
@@ -287,7 +270,7 @@ body {
 }
 
 .profile-name-container {
-    color: #817F7E;
+    color: white;
 }
 
 .openbtn {
@@ -296,7 +279,7 @@ body {
 }
 
 #sidebar-logout {
-    color: rgba(255, 0, 0, 0.5);
+    color: #ff9191;
 }
 
 #sidebar-logout:hover {
@@ -308,10 +291,10 @@ body {
     height: 100%;
     width: 0;
     position: fixed;
-    z-index: 1;
+    z-index: 1100;
     top: 0;
     left: 0;
-    background-color: #171717;
+    background-color: rgb(77, 88, 140);
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -321,19 +304,20 @@ body {
     text-decoration: none;
     font-size: 25px;
     transition: 0.3s;
-    color: white;
+    color: black;
 }
 
 .sidebar a:hover {
-    color: #f1f1f1;
+    color: blue;
 }
 
 .sidebar .closebtn {
     position: absolute;
-    top: 0;
+    top: 20px;
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
+    color: white;
 }
 
 

@@ -19,6 +19,8 @@
     <div id="home-sidebar-insert-area"></div>
 
     <div id="sched-calendar-insert-area"></div>
+
+    <div id="info-modal-insert-area"></div>
       
     <div id="home-container" style="margin-top: 50px;">
         <div id="home" class="container-fluid" >
@@ -56,9 +58,9 @@
                             <tr>
                                 <th>Status</th>
                                 <th>Datetime</th>
-                                <th>Reschedule Date</th>
-                                <th>Info</th>
-                                <th>Cancel Appointment</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody id="sched-table-body">
@@ -94,8 +96,12 @@
     Sidebar(document.getElementById('home-sidebar-insert-area'))
 </script>
 
+
+
 <script type="module">
     import {CalendarSelection, onClickShowCal, getAppointmentsFilter, getSession, getTimeName} from "/static/components/calendarSelection/script.js";
+    import {InfoModal, showModal} from "/static/components/infoModal/script.js";
+
     
     
     window.onClickShowCalendar = (event) => {
@@ -104,6 +110,8 @@
         const year = event.srcElement.getAttribute('data-year')
         onClickShowCal(month-1 , year) // shows calendar starting on date and year // subtract month num starts in 0
     }
+
+    
 
     
     const renderAppointments = async () => {
@@ -132,8 +140,8 @@
             const code = `<tr>
                 <td>${getStatusDisplay(status)}</td>
                 <td>${combinedDate} ${timeName}</td>
-                <td><button data-month="${month}" data-year="${year}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched">Resched</button></td>
-                <td><button class="btn btn-success">View</button></td>
+                <td><button data-month="${month}" data-year="${year}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
+                <td><button class="btn btn-primary viewer" data-userId="${sessionData.userId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
                 <td><button class="btn btn-danger">Cancel</button></td>
             </tr>`
             node = node + code
@@ -141,20 +149,24 @@
         tableBody.innerHTML = node // sets node string as table body's inner html
         console.log(document.getElementsByClassName('resched'))
 
-        // Initiate Component Only AFter table generation is done, to get all elements having resched class
-        CalendarSelection(
+       
+        }
+         // Initiate Component Only AFter table generation is done, to get all elements having resched class
+         CalendarSelection(
             document.getElementById('sched-calendar-insert-area'), //element where calendar is inserted
             document.getElementsByClassName('resched'), // elements that can show the calendar
             '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.', // warning msg at bottom
             'Reschedule', // Button Label
             'sched-patient', // purpose
          )
-        }
+        
 
     }
 
     renderAppointments()
-    
+    InfoModal(document.getElementById('info-modal-insert-area'),
+    document.getElementsByClassName('viewer'))
+    window.showModal = showModal
     
 </script>
 

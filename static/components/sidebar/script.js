@@ -80,12 +80,14 @@ let isGreen = true
 export const makeButtonBlink = () => {
     blinkButton = true
 }
+
 setInterval(() => {
     const borderBox = document.getElementById('openbtn');
     if (!blinkButton){return}
     if (isGreen) {
         
         borderBox.style.borderColor = 'green';
+        
     } else {
         borderBox.style.borderColor = 'black';
     }
