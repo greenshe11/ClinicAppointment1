@@ -52,8 +52,8 @@
                     </div>
                 </div>
 
-                <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
-                    <table class="table my-0" id="dataTable">
+                <div class="table-responsive table mt-2"   id="dataTable" role="grid" aria-describedby="dataTable_info">
+                    <table class="table my-0" id="dataTable" >
                         <thead>
                             <tr>
                                 <th>Status</th>
@@ -87,8 +87,8 @@
                 </div>-->
             </div>
         </div>
+        <div>end of list</div>
     </div>
-
 </body>
 <!--DONT DELETE-->
 <script type="module">
@@ -99,7 +99,7 @@
 
 
 <script type="module">
-    import {CalendarSelection, onClickShowCal, getAppointmentsFilter, getSession, getTimeName} from "/static/components/calendarSelection/script.js";
+    import {CalendarSelection, onClickShowCal, selected, getAppointmentsFilter, getSession, getTimeName, deleteAppointment} from "/static/components/calendarSelection/script.js";
     import {InfoModal, showModal} from "/static/components/infoModal/script.js";
 
     
@@ -108,7 +108,14 @@
         console.log(event.srcElement)
         const month = event.srcElement.getAttribute('data-month') 
         const year = event.srcElement.getAttribute('data-year')
+        selected.appointmentId = event.srcElement.getAttribute('data-appointmentId')
         onClickShowCal(month-1 , year) // shows calendar starting on date and year // subtract month num starts in 0
+        
+    }
+
+    window.deleteAppointment = (event) =>{
+        const id = event.srcElement.getAttribute('data-appointmentId')
+        deleteAppointment(id)
     }
 
     
@@ -121,6 +128,7 @@
         const sessionData = await getSession() // get session data
         const appointments = await getAppointmentsFilter({Patient_ID: sessionData.userId}) // get all appointments for user
         let node = '' 
+
         for (let i=0; i<appointments.length; i++){
             const appointmentSpec = appointments[i]
             const month = appointmentSpec.Appointment_Month
@@ -128,6 +136,7 @@
             const day = appointmentSpec.Appointment_Day
             const status = appointmentSpec.Appointment_Confirmed
             const time = appointmentSpec.Appointment_Time
+            const appId = appointmentSpec.Appointment_ID
             const monthName = monthNamesAll[appointmentSpec.Appointment_Month - 1]
             const combinedDate = `${monthName} ${day},${year}`
             const timeName = getTimeName(time)
@@ -140,9 +149,9 @@
             const code = `<tr>
                 <td>${getStatusDisplay(status)}</td>
                 <td>${combinedDate} ${timeName}</td>
-                <td><button data-month="${month}" data-year="${year}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
+                <td><button data-month="${month}" data-year="${year}" data-appointmentId="${appId}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
                 <td><button class="btn btn-primary viewer" data-userId="${sessionData.userId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
-                <td><button class="btn btn-danger">Cancel</button></td>
+                <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Cancel</button></td>
             </tr>`
             node = node + code
 

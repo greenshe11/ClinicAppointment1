@@ -335,7 +335,7 @@ function daysInMonth(iMonth, iYear) {
  * MODAL Calendar
  */
 // GLOBALS
-export let selected = {month: null, date: null, year: null, time:null, monthName:null, timeName:null}
+export let selected = {month: null, date: null, year: null, time:null, monthName:null, timeName:null, appointmentId:null}
 let btn = null
 let dialogChat = null
 let purposeClass = null
@@ -505,7 +505,7 @@ function onSetFunction(){
     let day = selected.day
     let year = selected.year
     let time = selected.time
-    let monthName = months[month]
+    let monthName = months[month-1]
     let timeName = getTimeName(time)
     selected.monthName = monthName
     selected.timeName = timeName
@@ -513,6 +513,59 @@ function onSetFunction(){
 
 }
 
+export async function deleteAppointment(appointmentId){
+const response = await fetch('/api/appointments', {
+        method: 'DELETE',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Appointment_ID: appointmentId}),
+        });
+
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        console.log(result.hasOwnProperty('customError'))
+        if (result.hasOwnProperty('customError')) {
+             alert(result.customError)
+             return
+        }
+        alert("Appointment Deleted!")
+        location.reload() //reloading page
+
+}
+
+export async function rescheduleAppointment(appointment_id, month, day, year, time){
+    const response = await fetch('/api/appointments', {
+        method: 'PUT',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Appointment_ID: appointment_id, 
+            Appointment_Month: month,
+            Appointment_Day: day,
+            Appointment_Year: year,
+            Appointment_Time: time,
+            Appointment_Confirmed: 0}),
+        });
+
+        if (!response.ok) {
+        throw new Error('Network response was not ok');
+        }
+
+        const result = await response.json();
+        console.log(result.hasOwnProperty('customError'))
+        if (result.hasOwnProperty('customError')) {
+             alert(result.customError)
+             return
+        }
+        alert("Reschedule Successful.")
+        location.reload() //reloading page
+}
 
 
 /**
@@ -533,7 +586,7 @@ class Purpose{ // blueprint/class
     }
 }
 
-const schedulesPatient = new Purpose()
+const schedulesPatient = new Purpose() // for rescheduling
 schedulesPatient.initialRun = () => { // no init scripts
 
 }
@@ -546,15 +599,17 @@ schedulesPatient.onSetAdditionalFunction = () => {
     const time = selected.time
     const monthName = selected.monthName
     const timeName = selected.timeName
+
     if (!(time)){
         alert("Error: You need to set the time and date to make an appointment!")
     } else{
         onClickCloseCal()
+        rescheduleAppointment(selected.appointmentId, month, day, year, time)
         return selected
     }
 }
 
-const cbpAppointment = new Purpose()
+const cbpAppointment = new Purpose() // for first appointments
 /**
  * @description recovers previous session and only recover session if previous date selected is on future
  */
