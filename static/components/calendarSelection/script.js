@@ -534,7 +534,7 @@ const response = await fetch('/api/appointments', {
              return
         }
         alert("Appointment Deleted!")
-        location.reload() //reloading page
+        
 
 }
 
@@ -661,7 +661,6 @@ cbpAppointment.onSetAdditionalFunction = () => {
 
         return selected
     }
-    
 }
 
 //*
@@ -683,6 +682,7 @@ const _calendarSelectionObj = new Component('/static/components/calendarSelectio
  * @param {String} purpose purpose of calendar selection, purposes are predefined and functions to be used vary based on this key   
  *  @param {HTMLElement} elementDialog // only for cbp-appointment purpose: null if not needed // element where message
  */
+
 export async function CalendarSelection(element, elementButtons, warningName=null, buttonName=null, purpose='cbp-appointment', elementDialog=null){
    
     // wait for element to be added to document
@@ -695,7 +695,6 @@ export async function CalendarSelection(element, elementButtons, warningName=nul
     selectMonth = document.getElementById("dr-month");
     monthAndYear = document.getElementById("dr-monthAndYear");
     
-
     // set global variables
     btn = elementButtons // btn for opening the modal
     dialogChat = elementDialog // a custom dialog

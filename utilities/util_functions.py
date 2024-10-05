@@ -285,3 +285,5 @@ def sort_dates(patients):
     return sorted_dates
 
 
+def user_is_staff():
+    return get_session('isStaff')

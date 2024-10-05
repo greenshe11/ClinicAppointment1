@@ -10,259 +10,192 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/sidebar.css')}}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        .profile-container {
-            padding: 10px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            border-bottom-width: 1px;
-            border-bottom-color: #817F7E;
-            border-bottom-style: solid;
-            margin-bottom: 20px;
-        }
-
-        .user-icon {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin: 20px;
-        }
-
-        .profile-name-container {
-            color: #817F7E;
-        }
-
-        .openbtn {
-            margin-left: -20px;
-            margin-top: 20px;
-        }
-
-        span {
-            color: rgba(255, 0, 0, 0.5);
-        }
-
-        span:hover {
-            cursor: pointer;
-            color: rgba(255, 0, 0, 1);
-        }
-
-        .sidebar {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #171717;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidebar a {
-            text-decoration: none;
-            font-size: 25px;
-            transition: 0.3s;
-            color: white;
-        }
-
-        .sidebar a:hover {
-            color: #f1f1f1;
-        }
-
-        .sidebar .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/assets/css/chatbotpage.css">
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div id="mySidebar" class="sidebar">
-            <a class="closebtn" href="javascript:void(0)" onclick="closeExpansion()" style="font-size: 25px;">x</a>
-            <div class="profile-container">
-                <div class="profile-avatar-container">
-                    <img src="{{ url_for('static',filename='p-default-inverted.png')}}" class="user-icon" id="icon" alt="User Icon" />
-                </div>
-                <div>
-                    <div class="profile-name-container" id="userName"></div>
-                    <hr>
-                    <span onclick="logout()">Log out</span>
-                </div>
-            </div>
-            <div id="container-button">
-                <button class="btn btn-primary"><a href="/home">Home</a></button>
-                <button class="btn btn-primary"><a href="/schedule">Schedule</a></button>
-                <button class="btn btn-primary"><a href="/history">History</a></button>
-                <button class="btn btn-primary"><a href="/about">About</a></button>
-
-            </div>
-        </div>
-        <div id="main">
-            <button class="btn btn-primary openbtn" style="position: fixed" type="button" onclick="expand()">☰</button>
-        </div>
-        
-    </div>
-
-
     <!--Start-->
-<div id="table" class="container-fluid">
-    <h1>Patient Records</h1>
-    <div class="card shadow">
-        <div class="card-header py-3">
-            <p class="text-primary m-0 fw-bold">Schedule Info</p>
-        </div>
-        <div class="card-body">
-            
-            <div class="row">
-                <div class="col-md-6 text-nowrap">
-                    <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><label class="form-label">Show&nbsp;<select class="d-inline-block form-select form-select-sm">
-                                <option value="10" selected="">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>&nbsp;</label></div>
-                </div>
-                <div class="col-md-6">
-                    <div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>
-                </div>
-            </div>
+      <!--DONT DELETE: THIS AREA IS WHERE THE SIDE BAR WILL BE INSERTED-->
+    <div id="home-sidebar-insert-area"></div>
 
-            <div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info">
-                <table class="table my-0" id="dataTable">
-                    <thead>
-                        <tr>
-                            <th>Firstname</th>
-                            <th>Lastname</th>
-                            <th>Age</th>
-                            <th>Schedule Date</th>
-                            <th>Chat History</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Michael Ian</td>
-                            <td>Leguira</td>
-                            <td>23</td>
-                            <td>2008/11/28</td>
-                            <td><button class="btn btn-primary">View</button></td>
-                        </tr>
-                        <tr>
-                            <td>Dave</td>
-                            <td>Tumagan</td>
-                            <td>23</td>
-                            <td>2009/09/10</td>
-                            <td><button class="btn btn-primary">View</button></td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th>Firstname</th>
-                            <th>Lastname</th>
-                            <th>Age</th>
-                            <th>Schedule Date</th>
-                            <th>Chat History</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-            <div class="row">
-                <div class="col-md-6 align-self-center">
-                    <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
-                </div>
-                <div class="col-md-6">
-                    <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                        <ul class="pagination">
-                            <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
+    <div id="sched-calendar-insert-area"></div>
+
+    <div id="info-modal-insert-area"></div>
+      
+    <div id="home-container" style="margin-top: 50px;">
+        <div id="home" class="container-fluid" >
+            <h1 class="title-opening" style="font-size: 30px;">Patients</h1>
         </div>
+         
     </div>
-</div>
+      
+    <div id="table" class="container-fluid">
+        <br>
+        
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <p class="text-primary m-0 fw-bold">Schedule Info</p>
+            </div>
+            <div class="card-body">
+                
+                <div class="row">
+                    <div class="col-md-12 text-nowrap">
+                        <div id="dataTable_length" class="dataTables_length" aria-controls="dataTable"><!--<label class="form-label">Show&nbsp;<select class="d-inline-block form-select form-select-sm">
+                                    <option value="10" selected="">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>&nbsp;</label></div>
+                    </div>-->
+                    <div class="col-md-6">
+                        <!---<div class="text-md-end dataTables_filter" id="dataTable_filter"><label class="form-label"><input type="search" class="form-control form-control-sm" aria-controls="dataTable" placeholder="Search"></label></div>-->
+                    </div>
+                </div>
 
-    <script src="{{ url_for('static',filename='assets/bootstrap/js/bootstrap.min.js')}}"></script>
-    <script src="{{ url_for('static',filename='assets/js/script.js')}}"></script>
-    <script>
-        function getName() {
-            return fetch(`api/patient?for=session`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const LastName = data[0].PatientLastName;
-                    const firstName = data[0].PatientName;
-                    const userNameDiv = document.getElementById('userName');
-                    userNameDiv.innerHTML = `${LastName}, ${firstName}`;
-                    return data; // Return the data to the caller
-                })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                    return []; // Return an empty array on error
-                });
-        }
-
-        getName();
-
-        async function logout() {
-            try {
-                const response = await fetch('/api/patient?for=logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({}),
-                });
-
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                const result = await response.json();
-                if (result.hasOwnProperty('customError')) {
-                    alert(result.customError);
-                    return;
-                }
-
-                window.location.href = '/login';
-            } catch (error) {
-                console.error('Error:', error);
-                window.location.href = '/home';
-            }
-        }
-
-        function closeNav() {
-            document.getElementById("mySidebar").style.width = "0";
-        }
-
-        function openNav() {
-            document.getElementById("mySidebar").style.width = "250px";
-        }
-
-        const closeExpansion = () => {
-            $("#main").css('opacity', '1');
-            closeNav();
-        }
-
-        const expand = () => {
-            openNav();
-            $("#main").css('opacity', '0');
-        }
-    </script>
-
+                <div class="table-responsive table mt-2"   id="dataTable" role="grid" aria-describedby="dataTable_info">
+                    <table class="table my-0" id="dataTable" >
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Datetime</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="sched-table-body">
+                            
+                        </tbody>
+                        
+                    </table>
+                </div>
+                <!--<div class="row">
+                    <div class="col-md-6 align-self-center">
+                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
+                    </div>
+                    <div class="col-md-6">
+                        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+                            <ul class="pagination">
+                                <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+        <div>end of list</div>
+    </div>
 </body>
+<!--DONT DELETE-->
+<script type="module">
+    import {SidebarStaff} from "/static/components/sidebarStaff/script.js";
+    SidebarStaff(document.getElementById('home-sidebar-insert-area'))
+</script>
+
+
+<script type="module">
+    import {CalendarSelection, onClickShowCal, selected, getAppointmentsFilter, getSession, getTimeName, deleteAppointment} from "/static/components/calendarSelection/script.js";
+    import {InfoModal, showModal} from "/static/components/infoModal/script.js";
+
+    
+    
+    window.onClickShowCalendar = (event) => {
+        console.log(event.srcElement)
+        const month = event.srcElement.getAttribute('data-month') 
+        const year = event.srcElement.getAttribute('data-year')
+        selected.appointmentId = event.srcElement.getAttribute('data-appointmentId')
+        onClickShowCal(month-1 , year) // shows calendar starting on date and year // subtract month num starts in 0
+        
+    }
+
+    window.deleteAppointment = (event) =>{
+        const id = event.srcElement.getAttribute('data-appointmentId')
+        deleteAppointment(id)
+    }
+
+    
+
+    
+    const renderAppointments = async () => {
+        // first
+        const monthNamesAll = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+        const tableBody = document.getElementById('sched-table-body') // get element for table body
+        const sessionData = await getSession() // get session data
+        let appointments = await getAppointmentsFilter({Patient_ID: sessionData.userId}) // get all appointments for user
+        let node = '' 
+        appointments.sort((a, b) => {
+            // Create date objects for comparison, using only the hour
+            const dateA = new Date(a.Appointment_Year, a.Appointment_Month - 1, a.Appointment_Day, a.Appointment_Time);
+            const dateB = new Date(b.Appointment_Year, b.Appointment_Month - 1, b.Appointment_Day, b.Appointment_Time);
+            let diff =  dateB - dateA; // Sort by date and hour
+            return diff
+        });
+        
+        for (let i=0; i<appointments.length; i++){
+            const appointmentSpec = appointments[i]
+            const month = appointmentSpec.Appointment_Month
+            const year = appointmentSpec.Appointment_Year
+            const day = appointmentSpec.Appointment_Day
+            const status = appointmentSpec.Appointment_Confirmed
+            const time = appointmentSpec.Appointment_Time
+            const appId = appointmentSpec.Appointment_ID
+            const monthName = monthNamesAll[appointmentSpec.Appointment_Month - 1]
+            const combinedDate = `${monthName} ${day},${year}`
+            const timeName = getTimeName(time)
+
+            const getStatusDisplay = (statusCode) =>{ 
+                if (statusCode==0){   
+                    return `<button class="btn btn-primary viewer" data-userId="${sessionData.userId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="showModal(event)">Confirm</button>
+                    <button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Reject</button>`
+                }
+                const color = ['black','green','red']
+                const name = ['Pending','Confirmed','Rejected']
+                return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
+            }
+
+            
+    
+
+            const code = `<tr>
+                 <td>${getStatusDisplay(status)}</td>
+                <td>${combinedDate} ${timeName}</td>
+                <td></td>
+                <td></td>
+                <td><button data-month="${month}" data-year="${year}" data-appointmentId="${appId}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
+                <td><button class="btn btn-primary viewer" data-userId="${sessionData.userId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
+                <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Cancel</button></td>
+            </tr>`
+            node = node + code
+
+        tableBody.innerHTML = node // sets node string as table body's inner html
+        console.log(document.getElementsByClassName('resched'))
+
+       
+        }
+         // Initiate Component Only AFter table generation is done, to get all elements having resched class
+         CalendarSelection(
+            document.getElementById('sched-calendar-insert-area'), //element where calendar is inserted
+            document.getElementsByClassName('resched'), // elements that can show the calendar
+            '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.', // warning msg at bottom
+            'Reschedule', // Button Label
+            'sched-patient', // purpose
+         )
+        
+
+    }
+
+    renderAppointments()
+    InfoModal(document.getElementById('info-modal-insert-area'),
+    document.getElementsByClassName('viewer'))
+    window.showModal = showModal
+    
+</script>
+
 
 </html>

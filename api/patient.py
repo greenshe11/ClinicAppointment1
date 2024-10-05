@@ -56,6 +56,8 @@ def patient_routes(self, table_name):
                 
                 if correct_password:
                     set_session('userId', credentials[0]['Patient_ID'])
+                    set_session('isStaff', bool(credentials[0]['PatientIsStaff']))
+                    print("IS STAFF", get_session('isStaff'))
                     # logging in doesnt require to add data to database atm; returns back to the client immediately without error
                     # all good as long as session has been set
                     return jsonify({})

@@ -113,9 +113,13 @@
         
     }
 
-    window.deleteAppointment = (event) =>{
+    window.deleteAppointment = async (event) =>{
         const id = event.srcElement.getAttribute('data-appointmentId')
-        deleteAppointment(id)
+        await deleteAppointment(id)
+        const tr = event.srcElement.closest('tr'); // Find the closest <tr> (the entire row)
+        tr.parentElement.removeChild(tr); // Remove the entire row
+
+    
     }
 
     
@@ -126,9 +130,19 @@
         const monthNamesAll = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
         const tableBody = document.getElementById('sched-table-body') // get element for table body
         const sessionData = await getSession() // get session data
-        const appointments = await getAppointmentsFilter({Patient_ID: sessionData.userId}) // get all appointments for user
+        let appointments = await getAppointmentsFilter({Patient_ID: sessionData.userId}) // get all appointments for user
         let node = '' 
-
+        //appointments = appointments.reverse()
+        // Sort appointments by year, month, and day
+        appointments.sort((a, b) => {
+            // Create date objects for comparison, using only the hour
+            const dateA = new Date(a.Appointment_Year, a.Appointment_Month - 1, a.Appointment_Day, a.Appointment_Time);
+            const dateB = new Date(b.Appointment_Year, b.Appointment_Month - 1, b.Appointment_Day, b.Appointment_Time);
+            let diff =  dateB - dateA; // Sort by date and hour
+            return diff
+        });
+        console.log("appointments", appointments)        
+        
         for (let i=0; i<appointments.length; i++){
             const appointmentSpec = appointments[i]
             const month = appointmentSpec.Appointment_Month

@@ -54,7 +54,6 @@ class App:
         @self.app.route('/')
         def home():
             try:
-                
                 return redirect('/login')
             except Exception as e:
                 return f"Error: {e}", 500
@@ -62,12 +61,13 @@ class App:
         @self.app.route('/login')
         def patient_login():
             if not util.no_user_logged_in(): # proceeds to home if logged in
+                print("NO USER LOGGED IN")
                 return redirect('/home')
             try:
                 return render_template('login.html')
             except Exception as e:
                 return f"Error: {e}", 500
-            
+
         @self.app.route('/register')
         def patient_register():
             if not util.no_user_logged_in(): # proceeds to home if logged in
@@ -80,15 +80,20 @@ class App:
         @self.app.route('/home')
         def patient_home():
             if util.no_user_logged_in(): #proceeds to login page if not logged in
+                
                 return redirect('/login')
             try:
+                if util.user_is_staff():
+                    print("USER IS STAFF")
+                    return redirect('/staff')
                 return render_template('patient/main.html')
+                
             except Exception as e:
                 return f"Error: {e}", 500
             
         @self.app.route('/schedule')
         def schedule_home():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('patient/schedule.html')
@@ -97,7 +102,7 @@ class App:
         
         @self.app.route('/chatbotpage')
         def chatbotpage():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('patient/chatbotpage.html')
@@ -106,7 +111,7 @@ class App:
 
         @self.app.route('/chatbotpage/response')
         def chatbotpageResponse():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('patient/chatbotpageResponse.html')
@@ -115,7 +120,7 @@ class App:
             
         @self.app.route('/chatbotpage/response/appointment')
         def chatbotpageAppointment():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('patient/chatbotpageAppointment.html')
@@ -124,7 +129,7 @@ class App:
             
         @self.app.route('/chatbotpage/response/appointment/summary')
         def chatbotpageSummary():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('patient/chatbotpageSummary.html')
@@ -133,7 +138,7 @@ class App:
             
         @self.app.route('/about')
         def about_home():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('patient/about.html')
@@ -142,7 +147,7 @@ class App:
 
         @self.app.route('/staff')
         def staff_home():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or not util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('staff/mainstaff.html')
@@ -152,7 +157,7 @@ class App:
         
         @self.app.route('/staff/schedules')
         def staff_schedules():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('dummy_all_appointments.html')
@@ -161,7 +166,7 @@ class App:
         
         @self.app.route('/chatbotpage/success')
         def chatbotpageSuccess():
-            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
                 return redirect('/home')
             try:
                 return render_template('patient/appointmentSent.html')
