@@ -13,20 +13,28 @@ def patient_routes(self, table_name):
         data = request.args.to_dict()
         processed_data = {}
 
-      
         arguments = data
         # having parameter: "for" will have special processes
         if 'for' in arguments.keys():
             if arguments['for'] == 'session':
                 processed_data = {'Patient_ID': get_session('userId')}
-            
         else:
+            # remove null arguments
             for key, value in zip(data.keys(), data.values()):
                 if value != 'null':
-                    processed_data[key] = int(value)
+                    try:
+                        processed_data[key] = int(value)
+                    except Exception as e:
+                        processed_data[key] = value
 
-        
-        return pull_from_db(self, processed_data, table_name)
+        print(processed_data)
+        res = []
+        data = pull_from_db(self, processed_data, table_name, jsonify_return=False)
+        for x in data:
+            temp = x
+            x.pop('PatientPassword')
+            res.append(temp)
+        return jsonify(res)
     
     @self.app.route('/api/patient', methods=['POST'])
     def patient_push():

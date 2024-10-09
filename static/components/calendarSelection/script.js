@@ -336,11 +336,14 @@ function daysInMonth(iMonth, iYear) {
  */
 // GLOBALS
 export let selected = {month: null, date: null, year: null, time:null, monthName:null, timeName:null, appointmentId:null}
-let btn = null
+export let btn = null
 let dialogChat = null
 let purposeClass = null
 //
 
+export const setCalendarButtonOpeners = (element) => {
+    btn = element
+}
 /**
  * @description shows calendar
  */

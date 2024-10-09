@@ -29,7 +29,7 @@
          
     </div>
       
-    <div id="table" class="container-fluid">
+    <div id="table-staff" class="container-fluid">
         <br>
         
         <div class="card shadow">
@@ -71,25 +71,19 @@
                         
                     </table>
                 </div>
-                <!--<div class="row">
+                <div class="row">
                     <div class="col-md-6 align-self-center">
-                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Showing 1 to 10 of 27</p>
+                        <p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite"></p>
                     </div>
                     <div class="col-md-6">
                         <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
-                            <ul class="pagination">
-                                <li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
+                            <ul class="pagination" id="pagination">
+                               
                             </ul>
-                        </nav>
                     </div>
-                </div>-->
+                </div>
             </div>
         </div>
-        <div>end of list</div>
     </div>
 </body>
 <!--DONT DELETE-->
@@ -100,11 +94,16 @@
 
 
 <script type="module">
-    import {CalendarSelection, onClickShowCal, selected, getAppointmentsFilter, getSession, getTimeName, deleteAppointment} from "/static/components/calendarSelection/script.js";
+    import {CalendarSelection, onClickShowCal, selected, getAppointmentsFilter, getSession, getTimeName, deleteAppointment, setCalendarButtonOpeners, btn} from "/static/components/calendarSelection/script.js";
     import {InfoModal, showModal} from "/static/components/infoModal/script.js";
+    const monthNamesAll = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    const tableBody = document.getElementById('sched-table-body') // get element for table body
+    const itemsPerPage = 5
+    let currentPage = 1
+    let sessionData = null // global var initialization only, later to be filled
+    let appointments = null
 
-    
-    
+
     window.onClickShowCalendar = (event) => {
         console.log(event.srcElement)
         const month = event.srcElement.getAttribute('data-month') 
@@ -119,25 +118,146 @@
         deleteAppointment(id)
     }
 
+    const getPatientInfo = async (userId) => {
+     
+        const res = await fetch(`/api/patient?Patient_ID=${userId}`)
+        const returnVal = await res.json()
+        console.log("result",returnVal)
+        return returnVal
+    }
+
+    window.setToPage = async (num) => {
+        currentPage = num
+        setPaginationNumber()
+        renderPage()
+    }
     
+    window.deleteAppointment = async (event) =>{
+        const id = event.srcElement.getAttribute('data-appointmentId')
+        await deleteAppointment(id)
+        const tr = event.srcElement.closest('tr'); // Find the closest <tr> (the entire row)
+        tr.parentElement.removeChild(tr); // Remove the entire row
+        setPaginationNumber()
+    }
 
     
-    const renderAppointments = async () => {
-        // first
-        const monthNamesAll = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-        const tableBody = document.getElementById('sched-table-body') // get element for table body
-        const sessionData = await getSession() // get session data
-        let appointments = await getAppointmentsFilter({Patient_ID: sessionData.userId}) // get all appointments for user
-        let node = '' 
-        appointments.sort((a, b) => {
-            // Create date objects for comparison, using only the hour
-            const dateA = new Date(a.Appointment_Year, a.Appointment_Month - 1, a.Appointment_Day, a.Appointment_Time);
-            const dateB = new Date(b.Appointment_Year, b.Appointment_Month - 1, b.Appointment_Day, b.Appointment_Time);
-            let diff =  dateB - dateA; // Sort by date and hour
-            return diff
-        });
+    window.setAppointmentStatus = async (event, statusCode) => {
+        const getStatusDisplay = (statusCode) =>{ 
         
-        for (let i=0; i<appointments.length; i++){
+            const color = ['black','green','red']
+            const name = ['Pending','Confirmed','Rejected']
+            return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
+        }
+    
+        const url = '/api/appointments'; // Replace with your API endpoint
+        const data = {
+            Appointment_ID: event.srcElement.getAttribute('data-appointmentId'),
+            Appointment_Confirmed: statusCode
+        }
+    
+        try {
+            const response = await fetch(url, {
+                method: 'PUT', // Specify the PUT method
+                headers: {
+                    'Content-Type': 'application/json' // Specify content type for JSON data
+                },
+                body: JSON.stringify(data) // Convert data object to a JSON string
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const result = await response.json(); // Parse the JSON response
+            console.log('Success:', result);
+            const td = event.srcElement.closest('td')
+            console.log("Nearest Td:",td)
+            td.innerHTML = getStatusDisplay(statusCode)
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    
+
+    }
+
+
+    const setPaginationNumber = async () => {
+        // statement info
+        const statement = document.getElementById('dataTable_info')
+        statement.innerHTML = ""
+        let finalLength = itemsPerPage * currentPage
+        finalLength = finalLength >= appointments.length ? appointments.length : finalLength
+        statement.innerHTML = `Showing ${currentPage} to ${finalLength} of ${appointments.length}`
+
+        // pagination buttons
+        const paginationContainer = document.getElementById('pagination')
+        console.log(paginationContainer)
+        paginationContainer.innerHTML = ""
+        const pageCountDisplayedMax = 3
+        const leftCountAllowance = 3
+        const leftAllowance = (() => {
+            let tempRes = leftCountAllowance
+            if (currentPage - tempRes <= 0){
+                tempRes = Math.abs(1 - currentPage)
+            }
+            return tempRes
+        
+        })()
+
+        const rightAllowance = Math.floor((pageCountDisplayedMax/2))
+        let codeTop = ''
+        let codeBottom = ''
+        if (currentPage == 1){
+            codeTop = `<li class="page-item disabled"><a class="page-link" aria-label="Previous"><span aria-hidden="true">«</span></a></li>`
+        }else{
+            codeTop = `<li class="page-item" onclick="setToPage(${currentPage-1})"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">«</span></a></li>`
+        }
+
+        if (currentPage >= (appointments.length/itemsPerPage)){
+            codeBottom = `<li class="page-item disabled"><a class="page-link" aria-label="Previous"><span aria-hidden="true">»</span></a></li>`
+        }else{
+            codeBottom = `<li class="page-item" onclick="setToPage(${currentPage+1})"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>`
+        }
+
+        
+       
+        let codeAll = ''
+        
+        console.log(currentPage, currentPage+pageCountDisplayedMax)
+        console.log(appointments)
+        
+        for (let i=currentPage - leftAllowance; i < currentPage+pageCountDisplayedMax; i++){
+            if (i >=(appointments.length/itemsPerPage) + 1){
+                console.log("pagination display end",i)
+                continue
+            }
+            if (i == currentPage){
+                codeAll = codeAll + `<li class="page-item active" onclick="setToPage(${i})"><a class="page-link" href="#">${i}</a></li>`
+            }else{
+                codeAll = codeAll + ` <li class="page-item" onclick="setToPage(${i})"><a class="page-link" href="#">${i}</a></li>`
+            }
+            
+        }
+        console.log("COADELAL", codeAll)
+        codeAll = codeTop + codeAll + codeBottom
+        paginationContainer.innerHTML = codeAll
+
+
+    }
+
+
+
+    const renderPage = async () => {
+        tableBody.innerHTML = ""
+        const startNum = itemsPerPage * (currentPage - 1)
+        let finalNum = itemsPerPage * currentPage
+            
+        let codeAll = ''
+        console.log('StartNum:', startNum, 'FInalNum:',finalNum)
+        for (let i=startNum; i<finalNum; i++){
+            if (appointments.length <= i){
+                break
+            }
             const appointmentSpec = appointments[i]
             const month = appointmentSpec.Appointment_Month
             const year = appointmentSpec.Appointment_Year
@@ -145,55 +265,84 @@
             const status = appointmentSpec.Appointment_Confirmed
             const time = appointmentSpec.Appointment_Time
             const appId = appointmentSpec.Appointment_ID
+            const patientId = appointmentSpec.Patient_ID
             const monthName = monthNamesAll[appointmentSpec.Appointment_Month - 1]
             const combinedDate = `${monthName} ${day},${year}`
             const timeName = getTimeName(time)
-
+            let patientInfo = await getPatientInfo(patientId)
+            patientInfo = patientInfo[0] // looking only for single result
+            const firstName = patientInfo? patientInfo.PatientName  : undefined
+            const lastName = patientInfo ? patientInfo.PatientLastName : undefined 
+            console.log("PatientInfo", patientInfo)
+            
             const getStatusDisplay = (statusCode) =>{ 
                 if (statusCode==0){   
-                    return `<button class="btn btn-primary viewer" data-userId="${sessionData.userId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="showModal(event)">Confirm</button>
-                    <button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Reject</button>`
+                    return `<button class="btn btn-primary viewer" data-appointmentId="${appId}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="setAppointmentStatus(event, 1)">Confirm</button>
+                    <button class="btn btn-danger" data-appId="${appId}" data-appointmentId="${appId}" onclick="setAppointmentStatus(event, 2)" >Reject</button>`
                 }
                 const color = ['black','green','red']
                 const name = ['Pending','Confirmed','Rejected']
                 return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
             }
 
-            
-    
-
             const code = `<tr>
-                 <td>${getStatusDisplay(status)}</td>
+                <td>${getStatusDisplay(status)}</td>
                 <td>${combinedDate} ${timeName}</td>
-                <td></td>
-                <td></td>
+                <td>${firstName}</td>
+                <td>${lastName}</td>
                 <td><button data-month="${month}" data-year="${year}" data-appointmentId="${appId}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
-                <td><button class="btn btn-primary viewer" data-userId="${sessionData.userId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
-                <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Cancel</button></td>
+                <td><button class="btn btn-primary viewer" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
+                <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Delete</button></td>
             </tr>`
-            node = node + code
+            codeAll = codeAll + code
 
-        tableBody.innerHTML = node // sets node string as table body's inner html
-        console.log(document.getElementsByClassName('resched'))
+        tableBody.innerHTML = codeAll // sets codeAll string as table body's inner html
+        //console.log(document.getElementsByClassName('resched'))
 
        
         }
-         // Initiate Component Only AFter table generation is done, to get all elements having resched class
-         CalendarSelection(
+        console.log(btn)
+        const btnUpdated = document.getElementsByClassName('resched') // reupdate button elements for calendar selection
+        setCalendarButtonOpeners(btnUpdated)
+        console.log(btn)
+    }
+
+    const setAppointmentsData = async () => {
+        sessionData = await getSession() // get session data
+        appointments = await getAppointmentsFilter({}) // no filter, get ALL appointments
+         
+        appointments.sort((a, b) => {
+            // Create date objects for comparison, using only the hour
+            const dateA = new Date(a.Appointment_Year, a.Appointment_Month - 1, a.Appointment_Day, a.Appointment_Time);
+            const dateB = new Date(b.Appointment_Year, b.Appointment_Month - 1, b.Appointment_Day, b.Appointment_Time);
+            let diff =  dateB - dateA; // Sort by date and hour
+            return diff
+        });
+    }
+
+    const renderAppointmentsInitial = async () => {
+        await setAppointmentsData()
+
+        await renderPage()
+         // Initiate Component Only After table generation is done, to get all elements having resched class
+        CalendarSelection(
             document.getElementById('sched-calendar-insert-area'), //element where calendar is inserted
             document.getElementsByClassName('resched'), // elements that can show the calendar
             '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.', // warning msg at bottom
             'Reschedule', // Button Label
             'sched-patient', // purpose
          )
-        
+        setPaginationNumber()
 
     }
 
-    renderAppointments()
-    InfoModal(document.getElementById('info-modal-insert-area'),
-    document.getElementsByClassName('viewer'))
-    window.showModal = showModal
+
+    renderAppointmentsInitial() 
+    InfoModal(
+        document.getElementById('info-modal-insert-area'),
+        document.getElementsByClassName('viewer')
+        ) 
+    window.showModal = showModal // make showModal function accessable/runnable from html
     
 </script>
 

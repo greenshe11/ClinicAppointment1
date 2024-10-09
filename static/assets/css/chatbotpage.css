@@ -174,3 +174,21 @@ body {
      }
 }
 
+#table-staff {
+     width: 90%;
+}
+
+@media all and (max-width: 1000px){
+     #table-staff {
+          width: 95%;
+     }
+}
+
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap; /* Allows the pagination items to wrap */
+    justify-content: center; /* Centers the items */
+    padding-left: 0; /* Optional: Removes default padding */
+    margin: 0; /* Optional: Removes default margin */
+}
