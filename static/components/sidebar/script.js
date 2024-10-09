@@ -12,6 +12,7 @@ function getName() {
             const firstName = data[0].PatientName;
             const userNameDiv = document.getElementById('userName');
             userNameDiv.innerHTML = `${LastName}, ${firstName}`;
+            
             return data; // Return the data to the caller
         })
         .catch(error => {
@@ -93,6 +94,7 @@ setInterval(() => {
     }
     isGreen = !isGreen; // Toggle the color
 }, 1000); // Change color every 1 second (1000 milliseconds)
+
 const _sidebarObj = new Component('/static/components/sidebar/layout.html', '/static/components/sidebar/styling.css')
 
 export async function sidebar(element){
@@ -111,3 +113,4 @@ export async function sidebar(element){
     window.closeExpansion = closeExpansion
   }
   window.Sidebar = sidebar
+

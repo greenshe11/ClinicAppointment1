@@ -55,7 +55,11 @@
      </div>
 
      <script type="module">
-          import {CalendarSelection, selected} from "/static/components/calendarSelection/script.js";
+          import {
+               CalendarSelection, //component
+               selected // object containing info of selected date
+               } 
+               from "/static/components/calendarSelection/script.js";
           
           CalendarSelection(
                document.getElementById('home-calendar-insert-area'), // element where to insert calendar

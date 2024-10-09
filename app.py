@@ -51,16 +51,18 @@ class App:
         )
     
     def create_page_routes(self):
-        @self.app.route('/')
+        @self.app.route('/') # base url page
         def home():
-            try:
+            """Go to login page by default"""
+            try: 
                 return redirect('/login')
             except Exception as e:
                 return f"Error: {e}", 500
         
         @self.app.route('/login')
-        def patient_login():
-            if not util.no_user_logged_in(): # proceeds to home if logged in
+        def patient_login(): #login page
+            """Go to Home if logged in else go to login.html"""
+            if not util.no_user_logged_in():
                 print("NO USER LOGGED IN")
                 return redirect('/home')
             try:
@@ -69,7 +71,7 @@ class App:
                 return f"Error: {e}", 500
 
         @self.app.route('/register')
-        def patient_register():
+        def patient_register():  # registration page
             if not util.no_user_logged_in(): # proceeds to home if logged in
                 return redirect('/home')
             try:

@@ -227,7 +227,7 @@ class WordSuggestions{
       
     }
 
-  evaluateInput(){
+  evaluateInput(){ // handler when textbox is being typed
     const word = document.getElementById("textbox").value.toLowerCase();
    
     const symptomsSuggested = this.getNearestWord(word)
@@ -255,36 +255,40 @@ class WordSuggestions{
   }
 
   updateTags(element){
-    this.symptoms = []
-    element.childNodes.forEach(symptom => {
-    
-      this.symptoms.push(symptom.textContent)
+    this.symptoms = [] // resets selected symptoms
+    element.childNodes.forEach(symptom => { // add symptoms based on name of tag
+
+      this.symptoms.push(symptom.textContent) 
       //this.symptoms = [...new Set(this.symptoms)];
     });
     console.log(this.symptoms)
   }
 
   addToSelectedSymptomsFromSession(stringArray){
+    // add tags from startup with session
     for (let i=0; i<stringArray.length; i++){
       this.addToElement(stringArray[i])
     }
   }
-  addToElement(name){
-    const targetElement = document.getElementById('symptom-tags-list')
+
+  addToElement(name){ // function crate a tag if a symptom is selected,
+    const targetElement = document.getElementById('symptom-tags-list') // element where to put tags
     let tag = document.createElement('div')
     tag.textContent = name
-    tag.classList.add('symptom-tag')
+    tag.classList.add('symptom-tag') // styling
     tag.onclick = () => {
-      this.removeSymptomTag(targetElement, tag)
+      this.removeSymptomTag(targetElement, tag) // remove tag when tag is selected
     }
 
+    // resets data before adding again all selected
     targetElement.append(tag)
-    this.symptoms = []
-    this.updateTags(targetElement)
+    this.symptoms = [] // resets selected symptoms
+    this.updateTags(targetElement) // this will refill data by readding all selected symptoms based on tags
     console.log(this.symptoms)
   }
 
   addToSelectedSymptoms(element){
+    // limit adding of symptoms to 5 and prevent readding of already selected symptoms
     if (this.symptoms.length > 4 || (this.symptoms.includes(element.textContent))){
       return
     }

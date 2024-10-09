@@ -682,7 +682,6 @@ const _calendarSelectionObj = new Component('/static/components/calendarSelectio
  * @param {String} purpose purpose of calendar selection, purposes are predefined and functions to be used vary based on this key   
  *  @param {HTMLElement} elementDialog // only for cbp-appointment purpose: null if not needed // element where message
  */
-
 export async function CalendarSelection(element, elementButtons, warningName=null, buttonName=null, purpose='cbp-appointment', elementDialog=null){
    
     // wait for element to be added to document

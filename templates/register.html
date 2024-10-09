@@ -180,7 +180,7 @@
                          }
 
                          const result = await response.json();
-                         console.log(result.hasOwnProperty('customError'))
+                         console.log(result.hasOwnProperty('customError')) // Shows error created from server
                          if (result.hasOwnProperty('customError')) {
                               alert(result.customError)
                               return

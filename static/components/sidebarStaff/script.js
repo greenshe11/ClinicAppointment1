@@ -1,23 +1,7 @@
 
 function getName() {
-    return fetch(`/api/patient?for=session`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            const LastName = data[0].PatientLastName;
-            const firstName = data[0].PatientName;
-            const userNameDiv = document.getElementById('userName');
-            userNameDiv.innerHTML = `${LastName}, ${firstName}`;
-            return data; // Return the data to the caller
-        })
-        .catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-            return []; // Return an empty array on error
-        });
+    const userNameDiv = document.getElementById('userName');
+    userNameDiv.innerHTML = `Admin`;
 }
 
 export const getUserData = async () => {

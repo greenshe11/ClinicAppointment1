@@ -40,24 +40,42 @@ def patient_routes(self, table_name):
             if arguments['for'] == 'registration':
                 # For security purpose, encrypts password sent to database
                 data["PatientPassword"] = hashPassword(data["PatientPassword"])
-                duplicates = pull_from_db(self, {"PatientEmail": data['PatientEmail'], "PatientContactNo": data["PatientContactNo"]}, table_name, jsonify_return=False, logical_op="OR")
+                duplicates = pull_from_db(self, {"PatientEmail": data['PatientEmail'], 
+                                                 "PatientContactNo": data["PatientContactNo"]}, 
+                                                 table_name, jsonify_return=False, 
+                                                 logical_op="OR")
                 print(duplicates)
                 if len(duplicates) > 0:
-                    return jsonify({"customError": "Contact No. or Email is in use!"}), 200
+                    return jsonify({"customE_rror": "Contact No. or Email is in use!"}), 200
         
             if arguments['for'] == 'login':
+                # retrieves record from database in patient table having the specified patient email
+                # pull from db is imported from utilities/util_functions.py 
                 credentials = pull_from_db(self, {"PatientEmail": data['PatientEmail']}, table_name, jsonify_return=False)
-                print(credentials)
                 
-                if len(credentials) == 0:
-                    return jsonify({"customError": "Password or Email is incorrect!"}), 200
-                #correct_password = hashPassword(data["PatientPassword"]) == credentials[0]['PatientPassword']
-                correct_password = check_password(data["PatientPassword"], credentials[0]["PatientPassword"])
-                
+                if len(credentials) == 0: # if no record found in patient table go, search in staff table
+                    # retrieve record from database in staff table having the specificed patient email
+                    credentials = pull_from_db(self, {"staffEmail": data['PatientEmail']}, "tblstaff", jsonify_return=False)
+                    print("CRED", credentials)
+
+                    if len(credentials) == 0:
+                        return jsonify({"customError": "Password or Email is incorrect!"}), 200
+                    
+                    correct_password = (data['PatientPassword'] == credentials[0]['staffPassword']) # staff password is not encrypted
+                    is_staff =True
+
+               
+                else:  # if theres a record
+                    correct_password = check_password(data["PatientPassword"], credentials[0]["PatientPassword"])
+                    is_staff = False
+                    
                 if correct_password:
-                    set_session('userId', credentials[0]['Patient_ID'])
-                    set_session('isStaff', bool(credentials[0]['PatientIsStaff']))
-                    print("IS STAFF", get_session('isStaff'))
+                    set_session('isStaff', is_staff) # set session with key isStaff to is_staff (true/false)
+                    if is_staff:
+                        set_session('userId', credentials[0]['staff_ID']) # from data retrieved get data from column: staff_id if from staff
+                    else:
+                        set_session('userId', credentials[0]['Patient_ID']) # from data retrieved, get data from column: patient_ID if not staff
+                    
                     # logging in doesnt require to add data to database atm; returns back to the client immediately without error
                     # all good as long as session has been set
                     return jsonify({})

@@ -40,12 +40,9 @@
 
     <!--DONT DELETE-->
     <script type="module">
-        import "/static/components/sidebar/script.js";
-        Sidebar(document.getElementById('home-sidebar-insert-area'))
-        window.onpopstate = function () {
-            // Push the state again to prevent going back
-            window.location.href = '/'   
-        };
+        import {sidebar} from "/static/components/sidebar/script.js";
+        sidebar(document.getElementById('home-sidebar-insert-area'))
+       
     </script>
     
     <script>
