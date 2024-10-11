@@ -137,7 +137,16 @@ body {
 .li.nav-item{
      border-radius: 0px;
 }
-}
+
+
+#next-button:disabled {
+     background-color: #e9ecef; /* Light grey color */
+     color: #6c757d; /* Darker grey for the text */
+     border-color: #ced4da; /* Border color */
+     opacity: 0.65; /* Reduce opacity */
+     cursor: not-allowed; /* Change cursor to indicate it's disabled */
+ }
+ 
 .nav li :hover {
      border-style: solid;
      border-width: 2px;

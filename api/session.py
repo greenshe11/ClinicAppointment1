@@ -39,5 +39,8 @@ def session_routes(self):
     @self.app.route('/api/session', methods=['GET'])
     def get_session_data():  
         return jsonify(dict(session))
+    
+    
+    
 
     

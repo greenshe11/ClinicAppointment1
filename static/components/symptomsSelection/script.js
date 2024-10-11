@@ -210,9 +210,9 @@ class WordSuggestions{
       let resNames = res.map(([key,value]) => getOutput(key,value, false)) // Extract the keys
      
       const topValue = resValues[0]
-      let benchmark = topValue*1.5
+      let benchmark = topValue*1.8
       if (topValue<0){
-        benchmark = topValue/1.5
+        benchmark = topValue/1.8
       }
 
       for (let i=0;i<resValues.length;i++){
@@ -231,6 +231,7 @@ class WordSuggestions{
     const word = document.getElementById("textbox").value.toLowerCase();
    
     const symptomsSuggested = this.getNearestWord(word)
+    symptomsSuggested.unshift('... others')
     const suggestionList = document.getElementById('symptoms-suggestion-list');
     
     // Populate the suggestion list
@@ -240,7 +241,9 @@ class WordSuggestions{
         li.textContent = symptom;
         li.classList.add('dropdown-item')
         li.classList.add('symptom')
-  
+        if (symptom == '... others'){
+          li.style.color = 'red'
+        }
 
         li.onclick = ()=>{this.addToSelectedSymptoms(li)}
         //this.addToSelectedSymptoms(li)
@@ -289,7 +292,7 @@ class WordSuggestions{
 
   addToSelectedSymptoms(element){
     // limit adding of symptoms to 5 and prevent readding of already selected symptoms
-    if (this.symptoms.length > 4 || (this.symptoms.includes(element.textContent))){
+    if (this.symptoms.length > 2 || (this.symptoms.includes(element.textContent))){
       return
     }
     console.log('selected', element.textContent)
@@ -325,22 +328,40 @@ async function storeSymptomsSession() {
 
   }
 }
-async function getSymptomsSession() {
+
+export async function getSymptomsSession(addToElement=true) {
     const res = await fetch(`/api/session/getSymptomsSelected`)
 
     const resJson = await res.json()
-    wordSuggestionObj.addToSelectedSymptomsFromSession(resJson['symptoms_selected'])
-
+    if (addToElement){
+     wordSuggestionObj.addToSelectedSymptomsFromSession(resJson['symptoms_selected'])
+    }
     return resJson
 }
 
 /**COMPONENTS */
 import { Component } from "/static/components/script.js";
-
+import { mildSymptoms, heavySymptoms } from "/static/pageScripts/utils.js";
 // create component
 const _symptomsSelectionObj = new Component('/static/components/symptomsSelection/layout.html', '/static/components/symptomsSelection/styling.css')
 //*
 
+
+window.showHideList = () =>{ 
+  const btn = document.getElementById('show-btn')
+  const textbox = document.getElementById('textbox')
+  const suggList = document.getElementById('symptoms-suggestion-list')
+  const label = btn.innerHTML
+  if (label == 'ok') {
+    suggList.style.display = 'none'
+    btn.innerHTML = 'search'
+    textbox.disabled = true
+  } else {
+    suggList.style.display = 'block'
+    btn.innerHTML = 'ok'
+    textbox.disabled = false
+  }
+}
 
 export async function symptomsSelection(element){
   
@@ -350,21 +371,8 @@ export async function symptomsSelection(element){
   // word bag
   
   const ws = new WordSuggestions(
-    [
-      'Ringing of Ears',
-      'san mig',
-      'creamier',
-      'del monte',
-      'sweet chili',
-      'bubble',
-      'pitcher',
-      'fever',
-      'high temperature',
-      'low temperature',
-      'Over 40 degrees body temperature'
-    ]
-    
-    
+    // Combine the keys of the two objects into one array
+    [...Object.keys(mildSymptoms), ...Object.keys(heavySymptoms)]
   )
   // sets to global variables
   wordSuggestionObj = ws

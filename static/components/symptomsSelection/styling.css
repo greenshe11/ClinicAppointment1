@@ -1,7 +1,7 @@
 #symptoms-suggestion-list {
     max-height: 200px; /* Limit height */
     overflow-y: auto;  /* Scroll if needed */
-    width: 200px;
+
 }
 
 @media all and (max-width: 600px){

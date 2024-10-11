@@ -41,9 +41,9 @@
           <div class="cbp-dialog-container" >
                <img class="cbp-dialog-img" src="/static/assets/nurse.png" style="margin: 20px;"/>
                <div class="cbp-dialog" style="flex-direction: column">
-                    <p>You may have a fever. You can take over-the-counter medicine: Biogesic 500mg once a day after eating. Appointment may not be needed based on your symptoms.
+                    <p id="cbp-recommendation">Evaluating..
                     </p>
-                    <p>But if you're worried, proceed to <b>Next</b> if you want to set an appointment date.
+                    <p id="cbp-bottom-line">
                     </p>
                </div>
                
@@ -51,14 +51,35 @@
      </div>
      <div id="text-area" >
           <div style="width:100%; height: 40px; background-color: white;  border-radius: 10px"></div>
-          <button onclick="toAppointment()">Next</button>
+          <button id='next-button' onclick="toAppointment()" disabled>Next</button>
      </div>
     
      <!--DONT DELETE-->
      <script type="module">
+          
           import "/static/components/sidebar/script.js";
+          import {createRecommendationSent, getSeriousSymptoms } from '/static/pageScripts/utils.js'
+          import {getSymptomsSession} from "/static/components/symptomsSelection/script.js"
+
           Sidebar(document.getElementById('home-sidebar-insert-area'))
           
+          const createResponse = async () => {
+               const symptoms = await getSymptomsSession(false)
+               console.log(symptoms)
+               document.getElementById('cbp-recommendation').innerHTML = createRecommendationSent(symptoms['symptoms_selected'])
+               const seriousSymptoms = getSeriousSymptoms(symptoms['symptoms_selected'])
+               const nextBtn = document.getElementById('next-button')
+               const bottomLine = document.getElementById('cbp-bottom-line')
+               if (seriousSymptoms.length > 0){
+                    nextBtn.disabled = false
+                    bottomLine.innerHTML = `The symptoms (${seriousSymptoms.join(',')}) makes you in need for a professional help. Click <b>Next</b> to set an appointment date.`
+               }else{
+                    nextBtn.disabled = true
+                    bottomLine.innerHTML = `The symptoms above are considered mild and is treatable by home remedies or over-the-counter medicines through your local pharmacies. For these symptoms, you will not need to make an appointment.`
+               }
+               console.log(allowProceed)
+          }
+         createResponse()
      </script>
 
      <script>
