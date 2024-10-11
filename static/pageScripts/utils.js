@@ -1,6 +1,6 @@
 
 export const mildSymptoms = {
-    "Fever (37.8 C or higher)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
+    "Fever (37.8 C - 40 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
     "Sweating": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
     "Chills and shivering": "Use a light blanket and keep the room at a comfortable temperature.",
     "Headache": "Take over-the-counter pain relievers like acetaminophen or ibuprofen. Rest in a quiet, dim room.",
@@ -112,7 +112,6 @@ export const mildSymptoms = {
   
   export const heavySymptoms = {
     "Vision loss": "Seek medical advice if vision loss occurs.",
-    "Fever (37.8 C or higher)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
     "Sweating": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
     "Chills and shivering": "Use a light blanket and keep the room at a comfortable temperature.",
     "Mild headache": "Take over-the-counter pain relievers like acetaminophen or ibuprofen. Rest in a quiet, dim room.",
