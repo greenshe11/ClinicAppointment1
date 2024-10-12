@@ -105,11 +105,12 @@
     let appointments = null
 
 
-    window.onClickShowCalendar = (event) => {
+    window.onClickShowCalendar = (event, contact) => {
         console.log(event.srcElement)
         const month = event.srcElement.getAttribute('data-month') 
         const year = event.srcElement.getAttribute('data-year')
         selected.appointmentId = event.srcElement.getAttribute('data-appointmentId')
+        selected.contact = contact
         onClickShowCal(month-1 , year) // shows calendar starting on date and year // subtract month num starts in 0
         
     }
@@ -140,21 +141,52 @@
         
     }
 
+    const sendMessage = async (date, time, contact, statusCode) => {
+        const url = '/api/sms'
+        const data = {date, time, contact, statusCode}
+        try {
+            const response = await fetch(url, {
+                method: 'POST', // Specify the PUT method
+                headers: {
+                    'Content-Type': 'application/json' // Specify content type for JSON data
+                },
+                body: JSON.stringify(data) // Convert data object to a JSON string
+            });
     
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const result = await response.json(); // Parse the JSON response
+            console.log(result)
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    
+    }
+
+   
+
     window.setAppointmentStatus = async (event, statusCode) => {
         const getStatusDisplay = (statusCode) =>{ 
-        
             const color = ['black','green','red']
             const name = ['Pending','Confirmed','Rejected']
             return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
         }
-    
+        
+        const appointmentId = event.srcElement.getAttribute('data-appId')
+        const monthName = event.srcElement.getAttribute('data-monthName')
+        const day = event.srcElement.getAttribute('data-day')
+        const year = event.srcElement.getAttribute('data-year')
+        const timeName = event.srcElement.getAttribute('data-timeName')
+        const contact = event.srcElement.getAttribute('data-contact')
+        console.log(monthName, day, year, appointmentId)
         const url = '/api/appointments'; // Replace with your API endpoint
         const data = {
-            Appointment_ID: event.srcElement.getAttribute('data-appointmentId'),
+            Appointment_ID: appointmentId,
             Appointment_Confirmed: statusCode
         }
-    
+
         try {
             const response = await fetch(url, {
                 method: 'PUT', // Specify the PUT method
@@ -171,8 +203,15 @@
             const result = await response.json(); // Parse the JSON response
             console.log('Success:', result);
             const td = event.srcElement.closest('td')
-            console.log("Nearest Td:",td)
+            console.log("Nearest Td:",td)   
             td.innerHTML = getStatusDisplay(statusCode)
+
+            sendMessage(
+                `${monthName} ${day}, ${year}`,
+                `${timeName}`,
+                contact,
+                statusCode
+            )
         } catch (error) {
             console.error('Error:', error);
         }
@@ -254,6 +293,7 @@
             
         let codeAll = ''
         console.log('StartNum:', startNum, 'FInalNum:',finalNum)
+        console.log(appointments)
         for (let i=startNum; i<finalNum; i++){
             if (appointments.length <= i){
                 break
@@ -265,20 +305,22 @@
             const status = appointmentSpec.Appointment_Confirmed
             const time = appointmentSpec.Appointment_Time
             const appId = appointmentSpec.Appointment_ID
+            console.log("APPID", appId)
             const patientId = appointmentSpec.Patient_ID
             const monthName = monthNamesAll[appointmentSpec.Appointment_Month - 1]
             const combinedDate = `${monthName} ${day},${year}`
             const timeName = getTimeName(time)
             let patientInfo = await getPatientInfo(patientId)
             patientInfo = patientInfo[0] // looking only for single result
+            const contact = patientInfo? patientInfo.PatientContactNo : undefined
             const firstName = patientInfo? patientInfo.PatientName  : undefined
             const lastName = patientInfo ? patientInfo.PatientLastName : undefined 
             console.log("PatientInfo", patientInfo)
             
             const getStatusDisplay = (statusCode) =>{ 
                 if (statusCode==0){   
-                    return `<button class="btn btn-primary viewer" data-appointmentId="${appId}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="setAppointmentStatus(event, 1)">Confirm</button>
-                    <button class="btn btn-danger" data-appId="${appId}" data-appointmentId="${appId}" onclick="setAppointmentStatus(event, 2)" >Reject</button>`
+                    return `<button class="btn btn-primary viewer" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="setAppointmentStatus(event, 1)">Confirm</button>
+                    <button class="btn btn-danger" data-appId="${appId}" data-contact="${contact}  data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}"  data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" onclick="setAppointmentStatus(event, 2)" >Reject</button>`
                 }
                 const color = ['black','green','red']
                 const name = ['Pending','Confirmed','Rejected']
@@ -290,7 +332,7 @@
                 <td>${combinedDate} ${timeName}</td>
                 <td>${firstName}</td>
                 <td>${lastName}</td>
-                <td><button data-month="${month}" data-year="${year}" data-appointmentId="${appId}" onclick="onClickShowCalendar(event)" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
+                <td><button data-month="${month}" data-year="${year}"  data-appointmentId="${appId}" onclick="onClickShowCalendar(event, ${contact})" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
                 <td><button class="btn btn-primary viewer" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
                 <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Delete</button></td>
             </tr>`
@@ -310,7 +352,7 @@
     const setAppointmentsData = async () => {
         sessionData = await getSession() // get session data
         appointments = await getAppointmentsFilter({}) // no filter, get ALL appointments
-         
+        console.log("DATA", appointments)
         appointments.sort((a, b) => {
             // Create date objects for comparison, using only the hour
             const dateA = new Date(a.Appointment_Year, a.Appointment_Month - 1, a.Appointment_Day, a.Appointment_Time);
@@ -322,7 +364,7 @@
 
     const renderAppointmentsInitial = async () => {
         await setAppointmentsData()
-
+        console.log("COMING", appointments)
         await renderPage()
          // Initiate Component Only After table generation is done, to get all elements having resched class
         CalendarSelection(

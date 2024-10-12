@@ -338,3 +338,27 @@ export const getCodesFromSymptomsArray = (symptoms) => {
     }
     return temp
 }
+
+export const sendMessage = async (date, time, contact, statusCode) => {
+    const url = '/api/sms'
+    const data = {date, time, contact, statusCode}
+    try {
+        const response = await fetch(url, {
+            method: 'POST', // Specify the PUT method
+            headers: {
+                'Content-Type': 'application/json' // Specify content type for JSON data
+            },
+            body: JSON.stringify(data) // Convert data object to a JSON string
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json(); // Parse the JSON response
+        console.log(result)
+    } catch (error) {
+        console.error('Error:', error);
+    }
+
+}

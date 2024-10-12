@@ -86,6 +86,7 @@ def pull_from_db(self, data, table_name, jsonify_return=True, logical_op="AND"):
         result = []
         for row in rows:
             result.append(dict(zip(column_names, row)))
+        print("pulled_from_db: ", result)
         if jsonify_return == False:
             return result
         return jsonify(result), 200
@@ -293,14 +294,15 @@ def user_is_staff():
     return get_session('isStaff')
 
 
-def sms_confirmed(date, time, contact):
+def sms_confirmed(date, time, contact='09604203044', *args, **kwargs):
+    print("CONFIRMATION SMS SENT", date, time, contact)
     conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
     payload = json.dumps({
         "messages": [
             {
                 "destinations": [{"to":contact}],
                 "from": "447491163443",
-                "text": f"Your appointment has been confirmed the time and date: {time},{date}"
+                "text": f"Your appointment has been confirmed for {date}, {time}"
             }
         ]
     })
@@ -312,9 +314,10 @@ def sms_confirmed(date, time, contact):
     conn.request("POST", "/sms/2/text/advanced", payload, headers)
     res = conn.getresponse()
     data = res.read()
+    return True
 
-
-def sms_reject(contact):
+def sms_reject(contact='09604203044', *args, **kwargs):
+    print("REJECT SMS SENT", contact)
     conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
     payload = json.dumps({
         "messages": [
@@ -333,15 +336,17 @@ def sms_reject(contact):
     conn.request("POST", "/sms/2/text/advanced", payload, headers)
     res = conn.getresponse()
     data = res.read()
+    return True
     
-def sms_resched(contact):
+def sms_resched(date, time, contact='09604203044', *args, **kwargs):
+    print("Rescheduling SMS SENT", date, time, contact)
     conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
     payload = json.dumps({
         "messages": [
             {
                 "destinations": [{"to":contact}],
                 "from": "447491163443",
-                "text": f"Your appointment has been rejected"
+                "text": f"Your appointment has been rescheduled to {date}, {time}."
             }
         ]
     })
@@ -354,5 +359,5 @@ def sms_resched(contact):
     conn.request("POST", "/sms/2/text/advanced", payload, headers)
     res = conn.getresponse()
     data = res.read()
-    
-        
+    return True
+

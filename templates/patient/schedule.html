@@ -104,7 +104,6 @@
     import {deleteSymptomsFromDb} from "/static/components/symptomsSelection/script.js"
 
     window.onClickShowCalendar = (event) => {
-        console.log(event.srcElement)
         const month = event.srcElement.getAttribute('data-month') 
         const year = event.srcElement.getAttribute('data-year')
         selected.appointmentId = event.srcElement.getAttribute('data-appointmentId')
@@ -119,12 +118,7 @@
         await deleteSymptomsFromDb(id)
         const tr = event.srcElement.closest('tr'); // Find the closest <tr> (the entire row)
         tr.parentElement.removeChild(tr); // Remove the entire row
-
-    
     }
-
-    
-
     
     const renderAppointments = async () => {
         // first
@@ -161,6 +155,7 @@
                 const name = ['Pending','Confirmed','Rejected']
                 return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
             }
+            
             const code = `<tr>
                 <td>${getStatusDisplay(status)}</td>
                 <td>${combinedDate} ${timeName}</td>

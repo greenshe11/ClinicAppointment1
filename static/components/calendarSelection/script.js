@@ -1,3 +1,8 @@
+// Component
+import { Component } from "/static/components/script.js";
+import { sendMessage } from "/static/pageScripts/utils.js"
+
+
 /**
  * @description fetches appointments from database based on any filter
  * @param {Object} filter 
@@ -31,6 +36,7 @@ export function getAppointmentsFilter(filter) {
     const keys = Object.keys(filter) // gets keys of filter object
     let parameters = '?' // initialization
 
+    // create parameter strings based on filter
     for (let i=0; i<keys.length; i++){
         let temp = `${keys[i]}=${filter[keys[i]]}`
         parameters = parameters + temp
@@ -335,7 +341,8 @@ function daysInMonth(iMonth, iYear) {
  * MODAL Calendar
  */
 // GLOBALS
-export let selected = {month: null, date: null, year: null, time:null, monthName:null, timeName:null, appointmentId:null}
+export let selected = {month: null, date: null, year: null, time:null, monthName:null, timeName:null, 
+    appointmentId:null, contact:null} // used for rescheduling only
 export let btn = null
 let dialogChat = null
 let purposeClass = null
@@ -354,7 +361,6 @@ export function onClickShowCal(month=null,year=null){
     const dimmer = document.getElementById('dr-dimmer')
     calendar.style.display = "block"
     dimmer.style.display = "block"
-    
 
     document.addEventListener('click', outsideClickListener);
     let month0 = currentMonth
@@ -602,12 +608,14 @@ schedulesPatient.onSetAdditionalFunction = () => {
     const time = selected.time
     const monthName = selected.monthName
     const timeName = selected.timeName
+    const contact = selected.contact
 
     if (!(time)){
         alert("Error: You need to set the time and date to make an appointment!")
     } else{
         onClickCloseCal()
         rescheduleAppointment(selected.appointmentId, month, day, year, time)
+        sendMessage(`${monthName} ${day}, ${year}`, timeName, contact, 3)
         return selected
     }
 }
@@ -669,8 +677,6 @@ cbpAppointment.onSetAdditionalFunction = () => {
 //*
 
 
-// Component
-import { Component } from "/static/components/script.js";
 
 // create component
 const _calendarSelectionObj = new Component('/static/components/calendarSelection/layout.html', '/static/components/calendarSelection/styling.css')
