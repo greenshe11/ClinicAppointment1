@@ -1,7 +1,8 @@
 from flask import jsonify, session
 import bcrypt
 from datetime import datetime
-
+import http.client
+import json
 
 def get_query(cursor, table_name, data, method, filter_names=[],logical_op="AND"):
     """
@@ -287,3 +288,68 @@ def sort_dates(patients):
 
 def user_is_staff():
     return get_session('isStaff')
+
+
+def sms_confirmed(date, time, contact):
+    conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
+    payload = json.dumps({
+        "messages": [
+            {
+                "destinations": [{"to":contact}],
+                "from": "447491163443",
+                "text": f"Your appointment has been confirmed the time and date: {time},{date}"
+            }
+        ]
+    })
+    headers = {
+        'Authorization': 'App d337d5c72769d3658747cc33538de248-11a8cef2-5285-4094-b5bb-4a455dca1032',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    conn.request("POST", "/sms/2/text/advanced", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+
+
+def sms_reject(contact):
+    conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
+    payload = json.dumps({
+        "messages": [
+            {
+                "destinations": [{"to":contact}],
+                "from": "447491163443",
+                "text": f"Your appointment has been rejected"
+            }
+        ]
+    })
+    headers = {
+        'Authorization': 'App d337d5c72769d3658747cc33538de248-11a8cef2-5285-4094-b5bb-4a455dca1032',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    conn.request("POST", "/sms/2/text/advanced", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    
+def sms_resched(contact):
+    conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
+    payload = json.dumps({
+        "messages": [
+            {
+                "destinations": [{"to":contact}],
+                "from": "447491163443",
+                "text": f"Your appointment has been rejected"
+            }
+        ]
+    })
+    headers = {
+        'Authorization': 'App d337d5c72769d3658747cc33538de248-11a8cef2-5285-4094-b5bb-4a455dca1032',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    
+    conn.request("POST", "/sms/2/text/advanced", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    
+        
