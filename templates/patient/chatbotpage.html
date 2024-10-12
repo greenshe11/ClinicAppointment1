@@ -60,18 +60,24 @@
      </script>
 
      <script type="module">
-          import "/static/components/symptomsSelection/script.js"
+          import {storeSymptomsSession, symptomsSelection} from "/static/components/symptomsSelection/script.js"
+          import {createRecommendationSent} from "/static/pageScripts/utils.js"
+          import {storeResponseSession} from "/static/components/symptomsSelection/script.js";
 
           const symptomsSelectionStart = async () => {
                const ss = await SymptomsSelection(document.getElementById('home-symptoms-insert-area'))
-               window.toResponse = () =>{
+               window.toResponse = async () =>{
                if (ss.symptoms.length < 1){
                     
                     alert("Tip: You need to select at least 1 symptom.")
                     
                     return
                }
-               storeSymptomsSession()
+
+               await storeSymptomsSession()
+               storeResponseSession((createRecommendationSent(ss.symptoms)))
+               
+               
                
                window.location.href = '/chatbotpage/response'
           }

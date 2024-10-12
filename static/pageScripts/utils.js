@@ -1,4 +1,5 @@
 
+  // when adding symptom: recommendation, start at bottom to avoid messing with code name -> symptom conversion
 export const mildSymptoms = {
     "Fever (37.8 C - 40 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
     "Sweating": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
@@ -63,7 +64,7 @@ export const mildSymptoms = {
     "Gritty feeling in one or both eyes": "Use lubricating eye drops for relief.",
     "Discharge that forms a crust": "Gently clean your eyes with a warm, damp cloth in the morning.",
     "Tearing": "Use artificial tears and avoid eye strain.",
-    "Photophobia (sensitivity to light)": "Wear sunglasses and rest in dim lighting.",
+    "Photophobia ( sensitivity to light )": "Wear sunglasses and rest in dim lighting.",
     "Swelling of eyelid": "Apply warm compresses for 10-15 minutes several times a day.",
     "Discharge from eye": "Gently clean eyelid with a warm, damp cloth.",
     "Crusting along eyelid": "Use a mild baby shampoo to clean the eyelid if necessary.",
@@ -76,7 +77,7 @@ export const mildSymptoms = {
     "Wheezing and shortness of breath": "Consider inhaled medications like bronchodilators.",
     "Heartburn or sour taste": "Take acid blockers like antacids or proton pump inhibitors.",
     "Shortness of breath (dyspnea)": "Use inhalers or nebulizers to ease breathing.",
-    "Tiredness (fatigue)": "Rest and stay hydrated.",
+    "Tiredness ( fatigue )": "Rest and stay hydrated.",
     "Wheezing (whistling sound when breathing)": "Use a bronchodilator to help relax airway muscles.",
     "Fast heart rate (tachycardia)": "Rest and monitor your heart rate; see a doctor if symptoms worsen.",
     "Sneezing": "Use saline nasal sprays for relief.",
@@ -85,7 +86,6 @@ export const mildSymptoms = {
     "Hives or skin rash": "Use antihistamines for mild symptoms.",
     "Swelling of lips or eyelids": "Avoid allergenic foods and seek medical help.",
     "Itching mouth and throat": "Antihistamines can relieve itching.",
-    
     "Cough, wheezing or shortness of breath": "Use a rescue inhaler if you have asthma.",
     "Abdominal pain, vomiting, diarrhea": "Consult a doctor if symptoms worsen.",
     "Lightheadedness or loss of consciousness": "Seek emergency assistance.",
@@ -108,6 +108,7 @@ export const mildSymptoms = {
     "Difficulty concentrating": "Take regular breaks and stay hydrated."
   };
   
+  // when adding symptom: recommendation, start at bottom to avoid messing with code name -> symptom conversion
   export const heavySymptoms = {
     "Vision loss": "Seek medical advice if vision loss occurs.",
     "Sweating": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
@@ -186,10 +187,10 @@ export const mildSymptoms = {
     "Heartburn or sour taste": "Take acid blockers like antacids or proton pump inhibitors.",
     "Coughing up blood (rare)": "Seek immediate medical attention.",
     "Hoarse voice or difficulty swallowing": "Seek immediate medical attention if severe.",
-    "Shortness of breath (dyspnea)": "Use inhalers or nebulizers to ease breathing.",
-    "Tiredness (fatigue)": "Rest and stay hydrated.",
+    "Shortness of breath ( dyspnea )": "Use inhalers or nebulizers to ease breathing.",
+    "Tiredness ( fatigue )": "Rest and stay hydrated.",
     "Wheezing (whistling sound when breathing)": "Use a bronchodilator to help relax airway muscles.",
-    "Fast heart rate (tachycardia)": "Rest and monitor your heart rate; see a doctor if symptoms worsen.",
+    "Fast heart rate ( tachycardia )": "Rest and monitor your heart rate; see a doctor if symptoms worsen.",
     "Nasal congestion": "Use saline nasal sprays or decongestants.",
     "Digestive issues": "Stay hydrated and consider light meals.",
     "Upset stomach": "Stay hydrated and consider light meals.",
@@ -203,18 +204,24 @@ export const mildSymptoms = {
     "Difficulty concentrating": "Take regular breaks and stay hydrated."
   };
 
-export const symptomCodes = (()=>{
+const getSymptomCodes = ()=>{
     const tempList = {}
-    for (let i=0; i<mildSymptoms.length; i++){
-        tempList[`a${i}`] = mildSymptoms[i]
+    for (let i=0; i<Object.keys(mildSymptoms).length; i++){
+        tempList[`a${i}`] = Object.keys(mildSymptoms)[i]
     }
-    for (let i=0; i<heavySymptoms.length; i++){
-        tempList[`b${i}`] = heavySymptoms[i]
+    for (let i=0; i<Object.keys(heavySymptoms).length; i++){
+        tempList[`b${i}`] = Object.keys(heavySymptoms)[i]
     }
-})()
+    tempList['o'] = '... others'
+    console.log('templist',tempList)
+    return tempList
+}
+
+export const symptomCodes = getSymptomCodes()
 
 export const getSymptomFromCode = (code) => {
-    const isNotOther = Object.keys(symptomCodes).includes('code')
+    
+    const isNotOther = Object.keys(symptomCodes).includes(code)
     if (isNotOther){
         return symptomCodes[code]
     }else{
@@ -241,7 +248,31 @@ export const getRecommendation = (symptom) => {
     } else {
         return false; // If the symptom is not found in either object, return false
     }
-};
+};  
+
+/**
+ * Converts an array of symptom codes into an array of corresponding symptom descriptions.
+ * 
+ * @param {Array} arr - An array of symptom codes that need to be converted.
+ * 
+ * @returns {Array} - An array of symptom descriptions corresponding to the input codes.
+ * 
+ * Example usage:
+ * const symptomCodes = ['C1', 'C2', 'C3'];
+ * const symptoms = getSymptomsFromCodeArray(symptomCodes);
+ * console.log(symptoms); // ['Headache', 'Fever', 'Cough']
+ */
+export const getSymptomsFromCodeArray = (arr) => {
+    const temp = []
+    console.log(arr)
+    for (let i = 0; i < arr.length; i++) {
+        const code = arr[i]
+        temp.push(getSymptomFromCode(code))
+    }
+    console.log(temp)
+    return temp
+}
+
 
 // Function to create a recommendation sentence from an array of symptoms
 export const createRecommendationSent = (symptomArray) => {
@@ -283,4 +314,27 @@ export const getSeriousSymptoms = (symptoms) => {
         }
     }
     return serious
+}
+
+export const getCodeFromSymptom = (symptom) => {
+    console.log(symptomCodes)
+
+    for (let code in symptomCodes) {
+       
+        if (symptomCodes[code] == symptom){
+            return code
+        }
+    }
+}
+
+export const getCodesFromSymptomsArray = (symptoms) => {
+    const temp = []
+    for (let i=0; i<symptoms.length; i++){
+        const symptom = symptoms[i]
+        console.log("SYMPTOM:", symptom)
+        const code = getCodeFromSymptom(symptom)
+        console.log(code)
+        temp.push(code)
+    }
+    return temp
 }

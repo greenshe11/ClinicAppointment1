@@ -25,6 +25,7 @@ def session_routes(self):
     def set_session_symptoms_selected():  
         data = request.json
         utils.set_session('symptoms_selected',data['symptoms'])
+        utils.set_session('symptoms_selected_code', data['code'])
         print(session)
         return jsonify({"success": True})
     
@@ -40,7 +41,9 @@ def session_routes(self):
     def get_session_data():  
         return jsonify(dict(session))
     
-    
-    
-
-    
+    @self.app.route('/api/session/storeSymptomsResponse', methods=['POST'])
+    def set_session_symptoms_response():  
+        data = request.json
+        utils.set_session('symptoms_response',data['response'])
+        print(session)
+        return jsonify({"success": True})

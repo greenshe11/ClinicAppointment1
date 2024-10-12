@@ -210,9 +210,9 @@ class WordSuggestions{
       let resNames = res.map(([key,value]) => getOutput(key,value, false)) // Extract the keys
      
       const topValue = resValues[0]
-      let benchmark = topValue*1.8
+      let benchmark = topValue*1.6
       if (topValue<0){
-        benchmark = topValue/1.8
+        benchmark = topValue/1.6
       }
 
       for (let i=0;i<resValues.length;i++){
@@ -306,15 +306,70 @@ class WordSuggestions{
  * GLOBALS
  */
 let wordSuggestionObj = null
+import { Component } from "/static/components/script.js";
+import { mildSymptoms, heavySymptoms } from "/static/pageScripts/utils.js";
+import { getCodesFromSymptomsArray } from "/static/pageScripts/utils.js";
 
-async function storeSymptomsSession() {
+// API FETCHES ____________________________________
+export async function getSymptomsFromDb(Appointment_ID) {
+  const res = await fetch(`/api/symptoms?Appointment_ID=${Appointment_ID}`)
+
+  const resJson = await res.json()
+  
+  return resJson
+}
+
+export async function deleteSymptomsFromDb(Appointment_ID){
+  try {
+    const response = await fetch('/api/symptoms', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({Appointment_ID: Appointment_ID}),
+    });
+
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+
+    const result = await response.json();
+    return result
+
+  } catch (error) {
+
+}
+}
+export async function storeResponseSession(array) {
+  try {
+      const response = await fetch('/api/session/storeSymptomsResponse', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({"response": array}),
+      });
+
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+
+      const result = await response.json();
+    
+
+  } catch (error) {
+
+  }
+}
+
+export async function storeSymptomsSession() {
   try {
       const response = await fetch('/api/session/storeSymptomsSelected', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
           },
-          body: JSON.stringify({"symptoms": wordSuggestionObj.symptoms}),
+          body: JSON.stringify({"symptoms": wordSuggestionObj.symptoms, "code": getCodesFromSymptomsArray(wordSuggestionObj.symptoms)}),
       });
 
       if (!response.ok) {
@@ -339,9 +394,10 @@ export async function getSymptomsSession(addToElement=true) {
     return resJson
 }
 
+// ___________________________________________________
+
 /**COMPONENTS */
-import { Component } from "/static/components/script.js";
-import { mildSymptoms, heavySymptoms } from "/static/pageScripts/utils.js";
+
 // create component
 const _symptomsSelectionObj = new Component('/static/components/symptomsSelection/layout.html', '/static/components/symptomsSelection/styling.css')
 //*

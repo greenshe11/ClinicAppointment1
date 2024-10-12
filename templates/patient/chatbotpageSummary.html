@@ -68,8 +68,22 @@
      <script type="module">
           import {sidebar, getUserData} from "/static/components/sidebar/script.js";
           import {getSession, getTimeName, createAppointment, getAppointments} from "/static/components/calendarSelection/script.js";
-    
+          import { createRecommendationSent , getCodesFromSymptomsArray} from "/static/pageScripts/utils.js"    
           sidebar(document.getElementById('home-sidebar-insert-area'))
+
+          const createSymptoms = async (Appointment_ID, Symptoms_Code) => {
+               console.log(Symptoms_Code)
+               const response = await fetch('/api/symptoms', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({Appointment_ID: Appointment_ID, Symptoms_Code: Symptoms_Code}),
+                    });
+               const resJson = await response.json()
+               console.log("createSymptoms()", resJson)
+               return resJson
+          }
           
           const renderData = async () => {
           
@@ -83,14 +97,16 @@
                const time = sessionData.appointment_time
                const symptoms = sessionData.symptoms_selected
                const symptomsString = symptoms.join(', ')
+               const response = createRecommendationSent(sessionData.symptoms_selected)
                const userId = sessionData.userId
+               const codes = getCodesFromSymptomsArray(symptoms)
 
                document.getElementById('sum-datetime').innerHTML = `${monthName} ${day}, ${year}`
                document.getElementById('sum-name').innerHTML = `${userData.PatientLastName}, ${userData.PatientName}`
                document.getElementById('sum-email').innerHTML = `${userData.PatientEmail}`
                document.getElementById('sum-contact').innerHTML = `${userData.PatientContactNo}`
                document.getElementById('sum-symptoms').innerHTML = `${symptomsString}`
-               document.getElementById('sum-response').innerHTML = `(...)`
+               document.getElementById('sum-response').innerHTML = `${response}`
               
                const toHome = async () => {
                     const value = await getAppointments(month, year, day) // check if theres existing appointments
@@ -103,15 +119,17 @@
                      }
                     
                     const newAppointment = await createAppointment(userId, day, month, time, year, 0)
-                   
+                    for (let i=0; i<codes.length; i++){
+                         let newSymptoms = await createSymptoms(newAppointment.id, codes[i])
+                         console.log(i, newAppointment.id, newSymptoms)
+
+                    }
+                    
                     window.location.href = '/chatbotpage/success'
                }
 
                const sendButton = document.getElementById('cbp-send-request')
                sendButton.onclick = toHome
-
-
-
                
           }
 

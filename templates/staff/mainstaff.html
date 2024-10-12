@@ -95,6 +95,7 @@
 
 <script type="module">
     import {CalendarSelection, onClickShowCal, selected, getAppointmentsFilter, getSession, getTimeName, deleteAppointment, setCalendarButtonOpeners, btn} from "/static/components/calendarSelection/script.js";
+    import {deleteSymptomsFromDb} from "/static/components/symptomsSelection/script.js"
     import {InfoModal, showModal} from "/static/components/infoModal/script.js";
     const monthNamesAll = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     const tableBody = document.getElementById('sched-table-body') // get element for table body
@@ -113,10 +114,6 @@
         
     }
 
-    window.deleteAppointment = (event) =>{
-        const id = event.srcElement.getAttribute('data-appointmentId')
-        deleteAppointment(id)
-    }
 
     const getPatientInfo = async (userId) => {
      
@@ -135,9 +132,12 @@
     window.deleteAppointment = async (event) =>{
         const id = event.srcElement.getAttribute('data-appointmentId')
         await deleteAppointment(id)
+        await deleteSymptomsFromDb(id)
         const tr = event.srcElement.closest('tr'); // Find the closest <tr> (the entire row)
         tr.parentElement.removeChild(tr); // Remove the entire row
+        
         setPaginationNumber()
+        
     }
 
     
