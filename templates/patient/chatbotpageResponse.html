@@ -56,29 +56,64 @@
     
      <!--DONT DELETE-->
      <script type="module">
-          
+          /**
+          * Import necessary scripts and components.
+          * 
+          * - Sidebar: Loads and renders the sidebar in the HTML element.
+          * - createRecommendationSent: Generates a recommendation sentence based on selected symptoms.
+          * - getSeriousSymptoms: Retrieves serious symptoms from a list of selected symptoms.
+          * - getSymptomsSession: Fetches the session data for selected symptoms.
+          */
           import "/static/components/sidebar/script.js";
           import {createRecommendationSent, getSeriousSymptoms } from '/static/pageScripts/utils.js'
           import {getSymptomsSession} from "/static/components/symptomsSelection/script.js"
 
+          /**
+          * Loads the sidebar component into the specified HTML element.
+          * 
+          * @function Sidebar
+          * @param {HTMLElement} document.getElementById('home-sidebar-insert-area') - The HTML element where the sidebar is inserted.
+          */
           Sidebar(document.getElementById('home-sidebar-insert-area'))
-          
+
+          /**
+          * Fetches selected symptoms from the session, creates recommendations, and determines if serious symptoms are present.
+          * 
+          * - Updates the HTML content of the page based on the symptoms and their severity.
+          * 
+          * @async
+          * @function createResponse
+          * @returns {Promise<void>} - This function does not return any value. It performs DOM manipulations.
+          */
           const createResponse = async () => {
-               const symptoms = await getSymptomsSession(false)
-               console.log(symptoms)
-               document.getElementById('cbp-recommendation').innerHTML = createRecommendationSent(symptoms['symptoms_selected'])
-               const seriousSymptoms = getSeriousSymptoms(symptoms['symptoms_selected'])
-               const nextBtn = document.getElementById('next-button')
-               const bottomLine = document.getElementById('cbp-bottom-line')
-               if (seriousSymptoms.length > 0){
-                    nextBtn.disabled = false
-                    bottomLine.innerHTML = `The symptoms (${seriousSymptoms.join(',')}) makes you in need for a professional help. Click <b>Next</b> to set an appointment date.`
-               }else{
-                    nextBtn.disabled = true
-                    bottomLine.innerHTML = `The symptoms above are considered mild and is treatable by home remedies or over-the-counter medicines through your local pharmacies. For these symptoms, you will not need to make an appointment.`
-               }
+          // Fetch selected symptoms from the session.
+          const symptoms = await getSymptomsSession(false)
+          console.log(symptoms)
+          
+          // Display the recommendation based on the selected symptoms.
+          document.getElementById('cbp-recommendation').innerHTML = createRecommendationSent(symptoms['symptoms_selected'])
+          
+          // Get serious symptoms from the selected symptoms.
+          const seriousSymptoms = getSeriousSymptoms(symptoms['symptoms_selected'])
+          
+          // Get the "Next" button and the bottom-line text element.
+          const nextBtn = document.getElementById('next-button')
+          const bottomLine = document.getElementById('cbp-bottom-line')
+          
+          // If there are serious symptoms, enable the "Next" button and show a message about setting an appointment.
+          if (seriousSymptoms.length > 0) {
+               nextBtn.disabled = false
+               bottomLine.innerHTML = `The symptoms (${seriousSymptoms.join(',')}) make you in need of professional help. Click <b>Next</b> to set an appointment date.`
+          } else {
+               // If no serious symptoms are found, disable the "Next" button and display a mild symptoms message.
+               nextBtn.disabled = true
+               bottomLine.innerHTML = `The symptoms above are considered mild and treatable with home remedies or over-the-counter medicines through your local pharmacies. For these symptoms, you will not need to make an appointment.`
           }
-         createResponse()
+          }
+
+          // Call createResponse to initialize the symptom evaluation and response generation.
+          createResponse()
+
      </script>
 
      <script>

@@ -60,31 +60,66 @@
      </script>
 
      <script type="module">
-          import {storeSymptomsSession, symptomsSelection} from "/static/components/symptomsSelection/script.js"
-          import {createRecommendationSent} from "/static/pageScripts/utils.js"
+         /**
+          * Import necessary modules for symptoms selection and session management.
+          * 
+          * - storeSymptomsSession: Stores the selected symptoms in a session.
+          * - symptomsSelection: A component responsible for rendering and handling symptom selection.
+          * - createRecommendationSent: A utility function that generates recommendations based on selected symptoms.
+          * - storeResponseSession: Stores the generated response in a session.
+          */
+          import {storeSymptomsSession, symptomsSelection} from "/static/components/symptomsSelection/script.js";
+          import {createRecommendationSent} from "/static/pageScripts/utils.js";
           import {storeResponseSession} from "/static/components/symptomsSelection/script.js";
 
+          /**
+          * Initializes the symptoms selection process by rendering the symptoms selection component 
+          * into the specified DOM element and preparing the transition to the next page after selection.
+          * 
+          * @async
+          * @function symptomsSelectionStart
+          * @returns {Promise<void>}
+          */
           const symptomsSelectionStart = async () => {
-               const ss = await SymptomsSelection(document.getElementById('home-symptoms-insert-area'))
-               window.toResponse = async () =>{
-               if (ss.symptoms.length < 1){
-                    
-                    alert("Tip: You need to select at least 1 symptom.")
-                    
-                    return
+          /**
+               * Initialize the SymptomsSelection component in the specified element.
+               * 
+               * @param {HTMLElement} document.getElementById('home-symptoms-insert-area') - The HTML element where the symptoms selection component will be rendered.
+               * @returns {Promise<Object>} ss - The symptoms selection object containing selected symptoms.
+               */
+          const ss = await SymptomsSelection(document.getElementById('home-symptoms-insert-area'));
+
+          /**
+               * Function to handle the transition to the response page.
+               * 
+               * - Validates that at least one symptom is selected before proceeding.
+               * - If no symptoms are selected, it alerts the user to select at least one symptom.
+               * - Stores the selected symptoms and generated recommendation in the session, then redirects to the response page.
+               * 
+               * @async
+               * @function toResponse
+               * @returns {Promise<void>}
+               */
+          window.toResponse = async () => {
+               // Check if the user has selected at least one symptom.
+               if (ss.symptoms.length < 1) {
+                    alert("Tip: You need to select at least 1 symptom."); // Alert if no symptoms are selected
+                    return; // Exit if no symptoms are selected
                }
 
-               await storeSymptomsSession()
-               storeResponseSession((createRecommendationSent(ss.symptoms)))
-               
-               
-               
-               window.location.href = '/chatbotpage/response'
+               // Store the selected symptoms in the session
+               await storeSymptomsSession();
+
+               // Store the generated recommendation in the session
+               storeResponseSession(createRecommendationSent(ss.symptoms));
+
+               // Redirect to the response page
+               window.location.href = '/chatbotpage/response';
+          }
           }
 
-          }
-
-          symptomsSelectionStart()
+          // Start the symptoms selection process
+          symptomsSelectionStart();
      </script>
 </body>
 

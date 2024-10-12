@@ -71,70 +71,90 @@
           import { createRecommendationSent , getCodesFromSymptomsArray} from "/static/pageScripts/utils.js"    
           sidebar(document.getElementById('home-sidebar-insert-area'))
 
-          const createSymptoms = async (Appointment_ID, Symptoms_Code) => {
-               console.log(Symptoms_Code)
-               const response = await fetch('/api/symptoms', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({Appointment_ID: Appointment_ID, Symptoms_Code: Symptoms_Code}),
-                    });
-               const resJson = await response.json()
-               console.log("createSymptoms()", resJson)
-               return resJson
-          }
+          /**
+     * Creates a new symptom entry in the database associated with a given appointment.
+     * 
+     * @async
+     * @function createSymptoms   
+     * @param {number} Appointment_ID - The ID of the appointment.
+     * @param {string} Symptoms_Code - The code of the symptom to be created in the database.
+     * @returns {Promise<Object>} - A promise that resolves to the response of the symptom creation operation.
+     */
+     const createSymptoms = async (Appointment_ID, Symptoms_Code) => {
+          console.log(Symptoms_Code)
+          const response = await fetch('/api/symptoms', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ Appointment_ID: Appointment_ID, Symptoms_Code: Symptoms_Code }),
+          });
+          const resJson = await response.json()
+          console.log("createSymptoms()", resJson)
+          return resJson
+     }
+     
+     
+     /**
+     * Renders appointment data, user data, and symptoms data into the HTML elements on the page.
+     * 
+     * @async
+     * @function renderData
+     * @returns {void}
+     */
+     const renderData = async () => {
+          // Fetch session and user data
+          const sessionData = await getSession()
+          const userData = await getUserData().then((data)=>{return data[0]}) // Get only the first result
           
-          const renderData = async () => {
+          // Extract session data
+          const day = sessionData.appointment_day
+          const monthName = sessionData.appointment_monthName
+          const month = sessionData.appointment_month
+          const year = sessionData.appointment_year
+          const timeName = sessionData.appointment_timeName
+          const time = sessionData.appointment_time
+          const symptoms = sessionData.symptoms_selected
+          const symptomsString = symptoms.join(', ') // Join symptoms into a comma-separated string
+          const response = createRecommendationSent(sessionData.symptoms_selected) // Generate response for symptoms
+          const userId = sessionData.userId
+          const codes = getCodesFromSymptomsArray(symptoms) // Get symptom codes
+     
+          // Render data to HTML elements
+          document.getElementById('sum-datetime').innerHTML = `${monthName} ${day}, ${year}`
+          document.getElementById('sum-name').innerHTML = `${userData.PatientLastName}, ${userData.PatientName}`
+          document.getElementById('sum-email').innerHTML = `${userData.PatientEmail}`
+          document.getElementById('sum-contact').innerHTML = `${userData.PatientContactNo}`
+          document.getElementById('sum-symptoms').innerHTML = `${symptomsString}`
+          document.getElementById('sum-response').innerHTML = `${response}`
           
-               const sessionData = await getSession()
-               const userData = await getUserData().then((data)=>{return data[0]}) // gets only first result
-               const day = sessionData.appointment_day
-               const monthName = sessionData.appointment_monthName
-               const month = sessionData.appointment_month
-               const year = sessionData.appointment_year
-               const timeName = sessionData.appointment_timeName
-               const time = sessionData.appointment_time
-               const symptoms = sessionData.symptoms_selected
-               const symptomsString = symptoms.join(', ')
-               const response = createRecommendationSent(sessionData.symptoms_selected)
-               const userId = sessionData.userId
-               const codes = getCodesFromSymptomsArray(symptoms)
-
-               document.getElementById('sum-datetime').innerHTML = `${monthName} ${day}, ${year}`
-               document.getElementById('sum-name').innerHTML = `${userData.PatientLastName}, ${userData.PatientName}`
-               document.getElementById('sum-email').innerHTML = `${userData.PatientEmail}`
-               document.getElementById('sum-contact').innerHTML = `${userData.PatientContactNo}`
-               document.getElementById('sum-symptoms').innerHTML = `${symptomsString}`
-               document.getElementById('sum-response').innerHTML = `${response}`
-              
-               const toHome = async () => {
-                    const value = await getAppointments(month, year, day) // check if theres existing appointments
-                    for (let i=0; i<value.length; i++){
-                         if (value[i].Appointment_Time == time){ // if there is an appointment with the same time
-                              alert("Selected date is not avaiable / is taken.")
-                              window.location.href = '/chatbotpage/response/appointment' // go to home instead
-                              return null
-                         }
-                     }
-                    
-                    const newAppointment = await createAppointment(userId, day, month, time, year, 0)
-                    for (let i=0; i<codes.length; i++){
-                         let newSymptoms = await createSymptoms(newAppointment.id, codes[i])
-                         console.log(i, newAppointment.id, newSymptoms)
-
-                    }
-                    
-                    window.location.href = '/chatbotpage/success'
+          // Function to navigate to home after checking appointment availability and creating a new appointment
+          const toHome = async () => {
+          const value = await getAppointments(month, year, day) // Check for existing appointments
+          for (let i = 0; i < value.length; i++) {
+               if (value[i].Appointment_Time == time) { // If there's an appointment at the same time
+                    alert("Selected date is not available / is taken.")
+                    window.location.href = '/chatbotpage/response/appointment' // Redirect to appointment page
+                    return null
                }
-
-               const sendButton = document.getElementById('cbp-send-request')
-               sendButton.onclick = toHome
-               
           }
-
-          
-          renderData()
+     
+          const newAppointment = await createAppointment(userId, day, month, time, year, 0) // Create a new appointment
+          for (let i = 0; i < codes.length; i++) {
+               let newSymptoms = await createSymptoms(newAppointment.id, codes[i]) // Create symptoms for the appointment
+               console.log(i, newAppointment.id, newSymptoms)
+          }
+     
+          window.location.href = '/chatbotpage/success' // Redirect to success page
+          }
+     
+          // Add click event to send button
+          const sendButton = document.getElementById('cbp-send-request')
+          sendButton.onclick = toHome
+     }
+     
+     // Call renderData function to render the data on page load
+     renderData()
 
      </script>
 </body>

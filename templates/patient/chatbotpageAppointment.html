@@ -53,31 +53,57 @@
      </div>
 
      <script type="module">
+          /**
+          * Import the necessary components and objects for calendar selection.
+          * 
+          * - CalendarSelection: A component that renders the calendar and handles appointment selections.
+          * - selected: An object that contains information about the selected date.
+          */
           import {
-               CalendarSelection, //component
-               selected // object containing info of selected date
-               } 
-               from "/static/components/calendarSelection/script.js";
+               CalendarSelection, // component for calendar functionality
+               selected // object containing the selected date info
+          } 
+          from "/static/components/calendarSelection/script.js";
           
+          /**
+          * Initializes the calendar selection component and attaches it to the DOM element.
+          * 
+          * @function CalendarSelection
+          * @param {HTMLElement} document.getElementById('home-calendar-insert-area') - The HTML element where the calendar will be rendered.
+          * @param {Array} [document.getElementById('cbp-set-date-btn')] - An array of buttons used for opening the calendar.
+          * @param {string} '' - A warning footer (currently unused, hence an empty string).
+          * @param {string} 'Set Appointment' - The label for the "Set Appointment" button.
+          * @param {string} 'cbp-appointment' - Purpose of the calendar, such as 'cbp-appointment'.
+          * @param {HTMLElement} document.getElementById('cbp-dialog-chat') - The element where dialog messages or interactions will be displayed.
+          */
           CalendarSelection(
-               document.getElementById('home-calendar-insert-area'), // element where to insert calendar
-               [document.getElementById('cbp-set-date-btn')], // buttons used for opening calendar 
-               '', // warning footer
-               'Set Appointment', // button label
-               'cbp-appointment', //purpose
-               document.getElementById('cbp-dialog-chat') // element where to put dialog
-               )
-
+               document.getElementById('home-calendar-insert-area'), // where the calendar is inserted
+               [document.getElementById('cbp-set-date-btn')], // buttons to trigger the calendar
+               '', // warning footer, currently not used
+               'Set Appointment', // label for the button
+               'cbp-appointment', // purpose of the calendar
+               document.getElementById('cbp-dialog-chat') // dialog container for calendar-related interactions
+          );
+          
+          /**
+          * Redirects the user to the appointment summary page if an appointment is selected.
+          * 
+          * - Checks whether the user has selected a valid appointment (date and time) before allowing them to proceed.
+          * - If no appointment is selected, an alert message is displayed.
+          * - If an appointment is selected, the user is redirected to the summary page.
+          * 
+          * @function toSummary
+          */
           window.toSummary = () => {
-               // An appointment data should be picked before pressing next.
-               if (!(selected.month||selected.day||selected.year||selected.time)){
-                    alert("You first need to set an appointment to proceed.")
-               }
-               else{
-                    
-                    window.location.href = '/chatbotpage/response/appointment/summary'
+               // Ensure an appointment (month, day, year, and time) is selected before proceeding.
+               if (!(selected.month || selected.day || selected.year || selected.time)) {
+               alert("You first need to set an appointment to proceed."); // Alert if no appointment is set
+               } else {
+               // Redirect to the summary page if appointment is valid.
+               window.location.href = '/chatbotpage/response/appointment/summary';
                }
           }
+          
      </script>
 
      <!--DONT DELETE-->

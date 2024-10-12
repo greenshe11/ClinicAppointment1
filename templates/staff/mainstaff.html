@@ -94,297 +94,327 @@
 
 
 <script type="module">
-    import {CalendarSelection, onClickShowCal, selected, getAppointmentsFilter, getSession, getTimeName, deleteAppointment, setCalendarButtonOpeners, btn} from "/static/components/calendarSelection/script.js";
-    import {deleteSymptomsFromDb} from "/static/components/symptomsSelection/script.js"
-    import {InfoModal, showModal} from "/static/components/infoModal/script.js";
-    const monthNamesAll = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-    const tableBody = document.getElementById('sched-table-body') // get element for table body
-    const itemsPerPage = 5
-    let currentPage = 1
-    let sessionData = null // global var initialization only, later to be filled
-    let appointments = null
+    // Imports necessary modules and functions for handling calendar and appointment data
+    import {
+        CalendarSelection,
+        onClickShowCal,
+        selected,
+        getAppointmentsFilter,
+        getSession,
+        getTimeName,
+        deleteAppointment,
+        setCalendarButtonOpeners,
+        btn
+    } from "/static/components/calendarSelection/script.js";
 
+    import { deleteSymptomsFromDb } from "/static/components/symptomsSelection/script.js";
+    import { InfoModal, showModal } from "/static/components/infoModal/script.js";
 
+    /**
+    * Global Constants and Variables
+    */
+    const monthNamesAll = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; // Array of month names for display
+    const tableBody = document.getElementById('sched-table-body'); // Reference to the table body where appointments will be rendered
+    const itemsPerPage = 5; // Number of appointments displayed per page
+    let currentPage = 1; // Tracks the current page number for pagination
+    let sessionData = null; // Holds session data (initially null)
+    let appointments = null; // Holds appointment data (initially null)
+
+    /**
+    * Show the calendar when a date is clicked.
+    * @param {Event} event - The click event that triggered the calendar display.
+    * @param {string} contact - The contact information of the patient.
+    */
     window.onClickShowCalendar = (event, contact) => {
-        console.log(event.srcElement)
-        const month = event.srcElement.getAttribute('data-month') 
-        const year = event.srcElement.getAttribute('data-year')
-        selected.appointmentId = event.srcElement.getAttribute('data-appointmentId')
-        selected.contact = contact
-        onClickShowCal(month-1 , year) // shows calendar starting on date and year // subtract month num starts in 0
-        
-    }
+        console.log(event.srcElement); // Log the element that triggered the event
+        const month = event.srcElement.getAttribute('data-month'); // Get month from data attribute
+        const year = event.srcElement.getAttribute('data-year'); // Get year from data attribute
+        selected.appointmentId = event.srcElement.getAttribute('data-appointmentId'); // Store the selected appointment ID
+        selected.contact = contact; // Store the contact information
+        onClickShowCal(month - 1, year); // Show calendar starting on selected month and year (month - 1 because months are 0-indexed)
+    };
 
-
+    /**
+    * Fetch patient information based on user ID.
+    * @param {string} userId - The ID of the patient.
+    * @returns {Promise<Object>} - The patient information.
+    */
     const getPatientInfo = async (userId) => {
-     
-        const res = await fetch(`/api/patient?Patient_ID=${userId}`)
-        const returnVal = await res.json()
-        console.log("result",returnVal)
-        return returnVal
-    }
+        const res = await fetch(`/api/patient?Patient_ID=${userId}`); // Fetch patient info from the API
+        const returnVal = await res.json(); // Parse the JSON response
+        console.log("result", returnVal); // Log the result
+        return returnVal; // Return the patient info
+    };
 
+    /**
+    * Set the current page for pagination and render the corresponding appointments.
+    * @param {number} num - The page number to set.
+    */
     window.setToPage = async (num) => {
-        currentPage = num
-        setPaginationNumber()
-        renderPage()
-    }
-    
-    window.deleteAppointment = async (event) =>{
-        const id = event.srcElement.getAttribute('data-appointmentId')
-        await deleteAppointment(id)
-        await deleteSymptomsFromDb(id)
-        const tr = event.srcElement.closest('tr'); // Find the closest <tr> (the entire row)
-        tr.parentElement.removeChild(tr); // Remove the entire row
-        
-        setPaginationNumber()
-        
-    }
+        currentPage = num; // Update current page
+        setPaginationNumber(); // Update pagination display
+        await renderPage(); // Render the appointments for the new page
+    };
 
+    /**
+    * Delete an appointment and its associated symptoms from the database.
+    * @param {Event} event - The click event triggering the deletion.
+    */
+    window.deleteAppointment = async (event) => {
+        const id = event.srcElement.getAttribute('data-appointmentId'); // Get appointment ID from data attribute
+        await deleteAppointment(id); // Delete the appointment
+        await deleteSymptomsFromDb(id); // Delete associated symptoms
+        
+        const tr = event.srcElement.closest('tr'); // Find the closest <tr> (the entire row)
+        tr.parentElement.removeChild(tr); // Remove the entire row from the table
+        
+        setPaginationNumber(); // Update pagination after deletion
+    };
+
+    /**
+    * Send an SMS notification about the appointment status.
+    * @param {string} date - The appointment date.
+    * @param {string} time - The appointment time.
+    * @param {string} contact - The contact number.
+    * @param {number} statusCode - The status code of the appointment.
+    */
     const sendMessage = async (date, time, contact, statusCode) => {
-        const url = '/api/sms'
-        const data = {date, time, contact, statusCode}
+        const url = '/api/sms'; // API endpoint for sending SMS
+        const data = { date, time, contact, statusCode }; // Prepare data for the request
         try {
             const response = await fetch(url, {
-                method: 'POST', // Specify the PUT method
-                headers: {
-                    'Content-Type': 'application/json' // Specify content type for JSON data
-                },
-                body: JSON.stringify(data) // Convert data object to a JSON string
+                method: 'POST', // Specify POST method
+                headers: { 'Content-Type': 'application/json' }, // Set content type to JSON
+                body: JSON.stringify(data) // Convert data object to JSON string
             });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-    
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); // Check for errors
+
             const result = await response.json(); // Parse the JSON response
-            console.log(result)
+            console.log(result); // Log the result
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error:', error); // Log any errors encountered
         }
-    
-    }
+    };
 
-   
-
+    /**
+    * Update the appointment status and notify the patient.
+    * @param {Event} event - The click event triggering the status update.
+    * @param {number} statusCode - The new status code for the appointment.
+    */
     window.setAppointmentStatus = async (event, statusCode) => {
-        const getStatusDisplay = (statusCode) =>{ 
-            const color = ['black','green','red']
-            const name = ['Pending','Confirmed','Rejected']
-            return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
-        }
-        
-        const appointmentId = event.srcElement.getAttribute('data-appId')
-        const monthName = event.srcElement.getAttribute('data-monthName')
-        const day = event.srcElement.getAttribute('data-day')
-        const year = event.srcElement.getAttribute('data-year')
-        const timeName = event.srcElement.getAttribute('data-timeName')
-        const contact = event.srcElement.getAttribute('data-contact')
-        console.log(monthName, day, year, appointmentId)
-        const url = '/api/appointments'; // Replace with your API endpoint
+        // Function to return HTML for displaying status
+        const getStatusDisplay = (statusCode) => { 
+            const color = ['black', 'green', 'red']; // Colors for status display
+            const name = ['Pending', 'Confirmed', 'Rejected']; // Status names
+            return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`; // Return formatted HTML
+        };
+
+        // Get attributes from the clicked element
+        const appointmentId = event.srcElement.getAttribute('data-appId'); // Get appointment ID
+        const monthName = event.srcElement.getAttribute('data-monthName'); // Get month name
+        const day = event.srcElement.getAttribute('data-day'); // Get day
+        const year = event.srcElement.getAttribute('data-year'); // Get year
+        const timeName = event.srcElement.getAttribute('data-timeName'); // Get time name
+        const contact = event.srcElement.getAttribute('data-contact'); // Get contact information
+
+        const url = '/api/appointments'; // API endpoint for updating appointments
         const data = {
             Appointment_ID: appointmentId,
-            Appointment_Confirmed: statusCode
-        }
+            Appointment_Confirmed: statusCode // Prepare data for the update
+        };
 
         try {
             const response = await fetch(url, {
-                method: 'PUT', // Specify the PUT method
-                headers: {
-                    'Content-Type': 'application/json' // Specify content type for JSON data
-                },
-                body: JSON.stringify(data) // Convert data object to a JSON string
+                method: 'PUT', // Specify PUT method for updates
+                headers: { 'Content-Type': 'application/json' }, // Set content type to JSON
+                body: JSON.stringify(data) // Convert data object to JSON string
             });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-    
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`); // Check for errors
+
             const result = await response.json(); // Parse the JSON response
-            console.log('Success:', result);
-            const td = event.srcElement.closest('td')
-            console.log("Nearest Td:",td)   
-            td.innerHTML = getStatusDisplay(statusCode)
+            console.log('Success:', result); // Log success message
+            const td = event.srcElement.closest('td'); // Get the closest <td> element
+            td.innerHTML = getStatusDisplay(statusCode); // Update the status display
 
-            sendMessage(
-                `${monthName} ${day}, ${year}`,
-                `${timeName}`,
-                contact,
-                statusCode
-            )
+            // Send an SMS notification
+            sendMessage(`${monthName} ${day}, ${year}`, timeName, contact, statusCode);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error:', error); // Log any errors encountered
         }
-    
+    };
 
-    }
-
-
+    /**
+    * Update pagination display based on the current page and total appointments.
+    */
     const setPaginationNumber = async () => {
-        // statement info
-        const statement = document.getElementById('dataTable_info')
-        statement.innerHTML = ""
-        let finalLength = itemsPerPage * currentPage
-        finalLength = finalLength >= appointments.length ? appointments.length : finalLength
-        statement.innerHTML = `Showing ${currentPage} to ${finalLength} of ${appointments.length}`
+        const statement = document.getElementById('dataTable_info'); // Reference to the pagination info element
+        statement.innerHTML = ""; // Clear previous info
+        let finalLength = itemsPerPage * currentPage; // Calculate the final item index to display
+        finalLength = finalLength >= appointments.length ? appointments.length : finalLength; // Ensure it does not exceed total appointments
+        statement.innerHTML = `Showing ${currentPage} to ${finalLength} of ${appointments.length}`; // Display current pagination info
 
-        // pagination buttons
-        const paginationContainer = document.getElementById('pagination')
-        console.log(paginationContainer)
-        paginationContainer.innerHTML = ""
-        const pageCountDisplayedMax = 3
-        const leftCountAllowance = 3
+        const paginationContainer = document.getElementById('pagination'); // Reference to pagination container
+        paginationContainer.innerHTML = ""; // Clear previous pagination buttons
+        const pageCountDisplayedMax = 3; // Maximum number of page buttons to display
+        const leftCountAllowance = 3; // Allowance for pages to the left of the current page
+
+        // Calculate the number of left pages to display
         const leftAllowance = (() => {
-            let tempRes = leftCountAllowance
-            if (currentPage - tempRes <= 0){
-                tempRes = Math.abs(1 - currentPage)
+            let tempRes = leftCountAllowance; // Start with the left count allowance
+            if (currentPage - tempRes <= 0) {
+                tempRes = Math.abs(1 - currentPage); // Adjust if current page is near the start
             }
-            return tempRes
-        
-        })()
+            return tempRes; // Return the calculated allowance
+        })();
 
-        const rightAllowance = Math.floor((pageCountDisplayedMax/2))
-        let codeTop = ''
-        let codeBottom = ''
-        if (currentPage == 1){
-            codeTop = `<li class="page-item disabled"><a class="page-link" aria-label="Previous"><span aria-hidden="true">«</span></a></li>`
-        }else{
-            codeTop = `<li class="page-item" onclick="setToPage(${currentPage-1})"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">«</span></a></li>`
+        const rightAllowance = Math.floor((pageCountDisplayedMax / 2)); // Allowance for pages to the right
+        let codeTop = ''; // HTML for the previous button
+        let codeBottom = ''; // HTML for the next button
+
+        // Set HTML for the previous button based on current page
+        if (currentPage === 1) {
+            codeTop = `<li class="page-item disabled"><a class="page-link" aria-label="Previous"><span aria-hidden="true">«</span></a></li>`;
+        } else {
+            codeTop = `<li class="page-item" onclick="setToPage(${currentPage - 1})"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">«</span></a></li>`;
         }
 
-        if (currentPage >= (appointments.length/itemsPerPage)){
-            codeBottom = `<li class="page-item disabled"><a class="page-link" aria-label="Previous"><span aria-hidden="true">»</span></a></li>`
-        }else{
-            codeBottom = `<li class="page-item" onclick="setToPage(${currentPage+1})"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>`
+        // Set HTML for the next button based on current page
+        if (currentPage >= (appointments.length / itemsPerPage)) {
+            codeBottom = `<li class="page-item disabled"><a class="page-link" aria-label="Previous"><span aria-hidden="true">»</span></a></li>`;
+        } else {
+            codeBottom = `<li class="page-item" onclick="setToPage(${currentPage + 1})"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>`;
         }
 
-        
-       
-        let codeAll = ''
-        
-        console.log(currentPage, currentPage+pageCountDisplayedMax)
-        console.log(appointments)
-        
-        for (let i=currentPage - leftAllowance; i < currentPage+pageCountDisplayedMax; i++){
-            if (i >=(appointments.length/itemsPerPage) + 1){
-                console.log("pagination display end",i)
-                continue
+        let codeAll = ''; // HTML for all page buttons
+        // Loop to create page buttons based on current page and allowances
+        for (let i = currentPage - leftAllowance; i < currentPage + pageCountDisplayedMax; i++) {
+            if (i >= (appointments.length / itemsPerPage) + 1) { // Skip if beyond total pages
+                continue;
             }
-            if (i == currentPage){
-                codeAll = codeAll + `<li class="page-item active" onclick="setToPage(${i})"><a class="page-link" href="#">${i}</a></li>`
-            }else{
-                codeAll = codeAll + ` <li class="page-item" onclick="setToPage(${i})"><a class="page-link" href="#">${i}</a></li>`
+            // Create HTML for the current page button
+            if (i === currentPage) {
+                codeAll += `<li class="page-item active" onclick="setToPage(${i})"><a class="page-link" href="#">${i}</a></li>`;
+            } else {
+                codeAll += `<li class="page-item" onclick="setToPage(${i})"><a class="page-link" href="#">${i}</a></li>`;
             }
-            
         }
-        console.log("COADELAL", codeAll)
-        codeAll = codeTop + codeAll + codeBottom
-        paginationContainer.innerHTML = codeAll
+        
+        // Update the pagination container with all constructed HTML
+        paginationContainer.innerHTML = codeTop + codeAll + codeBottom;
+    };
 
-
-    }
-
-
-
+    /**
+    * Render the current page of appointments in the table.
+    */
     const renderPage = async () => {
-        tableBody.innerHTML = ""
-        const startNum = itemsPerPage * (currentPage - 1)
-        let finalNum = itemsPerPage * currentPage
-            
-        let codeAll = ''
-        console.log('StartNum:', startNum, 'FInalNum:',finalNum)
-        console.log(appointments)
-        for (let i=startNum; i<finalNum; i++){
-            if (appointments.length <= i){
-                break
+        tableBody.innerHTML = ""; // Clear existing table content
+        const startNum = itemsPerPage * (currentPage - 1); // Calculate starting index for current page
+        let finalNum = itemsPerPage * currentPage; // Calculate ending index for current page
+        
+        let codeAll = ''; // HTML for all appointment rows
+        for (let i = startNum; i < finalNum; i++) {
+            if (appointments.length <= i) { // Break if exceeding total appointments
+                break;
             }
-            const appointmentSpec = appointments[i]
-            const month = appointmentSpec.Appointment_Month
-            const year = appointmentSpec.Appointment_Year
-            const day = appointmentSpec.Appointment_Day
-            const status = appointmentSpec.Appointment_Confirmed
-            const time = appointmentSpec.Appointment_Time
-            const appId = appointmentSpec.Appointment_ID
-            console.log("APPID", appId)
-            const patientId = appointmentSpec.Patient_ID
-            const monthName = monthNamesAll[appointmentSpec.Appointment_Month - 1]
-            const combinedDate = `${monthName} ${day},${year}`
-            const timeName = getTimeName(time)
-            let patientInfo = await getPatientInfo(patientId)
-            patientInfo = patientInfo[0] // looking only for single result
-            const contact = patientInfo? patientInfo.PatientContactNo : undefined
-            const firstName = patientInfo? patientInfo.PatientName  : undefined
-            const lastName = patientInfo ? patientInfo.PatientLastName : undefined 
-            console.log("PatientInfo", patientInfo)
-            
-            const getStatusDisplay = (statusCode) =>{ 
-                if (statusCode==0){   
-                    return `<button class="btn btn-primary viewer" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="setAppointmentStatus(event, 1)">Confirm</button>
-                    <button class="btn btn-danger" data-appId="${appId}" data-contact="${contact}  data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}"  data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" onclick="setAppointmentStatus(event, 2)" >Reject</button>`
-                }
-                const color = ['black','green','red']
-                const name = ['Pending','Confirmed','Rejected']
-                return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`
-            }
+            const appointmentSpec = appointments[i]; // Get appointment data for current index
+            const month = appointmentSpec.Appointment_Month; // Extract month
+            const year = appointmentSpec.Appointment_Year; // Extract year
+            const day = appointmentSpec.Appointment_Day; // Extract day
+            const status = appointmentSpec.Appointment_Confirmed; // Extract status
+            const time = appointmentSpec.Appointment_Time; // Extract time
+            const appId = appointmentSpec.Appointment_ID; // Extract appointment ID
+            const patientId = appointmentSpec.Patient_ID; // Extract patient ID
+            const monthName = monthNamesAll[appointmentSpec.Appointment_Month - 1]; // Get month name from array
+            const combinedDate = `${monthName} ${day}, ${year}`; // Format date for display
+            const timeName = getTimeName(time); // Get formatted time name
 
+            // Fetch patient info and ensure only single result is used
+            let patientInfo = await getPatientInfo(patientId);
+            patientInfo = patientInfo[0]; // Look only for single result
+            const contact = patientInfo ? patientInfo.PatientContactNo : undefined; // Get contact info
+            const firstName = patientInfo ? patientInfo.PatientName : undefined; // Get first name
+            const lastName = patientInfo ? patientInfo.PatientLastName : undefined; // Get last name
+
+            // Function to return HTML for displaying appointment status and action buttons
+            const getStatusDisplay = (statusCode) => {
+                if (statusCode == 0) { // If status is pending
+                    return `<button class="btn btn-primary viewer" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="setAppointmentStatus(event, 1)">Confirm</button>
+                    <button class="btn btn-danger" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" onclick="setAppointmentStatus(event, 2)">Reject</button>`;
+                }
+                const color = ['black', 'green', 'red']; // Colors for status display
+                const name = ['Pending', 'Confirmed', 'Rejected']; // Status names
+                return `<p style="color: ${color[statusCode]}">${name[statusCode]}</p>`; // Return formatted HTML
+            };
+
+            // Construct the HTML for a single appointment row
             const code = `<tr>
                 <td>${getStatusDisplay(status)}</td>
                 <td>${combinedDate} ${timeName}</td>
                 <td>${firstName}</td>
                 <td>${lastName}</td>
-                <td><button data-month="${month}" data-year="${year}"  data-appointmentId="${appId}" onclick="onClickShowCalendar(event, ${contact})" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
+                <td><button data-month="${month}" data-year="${year}" data-appointmentId="${appId}" onclick="onClickShowCalendar(event, ${contact})" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
                 <td><button class="btn btn-primary viewer" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
-                <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)" >Delete</button></td>
-            </tr>`
-            codeAll = codeAll + code
-
-        tableBody.innerHTML = codeAll // sets codeAll string as table body's inner html
-        //console.log(document.getElementsByClassName('resched'))
-
-       
+                <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)">Delete</button></td>
+            </tr>`;
+            
+            codeAll += code; // Accumulate appointment rows
         }
-        console.log(btn)
-        const btnUpdated = document.getElementsByClassName('resched') // reupdate button elements for calendar selection
-        setCalendarButtonOpeners(btnUpdated)
-        console.log(btn)
-    }
+        tableBody.innerHTML = codeAll; // Set the table body with all constructed rows
 
+        const btnUpdated = document.getElementsByClassName('resched'); // Re-update button elements for calendar selection
+        setCalendarButtonOpeners(btnUpdated); // Initialize calendar button functionality
+    };
+
+    /**
+    * Fetch and set the appointments data for rendering.
+    */
     const setAppointmentsData = async () => {
-        sessionData = await getSession() // get session data
-        appointments = await getAppointmentsFilter({}) // no filter, get ALL appointments
-        console.log("DATA", appointments)
+        sessionData = await getSession(); // Get session data
+        appointments = await getAppointmentsFilter({}); // Fetch all appointments (no filter)
+        console.log("DATA", appointments); // Log fetched data
         appointments.sort((a, b) => {
             // Create date objects for comparison, using only the hour
             const dateA = new Date(a.Appointment_Year, a.Appointment_Month - 1, a.Appointment_Day, a.Appointment_Time);
             const dateB = new Date(b.Appointment_Year, b.Appointment_Month - 1, b.Appointment_Day, b.Appointment_Time);
-            let diff =  dateB - dateA; // Sort by date and hour
-            return diff
+            let diff = dateB - dateA; // Sort by date and hour (latest first)
+            return diff;
         });
-    }
+    };
 
+    /**
+    * Render the initial appointments and setup components.
+    */
     const renderAppointmentsInitial = async () => {
-        await setAppointmentsData()
-        console.log("COMING", appointments)
-        await renderPage()
-         // Initiate Component Only After table generation is done, to get all elements having resched class
+        await setAppointmentsData(); // Fetch and set appointments data
+        console.log("COMING", appointments); // Log the fetched appointments
+        await renderPage(); // Render the appointments on the initial page
+        
+        // Initiate Calendar Selection after table generation is done
         CalendarSelection(
-            document.getElementById('sched-calendar-insert-area'), //element where calendar is inserted
-            document.getElementsByClassName('resched'), // elements that can show the calendar
-            '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.', // warning msg at bottom
-            'Reschedule', // Button Label
-            'sched-patient', // purpose
-         )
-        setPaginationNumber()
+            document.getElementById('sched-calendar-insert-area'), // Element where calendar is inserted
+            document.getElementsByClassName('resched'), // Elements that can show the calendar
+            '* This will reset the appointment status to <b>pending</b> and remove the previous appointment date.', // Warning message
+            'Reschedule', // Button label
+            'sched-patient' // Purpose of the calendar
+        );
+        
+        setPaginationNumber(); // Update pagination display
+    };
 
-    }
+    // Initial call to render appointments when the script loads
+    renderAppointmentsInitial();
 
-
-    renderAppointmentsInitial() 
+    // Initialize the info modal for appointment details
     InfoModal(
-        document.getElementById('info-modal-insert-area'),
-        document.getElementsByClassName('viewer')
-        ) 
-    window.showModal = showModal // make showModal function accessable/runnable from html
+        document.getElementById('info-modal-insert-area'), // Element for modal insertion
+        document.getElementsByClassName('viewer') // Elements that can show appointment info
+    );
+
+    // Expose showModal function globally for use in HTML
+    window.showModal = showModal;
+
     
 </script>
 
