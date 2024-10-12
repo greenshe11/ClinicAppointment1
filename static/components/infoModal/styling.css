@@ -15,6 +15,12 @@
     max-width: 10px;
 }
 
+.im-details {
+    width: 100%;
+    overflow-y: scroll;
+    height: 300px;
+}
+
 .im-close-btn {
     margin-bottom: 10px;
     text-align:end;

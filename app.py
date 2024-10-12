@@ -12,6 +12,7 @@ from api.appointments import appointment_routes
 from api.diagnosis import diagnosis_routes
 from api.sms import sms_routes
 from api.session import session_routes
+from api.symptoms import symptoms_routes
 
 # utils
 from utilities import util_functions as util
@@ -181,6 +182,8 @@ class App:
         diagnosis_routes(self, 'tbldiagnosis')
         sms_routes(self, 'tblsmsnotif')
         session_routes(self)
+        symptoms_routes(self, 'tblsymptoms')
+        
         
     def run(self):
         """Run the Flask application."""

@@ -66,6 +66,7 @@ def get_query(cursor, table_name, data, method, filter_names=[],logical_op="AND"
         values = filter_values # delet method doesnt use values. for this case, filter values will be the only values passed.
 
     values = tuple(values)
+
     return Query(statement, values)
 
 def pull_from_db(self, data, table_name, jsonify_return=True, logical_op="AND"):
@@ -77,11 +78,10 @@ def pull_from_db(self, data, table_name, jsonify_return=True, logical_op="AND"):
                             data=data,
                             method='get',
                             logical_op=logical_op)
-        
+        print(query.statement, query.values)
         cursor.execute(query.statement, query.values)
         
         rows = cursor.fetchall()
-
         column_names = [desc[0] for desc in cursor.description]
         result = []
         for row in rows:
@@ -106,9 +106,12 @@ def push_to_db(self, data, table_name, success_response = None, jsonify_return=T
 
         # Insert new user into the database
         cursor.execute(query.statement, query.values)
+        row = cursor.lastrowid
+
         conn.commit()
         if jsonify_return == False:
             return success_response
+        success_response['id'] = row
         return jsonify(success_response), 201
    
     except Exception as e:

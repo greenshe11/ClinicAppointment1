@@ -1,7 +1,8 @@
 
 
 import { getAppointmentsFilter, months, getTimeName} from "/static/components/calendarSelection/script.js";
-
+import { getSymptomsFromDb } from "/static/components/symptomsSelection/script.js"
+import { createRecommendationSent, getSymptomsFromCodeArray} from "/static/pageScripts/utils.js";
 // GLOBALS
 let btn = null
 let dialogChat = null
@@ -24,8 +25,19 @@ export async function showModal(event){
     const userId = event.srcElement.getAttribute('data-userId')
     const time = event.srcElement.getAttribute('data-time')
     const status = event.srcElement.getAttribute('data-status')
+    const appointmentId = event.srcElement.getAttribute('data-appointmentId')
     const userInfo = await getUserData(userId)
-    
+    const symptomData = await getSymptomsFromDb(appointmentId)
+    const symptomCodes = []
+    for (let i=0; i<symptomData.length; i++){
+        symptomCodes.push(symptomData[i].Symptoms_Code)
+    }
+    const symptomNames = getSymptomsFromCodeArray(symptomCodes)
+    console.log(symptomNames)
+    const symptomResponse = createRecommendationSent(symptomNames)
+    console.log(symptomResponse)
+    console.log(symptomCodes)
+    console.log('symptom_CODES', symptomCodes)
     console.log("USER INFO", userInfo)
     const getStatusDisplay = (statusCode) =>{ 
         const color = ['black','green','red']
@@ -40,7 +52,7 @@ export async function showModal(event){
     document.getElementById('im-sched-date').innerHTML = `${months[month-1]} ${day}, ${year}`
     document.getElementById('im-time').innerHTML = getTimeName(time)
     document.getElementById('im-status').innerHTML = getStatusDisplay(status)
-    
+    document.getElementById('im-sched-response').innerHTML = symptomResponse
     
 
     
