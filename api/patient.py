@@ -43,7 +43,8 @@ def patient_routes(self, table_name):
 
        
         arguments = request.args.to_dict()
-        # having parameter: "for", will give special processes
+
+        # having parameter: "for", will give special cases
         if "for" in arguments.keys():
             if arguments['for'] == 'registration':
                 # For security purpose, encrypts password sent to database
@@ -54,7 +55,7 @@ def patient_routes(self, table_name):
                                                  logical_op="OR")
                 print(duplicates)
                 if len(duplicates) > 0:
-                    return jsonify({"customE_rror": "Contact No. or Email is in use!"}), 200
+                    return jsonify({"customError": "Contact No. or Email is in use!"}), 200
         
             if arguments['for'] == 'login':
                 # retrieves record from database in patient table having the specified patient email

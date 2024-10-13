@@ -145,6 +145,9 @@
     * @returns {Promise<void>}
     */
     window.deleteAppointment = async (event) => {
+        if (!(confirm("Are you sure you want to cancel this appointment?\nThis action is irreversible."))) {
+            return
+        }
         const id = event.srcElement.getAttribute('data-appointmentId'); // Get the appointment ID
         await deleteAppointment(id); // Delete the appointment from the database
         await deleteSymptomsFromDb(id); // Delete related symptoms from the database

@@ -161,6 +161,9 @@
     * @param {Event} event - The click event triggering the deletion.
     */
     window.deleteAppointment = async (event) => {
+        if (!(confirm("Are you sure you want to delete this appointment?\nThis will not alert the user and this action is irreversible."))) {
+            return
+        }
         const id = event.srcElement.getAttribute('data-appointmentId'); // Get appointment ID from data attribute
         await deleteAppointment(id); // Delete the appointment
         await deleteSymptomsFromDb(id); // Delete associated symptoms
