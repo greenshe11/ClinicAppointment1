@@ -296,7 +296,7 @@ def user_is_staff():
 
 def sms_confirmed(date, time, contact='639604203044', *args, **kwargs):
     print("CONFIRMATION SMS SENT", date, time, contact)
-    conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
+    conn = http.client.HTTPSConnection("1gg4gx.api.infobip.com")
     payload = json.dumps({
         "messages": [
             {
@@ -307,7 +307,7 @@ def sms_confirmed(date, time, contact='639604203044', *args, **kwargs):
         ]
     })
     headers = {
-        'Authorization': 'App d337d5c72769d3658747cc33538de248-11a8cef2-5285-4094-b5bb-4a455dca1032',
+        'Authorization': 'App 36a933f0d09bfbc8cca4c805fe1fce42-83bbb717-3d0e-4512-9108-2610088ff4f5',
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
@@ -320,7 +320,7 @@ def sms_confirmed(date, time, contact='639604203044', *args, **kwargs):
 
 def sms_reject(contact='639604203044', *args, **kwargs):
     print("REJECT SMS SENT", contact)
-    conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
+    conn = http.client.HTTPSConnection("1gg4gx.api.infobip.com")
     payload = json.dumps({
         "messages": [
             {
@@ -331,7 +331,7 @@ def sms_reject(contact='639604203044', *args, **kwargs):
         ]
     })
     headers = {
-        'Authorization': 'App d337d5c72769d3658747cc33538de248-11a8cef2-5285-4094-b5bb-4a455dca1032',
+        'Authorization': 'App 36a933f0d09bfbc8cca4c805fe1fce42-83bbb717-3d0e-4512-9108-2610088ff4f5',
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
@@ -344,7 +344,7 @@ def sms_reject(contact='639604203044', *args, **kwargs):
     
 def sms_resched(date, time, contact='639604203044', *args, **kwargs):
     print("Rescheduling SMS SENT", date, time, contact)
-    conn = http.client.HTTPSConnection("z333k3.api.infobip.com")
+    conn = http.client.HTTPSConnection("1gg4gx.api.infobip.com")
     payload = json.dumps({
         "messages": [
             {
@@ -355,7 +355,7 @@ def sms_resched(date, time, contact='639604203044', *args, **kwargs):
         ]
     })
     headers = {
-        'Authorization': 'App d337d5c72769d3658747cc33538de248-11a8cef2-5285-4094-b5bb-4a455dca1032',
+        'Authorization': 'App 36a933f0d09bfbc8cca4c805fe1fce42-83bbb717-3d0e-4512-9108-2610088ff4f5',
         'Content-Type': 'application/json',
         'Accept': 'application/json'
     }
