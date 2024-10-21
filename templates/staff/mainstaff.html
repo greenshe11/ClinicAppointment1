@@ -343,8 +343,8 @@
             // Function to return HTML for displaying appointment status and action buttons
             const getStatusDisplay = (statusCode) => {
                 if (statusCode == 0) { // If status is pending
-                    return `<button class="btn btn-primary viewer" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="setAppointmentStatus(event, 1)">Confirm</button>
-                    <button class="btn btn-danger" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" onclick="setAppointmentStatus(event, 2)">Reject</button>`;
+                    return `<button class="btn btn-primary viewer" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: green" onclick="setAppointmentStatus(event, 1)">Confirm</button>`
+                    //<button class="btn btn-danger" data-appId="${appId}" data-contact="${contact}" data-appointmentId="${appId}" data-timeName="${timeName}" data-monthName="${monthName}" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" onclick="setAppointmentStatus(event, 2)">Reject</button>`;
                 }
                 const color = ['black', 'green', 'red']; // Colors for status display
                 const name = ['Pending', 'Confirmed', 'Rejected']; // Status names

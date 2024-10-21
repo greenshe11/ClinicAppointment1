@@ -360,5 +360,4 @@ export const sendMessage = async (date, time, contact, statusCode) => {
     } catch (error) {
         console.error('Error:', error);
     }
-
 }
