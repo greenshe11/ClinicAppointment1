@@ -339,6 +339,7 @@ export const getCodesFromSymptomsArray = (symptoms) => {
     return temp
 }
 
+/*
 export const sendMessage = async (date, time, contact, statusCode) => {
     const url = '/api/sms'
     const data = {date, time, contact, statusCode}
@@ -360,4 +361,4 @@ export const sendMessage = async (date, time, contact, statusCode) => {
     } catch (error) {
         console.error('Error:', error);
     }
-}
+}*/

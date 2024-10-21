@@ -17,6 +17,6 @@ def sms_routes(self, table_name):
             3: sms_resched
         }
         print("SENDING SMS", data, data['statusCode'])
-        purposes[data['statusCode']](date=data['date'], time=data['time'])
+        purposes[data['statusCode']](date=data['date'], time=data['time'], contact=data['contact'])
     
         return jsonify({'success': True})

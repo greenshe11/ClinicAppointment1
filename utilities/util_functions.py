@@ -294,7 +294,7 @@ def user_is_staff():
     return get_session('isStaff')
 
 
-def sms_confirmed(date, time, contact='639604203044', *args, **kwargs):
+def sms_confirmed(date, time, contact, *args, **kwargs):
     print("CONFIRMATION SMS SENT", date, time, contact)
     conn = http.client.HTTPSConnection("1gg4gx.api.infobip.com")
     payload = json.dumps({
@@ -318,7 +318,7 @@ def sms_confirmed(date, time, contact='639604203044', *args, **kwargs):
     print(data)
     return True
 
-def sms_reject(contact='639604203044', *args, **kwargs):
+def sms_reject(contact, *args, **kwargs):
     print("REJECT SMS SENT", contact)
     conn = http.client.HTTPSConnection("1gg4gx.api.infobip.com")
     payload = json.dumps({
@@ -342,7 +342,7 @@ def sms_reject(contact='639604203044', *args, **kwargs):
     print(data)
     return True
     
-def sms_resched(date, time, contact='639604203044', *args, **kwargs):
+def sms_resched(date, time, contact, *args, **kwargs):
     print("Rescheduling SMS SENT", date, time, contact)
     conn = http.client.HTTPSConnection("1gg4gx.api.infobip.com")
     payload = json.dumps({
