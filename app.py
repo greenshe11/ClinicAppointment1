@@ -67,7 +67,7 @@ class App:
                 print("NO USER LOGGED IN")
                 return redirect('/home')
             try:
-                return render_template('login.html')
+                return render_template('index.html')
             except Exception as e:
                 return f"Error: {e}", 500
 
