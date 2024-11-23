@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `dbchatbotclinicsys` /*!40100 DEFAULT CHARACTER SET latin1 */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `dbchatbotclinicsys`;
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: dbchatbotclinicsys
@@ -31,10 +33,9 @@ CREATE TABLE `tblappointment` (
   `Appointment_Time` int NOT NULL,
   `Appointment_Year` int NOT NULL,
   `Appointment_Confirmed` int NOT NULL DEFAULT '0',
-  `Symptoms_ID` int DEFAULT NULL,
-  `Appointment_DiagnosisCode` int DEFAULT NULL,
+  `Appointment_Complaints` varchar(255) NOT NULL DEFAULT 'none',
   PRIMARY KEY (`Appointment_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -43,7 +44,7 @@ CREATE TABLE `tblappointment` (
 
 LOCK TABLES `tblappointment` WRITE;
 /*!40000 ALTER TABLE `tblappointment` DISABLE KEYS */;
-INSERT INTO `tblappointment` VALUES (2,1,1,12,100,11,2024,0,0,0),(3,2,2,2,10,8,2024,0,0,0),(4,3,3,2,10,9,2024,0,0,0),(5,41,4,2,10,10,2024,0,0,0),(6,41,5,2,10,11,2024,0,0,0),(7,41,6,2,10,1,2024,0,0,0),(8,41,7,2,10,2,2024,2,0,0),(9,41,8,2,10,3,2024,1,0,0),(10,9,9,2,10,4,2024,1,0,0),(11,41,0,1,10,1,2024,0,0,0),(12,41,0,1,10,8,2024,0,0,0),(13,41,0,30,9,8,2024,0,0,0),(14,41,0,30,9,9,2024,0,0,0),(15,41,0,3,10,8,2024,0,0,0),(16,41,0,30,9,10,2024,0,0,0),(17,41,0,30,9,11,2024,0,0,0),(18,41,0,30,9,11,2024,0,0,0),(19,41,0,30,9,11,2024,0,0,0),(20,41,0,30,9,1,2024,0,0,0),(21,41,0,30,9,1,2024,0,0,0),(22,41,0,1,10,9,2024,0,0,0),(23,41,0,1,10,10,2024,0,0,0);
+INSERT INTO `tblappointment` VALUES (70,41,0,10,12,8,2024,0,'none'),(72,41,0,14,10,9,2024,1,'none'),(73,41,0,14,10,10,2024,1,'none'),(74,41,0,24,10,8,2024,1,'none'),(76,41,0,22,11,8,2024,0,'none');
 /*!40000 ALTER TABLE `tblappointment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,9 +63,10 @@ CREATE TABLE `tblpatient` (
   `PatientPassword` varchar(100) NOT NULL,
   `PatientEmail` varchar(100) NOT NULL,
   `PatientContactNo` varchar(100) NOT NULL,
+  `PatientCategory` varchar(45) NOT NULL DEFAULT 'student',
   PRIMARY KEY (`Patient_ID`),
   UNIQUE KEY `PatientContactNo_UNIQUE` (`PatientContactNo`)
-) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,38 +75,8 @@ CREATE TABLE `tblpatient` (
 
 LOCK TABLES `tblpatient` WRITE;
 /*!40000 ALTER TABLE `tblpatient` DISABLE KEYS */;
-INSERT INTO `tblpatient` VALUES (41,NULL,'Luffy D.','Monkey','$2b$12$ZdKBlcy66yyKYuLjzOcxpud6fwc6x7A3yUCtcZ87Arqnz0sz.FYAW','email02@email','09313123');
+INSERT INTO `tblpatient` VALUES (41,NULL,'Luffy D.','Monkey','$2b$12$ZdKBlcy66yyKYuLjzOcxpud6fwc6x7A3yUCtcZ87Arqnz0sz.FYAW','email02@email','09313123','student'),(42,NULL,'hello','world','$2b$12$qkLOyXuguHa1Wt/dsUDTKunvyPFwOIL7XyWvO0f57/3PJRnABFOwa','','+639674688324','student'),(43,NULL,'eugene','dave','$2b$12$BzXZ6n74E63xB.OUyR0qjOb/mXyb4HUjXUGXvnM.72EuX6llkpn6W','eugene','639672312312','student'),(44,NULL,'eugene dave','tumagan','$2b$12$YsDeQpzpePPqx9rMbhnb9.RDoO7.e8R6ebuoIE6bsJIk19yj13mwy','dave','639513213123','student'),(45,NULL,'asda','asdasd','$2b$12$tXD6eE.if/43MeLaAbJfyezKAhgT2/XYMTT74bqV8RgKTh7G8VH1.','euge@gmail.com','6313123','student'),(46,NULL,'First Name','Last Name','$2b$12$k46QpslopdN0UvilOD/pYON4hkIuv2Wp/QtjSl46sq0Ea/UcWTUy.','email@email.com','639674688324','student');
 /*!40000 ALTER TABLE `tblpatient` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tblsmsnotif`
---
-
-DROP TABLE IF EXISTS `tblsmsnotif`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `tblsmsnotif` (
-  `Smsnotif_ID` int NOT NULL AUTO_INCREMENT,
-  `Patient_ID` int NOT NULL,
-  `PatientContactNo` varchar(100) NOT NULL,
-  `Smsnotif_Message` text,
-  `Smsnotif_Date` datetime NOT NULL,
-  PRIMARY KEY (`Smsnotif_ID`),
-  UNIQUE KEY `PatientCode` (`Patient_ID`),
-  UNIQUE KEY `PatientNo` (`PatientContactNo`),
-  CONSTRAINT `tblsmsnotif_Patient_ID_fk_1` FOREIGN KEY (`Patient_ID`) REFERENCES `tblpatient` (`Patient_ID`) ON UPDATE CASCADE,
-  CONSTRAINT `tblsmsnotif_PatientNo_fk_2` FOREIGN KEY (`PatientContactNo`) REFERENCES `tblpatient` (`PatientContactNo`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tblsmsnotif`
---
-
-LOCK TABLES `tblsmsnotif` WRITE;
-/*!40000 ALTER TABLE `tblsmsnotif` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tblsmsnotif` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -117,7 +89,7 @@ DROP TABLE IF EXISTS `tblstaff`;
 CREATE TABLE `tblstaff` (
   `staff_ID` int NOT NULL,
   `staffEmail` varchar(45) NOT NULL,
-  `staffPassword` varchar(45) NOT NULL,
+  `staffPassword` varchar(1080) NOT NULL,
   UNIQUE KEY `staffEmail_UNIQUE` (`staffEmail`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -128,7 +100,7 @@ CREATE TABLE `tblstaff` (
 
 LOCK TABLES `tblstaff` WRITE;
 /*!40000 ALTER TABLE `tblstaff` DISABLE KEYS */;
-INSERT INTO `tblstaff` VALUES (1,'staff@staff','password');
+INSERT INTO `tblstaff` VALUES (1,'staff@staff','staff');
 /*!40000 ALTER TABLE `tblstaff` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -140,11 +112,11 @@ DROP TABLE IF EXISTS `tblsymptoms`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tblsymptoms` (
-  `Symptoms_ID` int NOT NULL,
-  `Patient_ID` int NOT NULL,
-  `Symptoms_Name` varchar(45) NOT NULL,
+  `Symptoms_ID` int NOT NULL AUTO_INCREMENT,
+  `Symptoms_Code` varchar(255) NOT NULL,
+  `Appointment_ID` int NOT NULL,
   PRIMARY KEY (`Symptoms_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,6 +125,7 @@ CREATE TABLE `tblsymptoms` (
 
 LOCK TABLES `tblsymptoms` WRITE;
 /*!40000 ALTER TABLE `tblsymptoms` DISABLE KEYS */;
+INSERT INTO `tblsymptoms` VALUES (26,'a0',70),(27,'a20',70),(28,'o',70),(32,'o',72),(33,'b15',72),(34,'b9',72),(35,'o',73),(36,'a1',73),(37,'o',74),(38,'a1',74),(42,'a3',76),(43,'o',76),(44,'a0',76);
 /*!40000 ALTER TABLE `tblsymptoms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -211,4 +184,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-30 10:18:14
+-- Dump completed on 2024-11-23 22:39:40
