@@ -1,14 +1,15 @@
 <div id="im-dimmer"></div>
-    
-    <div id="im-modal" class="im-modal" style="display: none">
-        <div class="dr-body" id="im-body">
-                <div class="im-close-btn" id="im-close-btn" onclick="onClickCloseCal()">x</div>
+
+<div id="im-modal" class="im-modal" style="display: none">
+    <div class="dr-body" id="im-body">
+            <div class="im-close-btn" id="im-close-btn" onclick="onClickCloseCal()">x</div>
+            <div class="im-scrollview">
                 <p class="im-info-title">User Information</p>
                 <p><b>First Name: </b><span id="im-first-name"></span></p>
                 <p><b>Last Name: </b><span id="im-last-name"></span></p>
                 <p><b>Email: </b><span id="im-email"></span></p>
                 <p><b>Contact No: </b><span id="im-contact-no"></span></p>
-
+                <p><b>Category: </b><span id="im-category"></span></p>
                 <p class="im-info-title">Requested Appointment</p>
                 <div class="im-details">
 
@@ -16,8 +17,9 @@
                     <p><b>Schedule Time: </b><span id="im-time"></span></p>
                     <p><b>Status: </b><span id="im-status"></span></p>
                     <p><b>Recommendation: </b><span id="im-sched-response"></span></p>
-            
+                    <p><b>Additional Complaints: </b><span id="im-sched-complaints"></span></p>
                 </div>
-        </div>
-            <!-- Include the JavaScript file for the calendar functionality -->
+            </div>
     </div>
+        <!-- Include the JavaScript file for the calendar functionality -->
+</div>

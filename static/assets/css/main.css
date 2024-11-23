@@ -64,7 +64,7 @@
 body {
   color: var(--default-color);
   background: linear-gradient(to right, #00008b, #87CEEB); ;
-  font-family: var(--default-font);
+
 }
 
 a {

@@ -12,7 +12,7 @@
 
 .symptom-tag {
     display: inline-block;
-    background-color: blue;
+    background-color: #257ECC;
     padding-left: 10px;
     padding-right: 10px;
     margin-top: 5px;
@@ -37,7 +37,7 @@
 }
 
 .symptom-tags-tip{
-    color: gray;
+    color: black;
 }
 
 #symptom-tags-container{

@@ -25,8 +25,11 @@ export async function showModal(event){
     const userId = event.srcElement.getAttribute('data-userId')
     const time = event.srcElement.getAttribute('data-time')
     const status = event.srcElement.getAttribute('data-status')
+    
     const appointmentId = event.srcElement.getAttribute('data-appointmentId')
+    const appointmentData = (await getAppointmentsFilter({Appointment_ID: appointmentId}))[0]
     const userInfo = await getUserData(userId)
+   
     const symptomData = await getSymptomsFromDb(appointmentId)
     const symptomCodes = []
     for (let i=0; i<symptomData.length; i++){
@@ -53,7 +56,9 @@ export async function showModal(event){
     document.getElementById('im-time').innerHTML = getTimeName(time)
     document.getElementById('im-status').innerHTML = getStatusDisplay(status)
     document.getElementById('im-sched-response').innerHTML = symptomResponse
-    
+    document.getElementById('im-category').innerHTML = userInfo[0].PatientCategory
+    document.getElementById('im-sched-complaints').innerHTML = appointmentData.Appointment_Complaints
+   
 
     
 
@@ -62,8 +67,8 @@ export async function showModal(event){
     calendar.classList.add('active');
     
     const dimmer = document.getElementById('im-dimmer')
-    calendar.style.display = "block"
-    dimmer.style.display = "block"
+    calendar.style.display = "flex"
+    dimmer.style.display = "flex"
     
     document.addEventListener('click', outsideClickListener);
 
@@ -95,11 +100,12 @@ function onClickCloseCal(){
  */
 function outsideClickListener(event) {
     const calendar = document.getElementById('im-modal');
-    const modalContent = document.querySelector('.dr-body');
+    const modalContent = document.querySelector('#im-body');
     //const btn = document.getElementById('im-modal-btn')
    
     // Close the modal if click is outside the modal content
-    if (calendar.style.display === "block" && !calendar.contains(event.target)) {
+    console.log('target',modalContent.contains(event.target))
+    if (calendar.style.display === "flex" && !modalContent.contains(event.target)) {
         let proceed = true
         for (let i=0; i<btn.length; i++){
             console.log(i)
