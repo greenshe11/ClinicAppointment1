@@ -11,16 +11,67 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="/static/assets/css/chatbotpage.css">
+    <link rel="icon" href="{{ url_for('static',filename='assets/img/favicon.png')}}">
+    <link rel="icon" href="{{ url_for('static',filename='assets/img/apple-touch-icon.png')}}">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+         rel="stylesheet">
+
+    <!--Veondor CSS Files-->
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/bootstrap-icons/bootstrap-icons.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/aos/aos.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/fontawesome-free/css/all.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/glightbox/css/glightbox.min.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/swiper/swiper-bundle.min.css')}}">
+
+
+
+
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/main.css')}}">
 </head>
 
 <body>
     <!--Start-->
       <!--DONT DELETE: THIS AREA IS WHERE THE SIDE BAR WILL BE INSERTED-->
-    <div id="home-sidebar-insert-area"></div>
+      <header id="header" class="header sticky-top">
 
-    <div id="sched-calendar-insert-area"></div>
 
-    <div id="info-modal-insert-area"></div>
+        <!-- Navigations -->
+        <div class="branding d-flex align-items-center">
+             <div class="container position-relative d-flex align-items-center justify-content-between">
+                  <a href="index.html" class="logo d-flex align-items-center me-auto">
+                       <h1 class="sitename">ISAT-U ClinicHub</h1>
+                  </a>
+
+                  <!--Navigation Menu-->
+                  <nav id="navmenu" class="navmenu">
+                       <ul>
+                            <li><a href="/" class="">Home</a></li>
+                            <li><a href="#" class="active">Schedules</a></li>
+                            <li><a href="#" class="">Account</a></li>
+                       </ul>
+                       <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                  </nav>
+
+                
+             </div>
+
+        </div>
+   </header>
+
+    <div id="sched-calendar-insert-area" style="display: flex; justify-content: center; align-items:center; height: 100%; width: 100%; "></div>
+   
+    
+    <div id="info-modal-insert-area" style="display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%"></div>
       
     <div id="home-container" style="margin-top: 50px;">
         <div id="home" class="container-fluid" >
@@ -60,9 +111,10 @@
                                 <th>Datetime</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+                                <th>Info</th>
+                                <th>Delete</th>
+                                <th>Reschedule</th>
+                                
                             </tr>
                         </thead>
                         <tbody id="sched-table-body">
@@ -109,6 +161,7 @@
 
     import { deleteSymptomsFromDb } from "/static/components/symptomsSelection/script.js";
     import { InfoModal, showModal } from "/static/components/infoModal/script.js";
+    import { getDaysUntilAppointment } from "/static/pageScripts/calendar.js"
 
     /**
     * Global Constants and Variables
@@ -352,17 +405,29 @@
             };
 
             // Construct the HTML for a single appointment row
-            const code = `<tr>
-                <td>${getStatusDisplay(status)}</td>
+            let code = '<tr>' 
+           if ((getDaysUntilAppointment(month, year, day) > 0)){
+            code = code + `<td>${getStatusDisplay(status)}</td>`
+           }else{
+            code = code + '<td><i>date lapsed</i></td>'
+           }
+            code = code + `
+               
                 <td>${combinedDate} ${timeName}</td>
                 <td>${firstName}</td>
                 <td>${lastName}</td>
-                <td><button data-month="${month}" data-year="${year}" data-appointmentId="${appId}" onclick="onClickShowCalendar(event, ${contact})" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>
                 <td><button class="btn btn-primary viewer" data-userId="${patientId}" data-month="${month}" data-day="${day}" data-year="${year}" data-time="${time}" data-status="${status}" style="background-color: blue" onclick="showModal(event)">Info</button></td>
                 <td><button class="btn btn-danger" data-appointmentId="${appId}" onclick="deleteAppointment(event)">Delete</button></td>
-            </tr>`;
-            
+               
+                
+            `;
+            const reschedSnippet = getDaysUntilAppointment(month, year, day) > 0 ? `<td><button data-month="${month}" data-year="${year}" data-appointmentId="${appId}" onclick="onClickShowCalendar(event, ${contact})" class="btn btn-primary resched" style="background-color: blue">Reschedule</button></td>` : `<td><i>date lapsed</i></td>`
+            code = code + reschedSnippet
+            code = code + '</tr>'
             codeAll += code; // Accumulate appointment rows
+            console.log(code)
+            console.log('<tr>' +  (getDaysUntilAppointment(month, year, day) > 0)
+                )
         }
         tableBody.innerHTML = codeAll; // Set the table body with all constructed rows
 

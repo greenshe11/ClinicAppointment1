@@ -10,18 +10,70 @@
      <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/chatbotpage.css')}}">
      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+     
+     <!-- Favicons-->
+     <link rel="icon" href="{{ url_for('static',filename='assets/img/favicon.png')}}">
+     <link rel="icon" href="{{ url_for('static',filename='assets/img/apple-touch-icon.png')}}">
+
+     <!-- Fonts -->
+     <link href="https://fonts.googleapis.com" rel="preconnect">
+     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+          rel="stylesheet">
+
+     <!--Veondor CSS Files-->
+     <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/bootstrap/css/bootstrap.min.css')}}">
+     <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/bootstrap-icons/bootstrap-icons.css')}}">
+     <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/aos/aos.css')}}">
+     <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/fontawesome-free/css/all.min.css')}}">
+     <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/glightbox/css/glightbox.min.css')}}">
+     <link rel="stylesheet" href="{{ url_for('static',filename='assets/vendor/swiper/swiper-bundle.min.css')}}">
+
+
+
+
+     <!-- Main CSS File -->
+     <link rel="stylesheet" href="{{ url_for('static',filename='assets/css/main.css')}}">
+
 </head>
 <body>
      <!--DONT DELETE: THIS AREA IS WHERE THE SIDE BAR WILL BE INSERTED-->
-    <div id="home-sidebar-insert-area"></div>
 
-    <div id="home-calendar-insert-area"></div>
+     <header id="header" class="header sticky-top">
+
+
+          <!-- Navigations -->
+          <div class="branding d-flex align-items-center">
+               <div class="container position-relative d-flex align-items-center justify-content-between">
+                    <a href="index.html" class="logo d-flex align-items-center me-auto">
+                         <h1 class="sitename">ISAT-U ClinicHub</h1>
+                    </a>
+
+                    <!--Navigation Menu-->
+                    <nav id="navmenu" class="navmenu">
+                         <ul>
+                              <li><a href="/" class="">Home</a></li>
+                              <li><a href="/schedule" class="">Schedules</a></li>
+                              <li><a href="#" class="">Account</a></li>
+                              <li><a href="#" class="active">Make an Appointment</a></li>
+                         </ul>
+                         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                    </nav>
+
+                  
+               </div>
+
+          </div>
+     </header>
+    
+     <div id="home-calendar-insert-area" style="display: flex; justify-content: center; align-items:center; height: 100%; width: 100%; "></div>
+
 
      <div id="main-body">
           <div id="header">
                <ul class="nav nav-pills">
                     <li class="nav-item mx-2">
-                         <a class="nav-link tab" aria-current="page" href="/home"><</a>
+                         <a class="nav-link tab" aria-current="page" href="/"><</a>
                     </li>
                     <li class="nav-item mx-2">
                          <a class="nav-link tab" href="/chatbotpage">Symptoms</a>
@@ -30,7 +82,7 @@
                          <a class="nav-link tab" href="/chatbotpage/response">Response</a>
                     </li>
                     <li class="nav-item mx-2">
-                         <a class="nav-link active tab" style="background-color: blue; border-radius: 0px;" href="/chatbotpage/response/appointment">Appointment</a>
+                         <a class="nav-link active tab" style="background-color: white; color: #257ECC; border-radius: 0px;"  href="/chatbotpage/response/appointment">Appointment</a>
                     </li>
                     <li class="nav-item mx-2">
                          <a class="nav-link disabled tab" href="#">Summary</a>

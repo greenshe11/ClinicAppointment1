@@ -1,14 +1,4 @@
 
-.im-modal {
-    background-color: white;
-    padding: 10px;
-    position: fixed;
-    top: 10px;
-    left:-5px;
-    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
-    border-radius: 8px;
-    z-index: 1202;
-}
 
 .dr-date-picker {
     font-size: 10px;
@@ -17,8 +7,7 @@
 
 .im-details {
     width: 100%;
-    overflow-y: scroll;
-    height: 300px;
+    height: auto;
 }
 
 .im-close-btn {
@@ -27,6 +16,11 @@
     align-self: flex-end;
     font-weight: bold;
 
+}
+
+.im-scrollview{
+    overflow-y: scroll;
+    width: 100%;
 }
 
 .im-close-btn:hover {
@@ -74,11 +68,26 @@
 }
 .im-modal {
     /* Add initial state for animation */
-    transform: translateX(-100%);
     transition: transform 0.5s ease-in;
-    height: 600px;
-    width: 250px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0px;
+    z-index: 1201;
+}
+
+#im-body{
+    display: flex;
+    background-color: rgba(255,255,255,1);
+    flex-direction: column;
     padding: 20px;
+    width: 50%;
+    border-radius: 8px;
 }
 
 .im-modal.active {
@@ -95,5 +104,6 @@
 .im-info-title {
     color: white;
     text-align: center;
-    background-color: blue;
+    background-color: #257ECC;
 }
+

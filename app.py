@@ -56,7 +56,7 @@ class App:
         def home():
             """Go to login page by default"""
             try: 
-                return redirect('/login')
+                return render_template('index.html')
             except Exception as e:
                 return f"Error: {e}", 500
         
@@ -65,16 +65,16 @@ class App:
             """Go to Home if logged in else go to login.html"""
             if not util.no_user_logged_in():
                 print("NO USER LOGGED IN")
-                return redirect('/home')
+                return redirect('/')
             try:
-                return render_template('index.html')
+                return render_template('login.html')
             except Exception as e:
                 return f"Error: {e}", 500
 
         @self.app.route('/register')
         def patient_register():  # registration page
             if not util.no_user_logged_in(): # proceeds to home if logged in
-                return redirect('/home')
+                return redirect('/')
             try:
                 return render_template('register.html')
             except Exception as e:
@@ -83,7 +83,6 @@ class App:
         @self.app.route('/home')
         def patient_home():
             if util.no_user_logged_in(): #proceeds to login page if not logged in
-                
                 return redirect('/login')
             try:
                 if util.user_is_staff():
@@ -105,8 +104,8 @@ class App:
         
         @self.app.route('/chatbotpage')
         def chatbotpage():
-            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
-                return redirect('/home')
+            if util.user_is_staff() or util.no_user_logged_in(): #proceeds to schedule page if not logged in
+                return redirect('/login')
             try:
                 return render_template('patient/chatbotpage.html')
             except Exception as e:

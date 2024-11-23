@@ -436,7 +436,7 @@ function onChangeTime(event){
  * @description calculate the day between selected date and todays date
  * @returns 
  */
-function getDaysUntilAppointment() {
+export function getDaysUntilAppointment() {
     // Get today's date
     const selectedDate = selected
     const today = new Date();
@@ -635,6 +635,7 @@ cbpAppointment.initialRun = () => {
             console.log(key)
             selected[keys[key]] = session[keys[key]]
         }
+
         console.log(selected)
         const allowance = getDaysUntilAppointment()
         console.log(allowance)
