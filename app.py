@@ -95,6 +95,10 @@ class App:
             
         @self.app.route('/profile')
         def profile_user():
+            if util.no_user_logged_in():#proceeds to schedule page if not logged in
+                return redirect('/login')
+            if util.user_is_staff():
+                return render_template('staff/profileAdmin.html') 
             try:
                 return render_template('patient/profile.html')
             except Exception as e:
@@ -111,8 +115,10 @@ class App:
         
         @self.app.route('/chatbotpage')
         def chatbotpage():
-            if util.user_is_staff() or util.no_user_logged_in(): #proceeds to schedule page if not logged in
+            if util.no_user_logged_in(): #proceeds to schedule page if not logged in
                 return redirect('/login')
+            if util.user_is_staff():
+                return redirect('/profile')
             try:
                 return render_template('patient/chatbotpage.html')
             except Exception as e:
