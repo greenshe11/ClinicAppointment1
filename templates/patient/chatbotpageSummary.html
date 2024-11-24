@@ -100,10 +100,12 @@
                     </p>
                     <p><b>Initial Diagnosis: </b><span id="sum-response"></span>
                     </p>
+                    <p><b>Additional Complaints: </b><span id="sum-complaints"></span>
                     <hr>
                     <p><i><u>Check your info above</u> and press <b>Send Request</b> below. Once request is received by the staff, a confirmation SMS will be sent to your number. <br> You can navigate to <b>Menu  → Schedules</b> to see the status of all your appointments.
                     </i>
                     </p>
+                    
                </div>
           </div>
      </div>    
@@ -176,6 +178,8 @@
           const response = createRecommendationSent(sessionData.symptoms_selected) // Generate response for symptoms
           const userId = sessionData.userId
           const codes = getCodesFromSymptomsArray(symptoms) // Get symptom codes
+          const complaints = sessionData.complaints
+          console.log('complaints', complaints)
      
           // Render data to HTML elements
           document.getElementById('sum-datetime').innerHTML = `${monthName} ${day}, ${year}`
@@ -184,6 +188,7 @@
           document.getElementById('sum-contact').innerHTML = `${userData.PatientContactNo}`
           document.getElementById('sum-symptoms').innerHTML = `${symptomsString}`
           document.getElementById('sum-response').innerHTML = `${response}`
+          document.getElementById('sum-complaints').innerHTML = complaints
           
           // Function to navigate to home after checking appointment availability and creating a new appointment
           const toHome = async () => {
@@ -196,7 +201,7 @@
                }
           }
      
-          const newAppointment = await createAppointment(userId, day, month, time, year, 0) // Create a new appointment
+          const newAppointment = await createAppointment(userId, day, month, time, year, 0, complaints) // Create a new appointment
           for (let i = 0; i < codes.length; i++) {
                let newSymptoms = await createSymptoms(newAppointment.id, codes[i]) // Create symptoms for the appointment
                console.log(i, newAppointment.id, newSymptoms)

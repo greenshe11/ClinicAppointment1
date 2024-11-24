@@ -17,8 +17,17 @@ def session_routes(self):
     @self.app.route('/api/session/storeAppointmentDate', methods=['GET'])
     def set_session_appointment_date():  
         data = request.args.to_dict()
+        
         for id in ['month', 'day', 'year', 'time','timeName','monthName']:
             utils.set_session(f'appointment_{id}',data[id])
+        return jsonify({"success": True})
+    
+    @self.app.route('/api/session/add', methods=['GET'])
+    def add_data_to_session():  
+        data = request.args.to_dict()
+        
+        for id in data.keys():
+            utils.set_session(f'{id}',data[id])
         return jsonify({"success": True})
     
     @self.app.route('/api/session/storeSymptomsSelected', methods=['POST'])

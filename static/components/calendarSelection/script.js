@@ -8,7 +8,7 @@ import { sendMessage } from "/static/pageScripts/utils.js"
  * @param {Object} filter 
  * @returns 
  */
-export async function createAppointment(id, day, month, time, year, diagnosisCode){
+export async function createAppointment(id, day, month, time, year, diagnosisCode, complaints){
     const data = {
         Patient_ID: id, 
         Smsnotif_ID: 0,
@@ -18,7 +18,8 @@ export async function createAppointment(id, day, month, time, year, diagnosisCod
         Appointment_Year: year,
         Appointment_Confirmed: 0,
         Symptoms_ID: 0,
-        Appointment_DiagnosisCode: diagnosisCode
+        Appointment_DiagnosisCode: diagnosisCode,
+        Appointment_Complaints: complaints,
     }
     const response = await fetch('/api/appointments', {
         method: 'POST',
@@ -457,6 +458,7 @@ export function getDaysUntilAppointment() {
  * @description store session; 
  */
 export async function storeAppointmentSession() {
+    
     const res = await fetch(`/api/session/storeAppointmentDate?month=${selected.month}&day=${selected.day}&year=${selected.year}&time=${selected.time}&timeName=${selected.timeName}&monthName=${selected.monthName}`)
     const resJson = await res.json()
     console.log(resJson)

@@ -100,7 +100,7 @@
                <div class="cbp-dialog-footer">
                     <p id="cbp-bottom-line"></p>
                     Additional Complaints:
-                    <textarea style="width: 100%;"></textarea>
+                    <textarea style="width: 100%;" id="complaints"></textarea>
                </div>
           </div>
      </div>
@@ -181,10 +181,15 @@
 
      </script>
 
-     <script>
-          function toAppointment(){
+     <script type="module">
+          import {complaintsToSession} from '/static/pageScripts/session.js';
+               
+          window.toAppointment = () => {
+               complaintsToSession(document.getElementById('complaints').value)
+               
                window.location.href = '/chatbotpage/response/appointment'
           }
+
          
      </script>
 </body>
