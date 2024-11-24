@@ -67,7 +67,7 @@ class App:
                 print("NO USER LOGGED IN")
                 return redirect('/')
             try:
-                return render_template('login.html')
+                return render_template('login.html') #kas?
             except Exception as e:
                 return f"Error: {e}", 500
 
@@ -90,6 +90,13 @@ class App:
                     return redirect('/staff')
                 return render_template('patient/main.html')
                 
+            except Exception as e:
+                return f"Error: {e}", 500
+            
+        @self.app.route('/profile')
+        def profile_user():
+            try:
+                return render_template('patient/profile.html')
             except Exception as e:
                 return f"Error: {e}", 500
             
