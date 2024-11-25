@@ -156,6 +156,7 @@
           console.log(symptoms)
           
           // Display the recommendation based on the selected symptoms.
+          console.log('seleted',symptoms['symptoms_selected'])
           document.getElementById('cbp-recommendation').innerHTML = createRecommendationSent(symptoms['symptoms_selected'])
           
           // Get serious symptoms from the selected symptoms.
