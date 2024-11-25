@@ -240,7 +240,7 @@ class WordSuggestions{
     
     // Populate the suggestion list
     suggestionList.innerHTML = ''
-    symptomsSuggested.forEach(symptom => {
+    symptomsSuggested.forEach((symptom, index) => {
         const li = document.createElement('li');
         li.textContent = symptom;
         li.classList.add('dropdown-item')
@@ -257,7 +257,7 @@ class WordSuggestions{
   removeSymptomTag(parent, element){
     parent.removeChild(element)
     this.updateTags(parent)
-
+    this.updateRadio()
     
   }
 
@@ -268,6 +268,12 @@ class WordSuggestions{
 
   updateRadio(){
     const tagsElement = document.getElementById('symptom-tags-list') // element where to put tags
+    document.getElementById('selection-0').innerHTML = ''
+    document.getElementById('selection-2').innerHTML = ''
+    document.getElementById('selection-1').innerHTML = ''
+    this.clearForNext['selection-0'] = true
+    this.clearForNext['selection-1'] = true
+    this.clearForNext['selection-2'] = true
     const symptomNames = []
     tagsElement.childNodes.forEach((element)=>{
       symptomNames.push(element.innerHTML)
@@ -277,16 +283,23 @@ class WordSuggestions{
       targetRadio.innerHTML = ''
       let content = `<p>How sever is your <b>${symptomNames[index]}</b>?:</p>`
       
-      const levels = mildSymptomsLevels[symptomNames[index]].concat(heavySymptoms[symptomNames[index]])
+      let levels = mildSymptomsLevels[symptomNames[index]]
+      if (levels){
+        levels.concat(heavySymptoms[symptomNames[index]])
+      }else{
+        levels = []
+      }
       for (let levelIndex in levels){
         if (!levels[levelIndex]){continue}
         content = content + `<input type="radio" name="${index}" onchange="setClear(${index}, '${levels[levelIndex]}')" value="${levels[levelIndex]}">
         <label for="html">${levels[levelIndex]}</label><br>`
       }
-      targetRadio.innerHTML = content + '<hr>'
+      
       console.log('levels', levels.length>0)
-      if (levels.length>0){
+      
+      if (levels.length>0 && (levels[0] != '')){
         this.clearForNext[`selection-${index}`] = false
+        targetRadio.innerHTML = content + '<hr>'
       }
       
     }
@@ -306,7 +319,7 @@ class WordSuggestions{
   addToSelectedSymptomsFromSession(stringArray){
     // add tags from startup with session
     for (let i=0; i<stringArray.length; i++){
-      this.addToElement(stringArray[i].split('(')[0])
+      this.addToElement(stringArray[i].split('(')[0 ])
     }
   }
 
