@@ -110,7 +110,7 @@
           </div>
           
           <div class="cbp-dialog-container">
-               <div class="cbp-dialog" style="justify-content: center; height: 40%;"><img class="cbp-dialog-img" src="/static/assets/nurse.png"/></div>
+               <div class="cbp-dialog" style="justify-content: center; height: 20%;"><!--<img class="cbp-dialog-img" src="/static/assets/nurse.png"/>--></div>
                <div style="margin-top: -60px; display: flex; width: 100%;"><div id="home-symptoms-insert-area"></div></div>
           </div>
      </div>
@@ -164,41 +164,39 @@
           * @returns {Promise<void>}
           */
           const symptomsSelectionStart = async () => {
-          /**
-               * Initialize the SymptomsSelection component in the specified element.
-               * 
-               * @param {HTMLElement} document.getElementById('home-symptoms-insert-area') - The HTML element where the symptoms selection component will be rendered.
-               * @returns {Promise<Object>} ss - The symptoms selection object containing selected symptoms.
-               */
-          const ss = await SymptomsSelection(document.getElementById('home-symptoms-insert-area'));
+          
+               const ss = await SymptomsSelection(document.getElementById('home-symptoms-insert-area'));
 
-          /**
-               * Function to handle the transition to the response page.
-               * 
-               * - Validates that at least one symptom is selected before proceeding.
-               * - If no symptoms are selected, it alerts the user to select at least one symptom.
-               * - Stores the selected symptoms and generated recommendation in the session, then redirects to the response page.
-               * 
-               * @async
-               * @function toResponse
-               * @returns {Promise<void>}
-               */
-          window.toResponse = async () => {
-               // Check if the user has selected at least one symptom.
-               if (ss.symptoms.length < 1) {
-                    alert("Tip: You need to select at least 1 symptom."); // Alert if no symptoms are selected
-                    return; // Exit if no symptoms are selected
+               
+               window.toResponse = async () => {
+                    // Check if the user has selected at least one symptom.
+                    if (ss.symptoms.length < 1) {
+                         alert("Tip: You need to select at least 1 symptom."); // Alert if no symptoms are selected
+                         
+                         return; // Exit if no symptoms are selected
+                         
+                    }
+
+                    for (let key in ss.clearForNext){
+                         if (!ss.clearForNext[key]){
+                              alert("Tip: Please specify the severity of symptoms.")
+                              const searchBtn = document.getElementById('show-btn')
+                              if (searchBtn.innerHTML != 'search'){
+                                   searchBtn.click()
+                              }
+                              return;
+                         }
+                    }
+
+                    // Store the selected symptoms in the session
+                    await storeSymptomsSession();
+
+                    // Store the generated recommendation in the session
+                    storeResponseSession(createRecommendationSent(ss.symptoms));
+
+                    // Redirect to the response page
+                    window.location.href = '/chatbotpage/response';
                }
-
-               // Store the selected symptoms in the session
-               await storeSymptomsSession();
-
-               // Store the generated recommendation in the session
-               storeResponseSession(createRecommendationSent(ss.symptoms));
-
-               // Redirect to the response page
-               window.location.href = '/chatbotpage/response';
-          }
           }
 
           // Start the symptoms selection process

@@ -1,3 +1,6 @@
+import { mildSymptomsKeysInitial } from "/static/pageScripts/utils.js";
+import { heavySymptomsKeysInitial, mildSymptomsLevels, heavySymptomsLevels } from "/static/pageScripts/utils.js";
+
 function smithWaterman(s1,s2){
   // cloned from github
   const match = 2;
@@ -143,6 +146,7 @@ class WordSuggestions{
     this.wordBag = wordBag
     this.evaluateInput('')
     this.symptoms = []
+    this.clearForNext = {'selection-0': true, 'selection-1': true, 'selection-2': true, }
   }
 
   editDistance(a, b){
@@ -257,6 +261,37 @@ class WordSuggestions{
     
   }
 
+  setClear(index, name){
+    this.clearForNext[`selection-${index}`] = true
+    this.symptoms[index] = this.symptoms[index] + name
+  }
+
+  updateRadio(){
+    const tagsElement = document.getElementById('symptom-tags-list') // element where to put tags
+    const symptomNames = []
+    tagsElement.childNodes.forEach((element)=>{
+      symptomNames.push(element.innerHTML)
+    })
+    for (let index in symptomNames){
+      const targetRadio = document.getElementById(`selection-${index}`)
+      targetRadio.innerHTML = ''
+      let content = `<p>How sever is your <b>${symptomNames[index]}</b>?:</p>`
+      
+      const levels = mildSymptomsLevels[symptomNames[index]].concat(heavySymptoms[symptomNames[index]])
+      for (let levelIndex in levels){
+        if (!levels[levelIndex]){continue}
+        content = content + `<input type="radio" name="${index}" onchange="setClear(${index}, '${levels[levelIndex]}')" value="${levels[levelIndex]}">
+        <label for="html">${levels[levelIndex]}</label><br>`
+      }
+      targetRadio.innerHTML = content + '<hr>'
+      console.log('levels', levels.length>0)
+      if (levels.length>0){
+        this.clearForNext[`selection-${index}`] = false
+      }
+      
+    }
+  }
+
   updateTags(element){
     this.symptoms = [] // resets selected symptoms
     element.childNodes.forEach(symptom => { // add symptoms based on name of tag
@@ -265,12 +300,13 @@ class WordSuggestions{
       //this.symptoms = [...new Set(this.symptoms)];
     });
     console.log(this.symptoms)
+    this.updateRadio()
   }
 
   addToSelectedSymptomsFromSession(stringArray){
     // add tags from startup with session
     for (let i=0; i<stringArray.length; i++){
-      this.addToElement(stringArray[i])
+      this.addToElement(stringArray[i].split('(')[0])
     }
   }
 
@@ -450,7 +486,7 @@ export async function symptomsSelection(element){
   
   const ws = new WordSuggestions(
     // Combine the keys of the two objects into one array
-    [...Object.keys(mildSymptoms), ...Object.keys(heavySymptoms)]
+    [...mildSymptomsKeysInitial(), ...heavySymptomsKeysInitial()]
   )
   // sets to global variables
   wordSuggestionObj = ws
@@ -460,7 +496,9 @@ export async function symptomsSelection(element){
   window.addToSelectedSymptoms = ws.addToSelectedSymptoms.bind(ws)
   window.removeSymptomTag = ws.removeSymptomTag.bind(ws)
   window.storeSymptomsSession = storeSymptomsSession
+  window.setClear = ws.setClear.bind(ws)
   getSymptomsSession()
+  wordSuggestionObj.updateRadio()
   return ws
   
 }

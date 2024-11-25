@@ -1,7 +1,9 @@
 
   // when adding symptom: recommendation, start at bottom to avoid messing with code name -> symptom conversion
 export const mildSymptoms = {
-    "Fever (37.8 C - 40 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
+    "Fever ( 37.8 C - 39 C) ": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
+    "Fever (39 C - 40 C) ": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
+    "Fever (greater than 40 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
     "Sweating": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
     "Chills and shivering": "Use a light blanket and keep the room at a comfortable temperature.",
     "Headache": "Take over-the-counter pain relievers like acetaminophen or ibuprofen. Rest in a quiet, dim room.",
@@ -105,7 +107,7 @@ export const mildSymptoms = {
     "Skin irritation": "Avoid harsh soaps or chemicals.",
     "Numbness or tingling": "Rest and consult a doctor if it worsens.",
     "Sore muscles": "Rest and apply heat to sore areas.",
-    "Difficulty concentrating": "Take regular breaks and stay hydrated."
+    "Difficulty concentrating": "Take regular breaks and stay hydrated.",
   };
   
   // when adding symptom: recommendation, start at bottom to avoid messing with code name -> symptom conversion
@@ -203,6 +205,59 @@ export const mildSymptoms = {
     "Sore muscles": "Rest and apply heat to sore areas.",
     "Difficulty concentrating": "Take regular breaks and stay hydrated."
   };
+
+const getKeyInitial = (array, index) => {
+    const key = Object.keys(array)[index]
+    const first = key.split('(')[0]
+    return first
+}
+
+export const mildSymptomsKeysInitial = () => {
+    const list = []
+    for (let i=0; i<Object.keys(mildSymptoms).length; i++){
+        list.push(getKeyInitial(mildSymptoms, i))
+    }
+    return list
+}
+
+export const heavySymptomsKeysInitial = () => {
+    const list = []
+    for (let i=0; i<Object.keys(heavySymptoms).length; i++){
+        list.push(getKeyInitial(heavySymptoms, i))
+    }
+    return list
+}
+const getLevels = (array, severity) => {
+    const pairs = {}
+    let symptomsInitialKeys = []
+    if (severity=='mild'){
+        symptomsInitialKeys = mildSymptomsKeysInitial()
+    }else{
+        symptomsInitialKeys = heavySymptomsKeysInitial()
+    }
+
+    const getLevelName = (name) => {
+        const res =  name.match(/\(([^)]+)\)/g)
+        return res?res[0]:''
+    }
+
+    for (let index in symptomsInitialKeys){
+        pairs[symptomsInitialKeys[index]] = []
+        for (let key in array){
+            if (symptomsInitialKeys[index] == key.split('(')[0]){
+                pairs[symptomsInitialKeys[index]].push(getLevelName(key))
+                
+            }
+        }
+    }
+    return pairs
+
+}
+
+export const mildSymptomsLevels = getLevels(mildSymptoms, 'mild')
+export const heavySymptomsLevels = getLevels(heavySymptoms, 'heavy')
+
+
 
 const getSymptomCodes = ()=>{
     const tempList = {}
