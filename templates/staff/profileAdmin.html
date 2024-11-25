@@ -48,7 +48,7 @@
                               <li><a href="/" class="">Home</a></li>
                               <li><a href="/schedule" class="">Schedules</a></li>
                               <li><a href="/profile" class="">Account</a></li>
-                              <li><a href="/chatbotpage" class="active">Make an Appointment</a></li>
+                              <li><a href="#" class="active">Make an Appointment</a></li>
                          </ul>
                          <i class="mobile-nav-toggle d-xl-none bi bi-list" id="menu-btn"></i>
                     </nav>
@@ -81,42 +81,12 @@
                                              <div class="row g-3">
                                                   <h3>My Profile</h3>
                                                   <hr>
-                                                  <h4 class="mb-4 mt-0">Information</h4>
-                                                  <!-- First Name -->
-                                                  <div class="col-md-6">
-                                                       <label class="form-label">Email *</label>
-                                                       <input type="text" id="email" class="form-control" placeholder="" aria-label="First name" value="">
-                                                  </div>
-                                                  <div class="col-md-6">
-                                                       <label class="form-label">First Name *</label>
-                                                       <input type="text" id="first-name" class="form-control" placeholder="" oninput="validateApply()" aria-label="First name" value="">
-                                                  </div>
-                                                  <!-- Last name -->
-                                                  <div class="col-md-6">
-                                                       <label class="form-label">Last Name *</label>
-                                                       <input type="text" id="last-name" class="form-control" placeholder="" oninput="validateApply()" aria-label="Last name" value="">
-                                                  </div>
-                                                  <!-- Phone number -->
-                                                  <div class="col-md-6">
-                                                       <label class="form-label">Phone number *</label>
-                                                       <input type="text" id="contact" class="form-control" placeholder="" oninput="contactOnChange(event)" aria-label="Phone number" value="63">
-                                                  </div>
-                                                  <!-- Label number -->
-                                                  <div class="col-md-6">
-                                                       <label class="form-label">Member type</label>
-                                                       <select class="form-select" id="member-type" aria-label="Default select example" onchange="validateApply()">
-                                                            <option value="student">student</option>
-                                                            <option value="community">community</option>
-                                                            <option value="faculty">faculty</option>
-                                                            <option value="staff">staff</option>
-                                                          </select>
-                                                  </div>
+                                                  <h4 class="mb-4 mt-0">Admin Account</h4>
+                                                  
                                                  
                                              </div> <!-- Row END -->
                                         </div>
                                         <div style="display: flex; width: 100%; justify-content: right;">
-                                             <button class="btn btn-primary" id="apply" onclick="updateInfo()">Apply</button>
-                                             <button class="btn " style="margin-left: 20px;" onclick="renderData(event)">Cancel</button>
                                              
                                         </div>
                                    </div>

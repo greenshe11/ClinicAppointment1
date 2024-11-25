@@ -9,7 +9,7 @@
      <meta name="keywords" content="">
 
      <!-- Favicons-->
-     <link rel="icon" href="{{ url_for('static',filename='assets/img/sample-icon.png')}}">
+     <link rel="icon" href="{{ url_for('static',filename='assets/img/favicon.png')}}">
      <link rel="icon" href="{{ url_for('static',filename='assets/img/apple-touch-icon.png')}}">
 
      <!-- Fonts -->
@@ -43,7 +43,7 @@
           <!-- Navigations -->
           <div class="branding d-flex align-items-center">
                <div class="container position-relative d-flex align-items-center justify-content-between">
-                    <a href="index.html" class="logo d-flex align-items-center me-auto">
+                    <a href="/" class="logo d-flex align-items-center me-auto">
                          <h1 class="sitename">ISAT-U ClinicHub</h1>
                     </a>
 
@@ -53,8 +53,9 @@
                           <li><a href="/" class="active">Home</a></li>
                           <li><a href="/schedule" class="">Schedules</a></li>
                           <li><a href="/profile" class="">Account</a></li>
+                          <li id="appointment-btn" style="display: none"><a class="" href="/chatbotpage" ><b>Make an Appointment</b></a></li>
                          </ul>
-                         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                         <i class="mobile-nav-toggle d-xl-none bi bi-list" id="menu-btn"></i>
                     </nav>
 
                     <a class="cta-btn d-none d-sm-block" href="/chatbotpage">Make an Appointment</a>
@@ -198,22 +199,22 @@
 
 
               <!-- Contact Section -->
-          <section id="contact" class="contact section light-background">
+    <section id="contact" class="contact section light-background">
 
-          <!-- Section Title -->
-          <div class="container section-title" data-aos="fade-up">
-            <h2>Contact</h2>
-            <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
-          </div><!-- End Section Title -->
+     <!-- Section Title -->
+     <div class="container section-title" data-aos="fade-up">
+       <h2>Contact</h2>
+       <p>Necessitatibus eius consequatur ex aliquid fuga eum quidem sint consectetur velit</p>
+     </div><!-- End Section Title -->
 
           <div class="mb-5" data-aos="fade-up" data-aos-delay="200">
             <!-- <iframe style="border:0; width: 100%; height: 270px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d48389.78314118045!2d-74.006138!3d40.710059!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25a22a3bda30d%3A0xb89d1fe6bc499443!2sDowntown%20Conference%20Center!5e0!3m2!1sen!2sus!4v1676961268712!5m2!1sen!2sus" frameborder="0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> -->
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3920.2470708573946!2d122.56376611137638!3d10.715416889385615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x33aee510fbc26713%3A0x2b8cbdc09ed6be20!2sIloilo%20Science%20and%20Technology%20University!5e0!3m2!1sen!2sph!4v1732439160118!5m2!1sen!2sph" style="border:0; width: 100%; height: 270px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
           </div><!-- End Google Maps -->
 
-          <div class="container" data-aos="fade-up" data-aos-delay="100">
+     <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-            <div class="row gy-4">
+       <div class="row gy-4">
 
               <div class="col-lg-4">
                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
@@ -224,13 +225,13 @@
                   </div>
                 </div><!-- End Info Item -->
 
-                <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
-                  <i class="bi bi-telephone flex-shrink-0"></i>
-                  <div>
-                    <h3>Call Us</h3>
-                    <p>+1 5589 55488 55</p>
-                  </div>
-                </div><!-- End Info Item -->
+           <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+             <i class="bi bi-telephone flex-shrink-0"></i>
+             <div>
+               <h3>Call Us</h3>
+               <p>+1 5589 55488 55</p>
+             </div>
+           </div><!-- End Info Item -->
 
                 <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
                   <i class="bi bi-envelope flex-shrink-0"></i>
@@ -240,46 +241,46 @@
                   </div>
                 </div><!-- End Info Item -->
 
-              </div>
+         </div>
 
-              <div class="col-lg-8">
-                <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
-                  <div class="row gy-4">
+         <div class="col-lg-8">
+           <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+             <div class="row gy-4">
 
-                    <div class="col-md-6">
-                      <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                    </div>
+               <div class="col-md-6">
+                 <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+               </div>
 
-                    <div class="col-md-6 ">
-                      <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                    </div>
+               <div class="col-md-6 ">
+                 <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+               </div>
 
-                    <div class="col-md-12">
-                      <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                    </div>
+               <div class="col-md-12">
+                 <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+               </div>
 
-                    <div class="col-md-12">
-                      <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                    </div>
+               <div class="col-md-12">
+                 <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+               </div>
 
-                    <div class="col-md-12 text-center">
-                      <div class="loading">Loading</div>
-                      <div class="error-message"></div>
-                      <div class="sent-message">Your message has been sent. Thank you!</div>
+               <div class="col-md-12 text-center">
+                 <div class="loading">Loading</div>
+                 <div class="error-message"></div>
+                 <div class="sent-message">Your message has been sent. Thank you!</div>
 
-                      <button type="submit">Send Message</button>
-                    </div>
+                 <button type="submit">Send Message</button>
+               </div>
 
-                  </div>
-                </form>
-              </div><!-- End Contact Form -->
+             </div>
+           </form>
+         </div><!-- End Contact Form -->
 
-            </div>
+       </div>
 
-          </div>
+     </div>
 
-          </section>
-          <!-- /Contact Section -->
+   </section>
+   <!-- /Contact Section -->
 
      </main>
 
@@ -356,7 +357,7 @@
        </div>
      </div>
    </footer>
-   
+ 
 
      <!-- Scroll Top -->
      <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i
@@ -371,7 +372,7 @@
      <script src="{{ url_for('static',filename='assets/vendor/aos/aos.js')}}"></script>
      <script src="{{ url_for('static',filename='assets/vendor/glightbox/js/glightbox.min.js')}}"></script>
      <script src="{{ url_for('static',filename='assets/vendor/purecounter/purecounter_vanilla.js')}}"></script>
-     <script src="{{ url_for('static',filename='assets/vendor/swiper/swiper-bundle.min.js')}}"></script>  
+     <script src="{{ url_for('static',filename='assets/vendor/swiper/swiper-bundle.min.js')}}"></script>
 
 
      <!-- Main JS File -->
@@ -379,9 +380,21 @@
      <script type="module">
       import {resetSymptomsSelected} from '/static/pageScripts/session.js';
       resetSymptomsSelected()
+      
+      setInterval(()=>{
+      
+        const onX = document.getElementById('menu-btn').classList.contains('bi-x')
+       
+        if (onX) {
+          document.getElementById('appointment-btn').style.display = 'block'
+          
+        }else{
+          document.getElementById('appointment-btn').style.display = 'none'
+          
+        }
+      }, 50)
+     
      </script>
-
-
 
 </body>
 

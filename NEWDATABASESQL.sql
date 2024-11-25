@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `dbchatbotclinicsys` /*!40100 DEFAULT CHARACTER SET latin1 */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `dbchatbotclinicsys`;
 -- MySQL dump 10.13  Distrib 8.0.38, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: dbchatbotclinicsys
@@ -35,7 +33,7 @@ CREATE TABLE `tblappointment` (
   `Appointment_Confirmed` int NOT NULL DEFAULT '0',
   `Appointment_Complaints` varchar(255) NOT NULL DEFAULT 'none',
   PRIMARY KEY (`Appointment_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +42,7 @@ CREATE TABLE `tblappointment` (
 
 LOCK TABLES `tblappointment` WRITE;
 /*!40000 ALTER TABLE `tblappointment` DISABLE KEYS */;
-INSERT INTO `tblappointment` VALUES (70,41,0,10,12,8,2024,0,'none'),(72,41,0,14,10,9,2024,1,'none'),(73,41,0,14,10,10,2024,1,'none'),(74,41,0,24,10,8,2024,1,'none'),(76,41,0,22,11,8,2024,0,'none');
+INSERT INTO `tblappointment` VALUES (72,41,0,14,10,9,2024,1,'none'),(73,41,0,14,10,10,2024,1,'none'),(74,41,0,24,10,8,2024,1,'none'),(76,41,0,22,11,8,2024,0,'none');
 /*!40000 ALTER TABLE `tblappointment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -75,7 +73,7 @@ CREATE TABLE `tblpatient` (
 
 LOCK TABLES `tblpatient` WRITE;
 /*!40000 ALTER TABLE `tblpatient` DISABLE KEYS */;
-INSERT INTO `tblpatient` VALUES (41,NULL,'Luffy D.','Monkey','$2b$12$ZdKBlcy66yyKYuLjzOcxpud6fwc6x7A3yUCtcZ87Arqnz0sz.FYAW','email02@email','09313123','student'),(42,NULL,'hello','world','$2b$12$qkLOyXuguHa1Wt/dsUDTKunvyPFwOIL7XyWvO0f57/3PJRnABFOwa','','+639674688324','student'),(43,NULL,'eugene','dave','$2b$12$BzXZ6n74E63xB.OUyR0qjOb/mXyb4HUjXUGXvnM.72EuX6llkpn6W','eugene','639672312312','student'),(44,NULL,'eugene dave','tumagan','$2b$12$YsDeQpzpePPqx9rMbhnb9.RDoO7.e8R6ebuoIE6bsJIk19yj13mwy','dave','639513213123','student'),(45,NULL,'asda','asdasd','$2b$12$tXD6eE.if/43MeLaAbJfyezKAhgT2/XYMTT74bqV8RgKTh7G8VH1.','euge@gmail.com','6313123','student'),(46,NULL,'First Name','Last Name','$2b$12$k46QpslopdN0UvilOD/pYON4hkIuv2Wp/QtjSl46sq0Ea/UcWTUy.','email@email.com','639674688324','student');
+INSERT INTO `tblpatient` VALUES (41,NULL,'MyFirstName','MyLastName','$2b$12$ZdKBlcy66yyKYuLjzOcxpud6fwc6x7A3yUCtcZ87Arqnz0sz.FYAW','email02@email','639111111111','faculty'),(42,NULL,'hello','world','$2b$12$qkLOyXuguHa1Wt/dsUDTKunvyPFwOIL7XyWvO0f57/3PJRnABFOwa','','+639674688324','student'),(43,NULL,'eugene','dave','$2b$12$BzXZ6n74E63xB.OUyR0qjOb/mXyb4HUjXUGXvnM.72EuX6llkpn6W','eugene','639672312312','student'),(44,NULL,'eugene dave','tumagan','$2b$12$YsDeQpzpePPqx9rMbhnb9.RDoO7.e8R6ebuoIE6bsJIk19yj13mwy','dave','639513213123','student'),(45,NULL,'asda','asdasd','$2b$12$tXD6eE.if/43MeLaAbJfyezKAhgT2/XYMTT74bqV8RgKTh7G8VH1.','euge@gmail.com','6313123','student'),(46,NULL,'First Name','Last Name','$2b$12$k46QpslopdN0UvilOD/pYON4hkIuv2Wp/QtjSl46sq0Ea/UcWTUy.','email@email.com','639674688324','student');
 /*!40000 ALTER TABLE `tblpatient` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -116,7 +114,7 @@ CREATE TABLE `tblsymptoms` (
   `Symptoms_Code` varchar(255) NOT NULL,
   `Appointment_ID` int NOT NULL,
   PRIMARY KEY (`Symptoms_ID`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -125,7 +123,7 @@ CREATE TABLE `tblsymptoms` (
 
 LOCK TABLES `tblsymptoms` WRITE;
 /*!40000 ALTER TABLE `tblsymptoms` DISABLE KEYS */;
-INSERT INTO `tblsymptoms` VALUES (26,'a0',70),(27,'a20',70),(28,'o',70),(32,'o',72),(33,'b15',72),(34,'b9',72),(35,'o',73),(36,'a1',73),(37,'o',74),(38,'a1',74),(42,'a3',76),(43,'o',76),(44,'a0',76);
+INSERT INTO `tblsymptoms` VALUES (32,'o',72),(33,'b15',72),(34,'b9',72),(35,'o',73),(36,'a1',73),(37,'o',74),(38,'a1',74),(42,'a3',76),(43,'o',76),(44,'a0',76);
 /*!40000 ALTER TABLE `tblsymptoms` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -184,4 +182,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-23 22:39:40
+-- Dump completed on 2024-11-24 22:19:28

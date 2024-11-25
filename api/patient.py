@@ -106,33 +106,9 @@ def patient_routes(self, table_name):
         # print(data)
         # return update_db(self, data, table_name, filter_names=['Patient_ID'])
         data = request.json
-        patient_id = get_session('userId')
-        
-        if not patient_id:
-            return jsonify({"error": "User not logged in"}), 400
-
-        # Ensure that we are updating the data for the logged-in user
-        # `data` should contain the fields that need to be updated
-        updated_data = {
-            "PatientName": data.get("PatientName"),
-            "PatientLastName": data.get("PatientLastName"),
-            #"PatientLabel": data.get("PatientLabel"),
-            # Add any other fields that you need to update
-        }
 
         # Assuming `update_db` is a function that updates data in the database
-        result = update_db(self, updated_data, table_name, filter_names=['Patient_ID'])
-
-        if result:
-            # Update session data to reflect the new information
-            set_session('user_name', updated_data.get('PatientName'))
-            set_session('user_lastname', updated_data.get('PatientLastName'))
-            #set_session('user_label', updated_data.get('PatientLabel'))
-            
-            return jsonify({"success": "Account updated successfully!"}), 200
-        else:
-            return jsonify({"error": "Failed to update account"}), 500
-    
+        return update_db(self, data, table_name=table_name, filter_names=['Patient_ID'])
     
     @self.app.route('/api/patient', methods=['DELETE'])
     def patient_delete():

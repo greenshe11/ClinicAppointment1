@@ -19,3 +19,17 @@ export async function resetSymptomsSelected() {
   
     }
   }
+
+
+ 
+export const getUserData = async () => {
+    const content = await fetch('/api/patient?for=session')
+    const resJson = await content.json()
+    return resJson
+}
+
+export async function complaintsToSession(message) {
+    
+    const res = await fetch(`/api/session/add?complaints=${message}`)
+    const resJson = await res.json()
+}
