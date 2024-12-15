@@ -112,11 +112,11 @@
    }
 
    .left-fade{
-    animation: message-fade-from-left 0.2s forwards linear;
+    animation: message-fade-from-left 0.5s forwards linear;
    }
 
    .right-fade{
-    animation: message-fade-from-right 0.2s forwards linear;
+    animation: message-fade-from-right 0.5s forwards linear;
    }
 
    @keyframes message-fade-from-left {
@@ -371,6 +371,11 @@
             console.log(txt);
             message.innerHTML = txt
             conversation.appendChild(message);
+            const div = conversation;
+            const lastChild = div.lastElementChild;
+            if (lastChild) {
+              lastChild.scrollIntoView({ behavior: "smooth" }); // Smooth scroll to the bottom
+            }
            
         
         }
@@ -855,7 +860,10 @@
 
             // Add click event to send button
             const sendButton = document.getElementById('cbp-send-request')
-            sendButton.onclick = toHome;
+            sendButton.onclick = ()=>{
+                disableFinishedChats();
+                toHome();
+            }
         }
 
         // Call renderData function to render the data on page load
