@@ -52,7 +52,7 @@ body {
      }
 }
 
-.cbp-dialog{
+.cbp-dialog-XXXXXXXX {
      display: flex;
      flex-direction: row;
      width: 100%;
@@ -63,7 +63,8 @@ body {
      margin-right: 30px;
 }
 
-.cbp-dialog-footer{
+
+.cbp-dialog-footer-XXXXXXX {
      border-style: solid;
      border-color: black;
      border-width: 0px;;
@@ -74,6 +75,10 @@ body {
      flex-direction: column;
      justify-content: center;
      align-items: center;
+     
+}
+
+.cbp-dialog-footer{
      
 }
 

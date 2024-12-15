@@ -120,7 +120,7 @@ class App:
             if util.user_is_staff():
                 return redirect('/profile')
             try:
-                return render_template('patient/chatbotpage.html')
+                return render_template('patient/chatbot.html')
             except Exception as e:
                 return f"Error: {e}", 500
 
@@ -179,6 +179,15 @@ class App:
             except Exception as e:
                 return f"Error: {e}", 500
         
+        @self.app.route('/chat')
+        def chatbot():
+            if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in
+                return redirect('/home')
+            try:
+                return render_template('patient/chatbot.html')
+            except Exception as e:
+                return f"Error: {e}", 500
+            
         @self.app.route('/chatbotpage/success')
         def chatbotpageSuccess():
             if util.no_user_logged_in() or util.user_is_staff(): #proceeds to schedule page if not logged in

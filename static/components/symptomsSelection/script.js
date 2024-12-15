@@ -141,6 +141,8 @@ function smithWaterman(s1,s2){
   return res
 }
 
+export let levelQuestions = {}
+
 class WordSuggestions{
   constructor(wordBag){
     this.wordBag = wordBag
@@ -268,6 +270,7 @@ class WordSuggestions{
 
   updateRadio(){
     const tagsElement = document.getElementById('symptom-tags-list') // element where to put tags
+    levelQuestions = {}
     document.getElementById('selection-0').innerHTML = ''
     document.getElementById('selection-2').innerHTML = ''
     document.getElementById('selection-1').innerHTML = ''
@@ -281,27 +284,42 @@ class WordSuggestions{
     for (let index in symptomNames){
       const targetRadio = document.getElementById(`selection-${index}`)
       targetRadio.innerHTML = ''
-      let content = `<p>How sever is your <b>${symptomNames[index]}</b>?:</p>`
+      let question = `<p>How sever is your <b>${symptomNames[index]}</b>?</p>`
+      let content = ""
       
       let levels = mildSymptomsLevels[symptomNames[index]]
-      if (levels){
-        levels.concat(heavySymptoms[symptomNames[index]])
+      if(!levels){
+        continue
+      }
+      if (levels.length > 0){
+        console.log('heav', heavySymptoms)
+        console.log(heavySymptomsLevels[symptomNames[index]])
+        levels = levels.concat(heavySymptomsLevels[symptomNames[index]])
+        
       }else{
         levels = []
       }
+      console.log("FINALEVELS", levels)
       for (let levelIndex in levels){
         if (!levels[levelIndex]){continue}
-        content = content + `<input type="radio" name="${index}" onchange="setClear(${index}, '${levels[levelIndex]}')" value="${levels[levelIndex]}">
-        <label for="html">${levels[levelIndex]}</label><br>`
+        content = content + `<button name="${index}" onclick="setClear(${index}, '${levels[levelIndex]}')" value="${levels[levelIndex]}">${levels[levelIndex]}</button>`
       }
-      
       console.log('levels', levels.length>0)
-      
+      console.log(levels?true:false)
       if (levels.length>0 && (levels[0] != '')){
         this.clearForNext[`selection-${index}`] = false
         targetRadio.innerHTML = content + '<hr>'
       }
-      
+      console.log("levels", levels)
+      console.log(symptomNames[index])
+      if (levels.length<1 || !levels[0]){
+        continue
+      }
+      else{
+        levelQuestions[question] = content
+        console.log(levelQuestions)
+      }
+     
     }
   }
 
@@ -490,13 +508,98 @@ window.showHideList = () =>{
   }
 }
 
-export async function symptomsSelection(element){
+
+// GLOBALS
+let btn = null
+let dialogChat = null
+//
+
+export async function getUserData(userId){
+    const res = await fetch(`/api/patient?Patient_ID=${userId}`)
+    return await res.json()
+}
+
+/**
+ * @description shows calendar
+ */
+export async function showSymptomsModal(event){
+     
+    const calendar = document.getElementById('ss-modal')
+    calendar.classList.add('active');
+    
+    const dimmer = document.getElementById('ss-dimmer')
+    calendar.style.display = "flex"
+    dimmer.style.display = "flex"
+    
+    document.addEventListener('click', outsideClickListener);
+
+
+
+    
+}
+
+/**
+ * @description Closes when pressed x button
+ */
+function onClickCloseCal(){
+    console.log("CLOSING")
+    const calendar = document.getElementById('ss-modal')
+    const dimmer = document.getElementById('ss-dimmer')
+    calendar.classList.remove('active')
+    calendar.classList.add('inactive')
+
+    setTimeout(() => {
+        calendar.style.display = "none";
+        dimmer.style.display = "none";
+        calendar.classList.remove('inactive')
+    }, 400); // Wait for animation to finish before hiding
+}
+
+/**
+ * @description Closes when pressed outside
+ * @param {*} event 
+ */
+function outsideClickListener(event) {
+    const calendar = document.getElementById('ss-modal');
+    const modalContent = document.querySelector('#ss-body');
+    //const btn = document.getElementById('ss-modal-btn')
+   
+    // Close the modal if click is outside the modal content
+    console.log('target',modalContent.contains(event.target))
+    console.log()
+    
+    if (calendar.style.display === "flex" && !modalContent.contains(event.target) && !Array.from(event.target.classList).includes('symptom-tag')) {
+        let proceed = true
+        for (let i=0; i<btn.length; i++){
+            console.log(i)
+            console.log(btn[i])
+            if (btn[i].contains(event.target)){
+                proceed = false
+                console.log('true')
+            }
+            console.log(proceed)
+        }
+        
+        if (proceed){
+            onClickCloseCal();
+        }
+        
+    }
+}
+
+export async function symptomsSelection(element,elementButtons){
   
   // wait for element to be added to document
   await _symptomsSelectionObj.setToElement(element)
   
   // word bag
-  
+  btn = elementButtons
+  document.getElementById('ss-close-btn').onclick = onClickCloseCal
+  document.getElementById('ss-cancel').onclick = () => {onClickCloseCal()}
+  document.getElementById('ss-confirm').onclick = () => {
+    window.toResponse();
+    onClickCloseCal();
+  }
   const ws = new WordSuggestions(
     // Combine the keys of the two objects into one array
     [...mildSymptomsKeysInitial(), ...heavySymptomsKeysInitial()]

@@ -3,8 +3,9 @@
 export const mildSymptoms = {
     "Fever ( 37.8 C - 39 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
     "Fever (39 C - 40 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
-    "Fever (greater than 40 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
-    "Sweating": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
+    
+    "Sweating (mild)": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
+    
     "Chills and shivering": "Use a light blanket and keep the room at a comfortable temperature.",
     "Headache": "Take over-the-counter pain relievers like acetaminophen or ibuprofen. Rest in a quiet, dim room.",
     "Muscle aches": "Rest and consider over-the-counter medications for relief.",
@@ -112,7 +113,9 @@ export const mildSymptoms = {
   
   // when adding symptom: recommendation, start at bottom to avoid messing with code name -> symptom conversion
   export const heavySymptoms = {
+    "Sweating (severe)": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
     "Vision loss": "Seek medical advice if vision loss occurs.",
+    "Fever (greater than 40 C)": "Stay hydrated and rest. Use light clothing. Consider over-the-counter medication like acetaminophen or ibuprofen for discomfort.",
     "Sweating": "Stay hydrated with water or clear broth. Avoid heavy clothing.",
     "Chills and shivering": "Use a light blanket and keep the room at a comfortable temperature.",
     "Mild headache": "Take over-the-counter pain relievers like acetaminophen or ibuprofen. Rest in a quiet, dim room.",

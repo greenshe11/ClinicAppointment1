@@ -406,6 +406,8 @@ function outsideClickListener(event) {
     // Close the modal if click is outside the modal content
     if (calendar.style.display === "block" && !calendar.contains(event.target)) {
         let proceed = true
+        console.log(btn.length)
+        console.log(btn)
         for (let i=0; i<btn.length; i++){
             console.log(i)
             console.log(btn[i])
@@ -419,7 +421,6 @@ function outsideClickListener(event) {
         if (proceed){
             onClickCloseCal();
         }
-        
     }
 }
 
@@ -650,7 +651,6 @@ cbpAppointment.initialRun = () => {
        
         if (allowance > 0){onSetFunction()} 
     }
-    recoverSession()
 }
 /**
  * @description this function is run after date is set.
@@ -664,7 +664,7 @@ cbpAppointment.onSetAdditionalFunction = () => {
     const monthName = selected.monthName
     const timeName = selected.timeName
     if (!(time)){
-        alert("Error: You need to set the time and date to make an appointment!")
+        alert("Error: You need to set BOTH the TIME and DATE to make an appointment!")
     } else{
         onClickCloseCal()
         const daysLeft = getDaysUntilAppointment()
