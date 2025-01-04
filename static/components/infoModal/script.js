@@ -3,6 +3,7 @@
 import { getAppointmentsFilter, months, getTimeName} from "/static/components/calendarSelection/script.js";
 import { getSymptomsFromDb } from "/static/components/symptomsSelection/script.js"
 import { createRecommendationSent, getSymptomsFromCodeArray} from "/static/pageScripts/utils.js";
+
 // GLOBALS
 let btn = null
 let dialogChat = null

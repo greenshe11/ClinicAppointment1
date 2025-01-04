@@ -86,7 +86,7 @@ def pull_from_db(self, data, table_name, jsonify_return=True, logical_op="AND"):
         result = []
         for row in rows:
             result.append(dict(zip(column_names, row)))
-        print("pulled_from_db: ", result)
+        #print("pulled_from_db: ", result)
         if jsonify_return == False:
             return result
         return jsonify(result), 200
@@ -367,3 +367,30 @@ def sms_resched(date, time, contact, *args, **kwargs):
     print(data)
     return True
 
+def sms_reminder(contact,time):
+    print("REMINDER SMS SENT", contact)
+    timeName = lambda number: "PM" if number < 5 else "AM"
+    message = f"Good Day! This is an automated message from ISATU Chatbot Clinic and we would like to remind you that your appointment is in tommorow at {time} {timeName(time)}. Thank you."
+    print(message)
+    
+    conn = http.client.HTTPSConnection("1gg4gx.api.infobip.com")
+    payload = json.dumps({
+        "messages": [
+            {
+                "destinations": [{"to":contact}],
+                "from": "447491163443",
+                "text": message
+            }
+        ]
+    })
+    headers = {
+        'Authorization': 'App 36a933f0d09bfbc8cca4c805fe1fce42-83bbb717-3d0e-4512-9108-2610088ff4f5',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    }
+    conn.request("POST", "/sms/2/text/advanced", payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    print(res)
+    print(data)
+    return True

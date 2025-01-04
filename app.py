@@ -16,7 +16,8 @@ from api.symptoms import symptoms_routes
 
 # utils
 from utilities import util_functions as util
-
+from utilities import notif_service as notif
+import asyncio
 
 load_dotenv()
 
@@ -30,7 +31,13 @@ class App:
         self.mysql = MySQL(self.app)
         self.create_api_routes()
         self.create_page_routes()
+        self.initiate_notif_service()
     
+    def initiate_notif_service(self):
+        # get data every 8 hours
+        notif.start_notif_service(self, 'tblpatient', 'tblappointment', 8 * 60 * 60) # attempt notif every 8 hours
+        pass
+
     def configure_app(self):
         """Configure Flask app with MySQL settings."""
         self.app.config['SECRET_KEY'] = os.getenv('SESSION_SECRET') 
@@ -204,8 +211,7 @@ class App:
         sms_routes(self, 'tblsmsnotif')
         session_routes(self)
         symptoms_routes(self, 'tblsymptoms')
-        
-        
+
     def run(self):
         """Run the Flask application."""
         self.app.run(debug=True)
