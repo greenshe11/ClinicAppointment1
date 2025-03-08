@@ -341,11 +341,11 @@ export const createRecommendationSent = (symptomArray) => {
         let recommendation = getRecommendation(symptom); // Get the recommendation for the current symptom
         if (recommendation) { // If a recommendation exists
             recommendation = recommendation
-            temp = `For <i>${symptomArray[i]}</i>: ${recommendation} <br>`; // Format it and append it to the temp string
+            temp = `For <u>${symptomArray[i]}</u>: <br>${recommendation} <br><br>`; // Format it and append it to the temp string
         }
         sentence = sentence + temp; // Append the temp string to the final sentence
     }
-    return sentence; // Return the complete recommendation sentence
+    return '<br>'+sentence; // Return the complete recommendation sentence
 };
 
 // Function to determine if a symptom is serious based on its presence in symptom categories

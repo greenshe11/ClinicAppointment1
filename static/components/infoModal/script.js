@@ -69,6 +69,7 @@ export async function showModal(event){
     document.getElementById('im-sched-date').innerHTML = `${months[month-1]} ${day}, ${year}`
     document.getElementById('im-time').innerHTML = getTimeName(time)
     document.getElementById('im-status').innerHTML = getStatusDisplay(status)
+    document.getElementById('im-sched-symptoms').innerHTML ="<br>"+symptomNames.join("<br>")
     document.getElementById('im-sched-response').innerHTML = symptomResponse
     document.getElementById('im-category').innerHTML = userInfo[0].PatientCategory
     document.getElementById('im-sched-complaints').innerHTML = appointmentData.Appointment_Complaints
