@@ -187,7 +187,7 @@ async function removeUserFilterForPatients(){
 
 setTimeout(()=>{
     removeUserFilterForPatients()
-},1000)
+},1000) // delay to wait html to load. 
 window.filterUser = (event) => {
     // element from mainstaff.html
     
