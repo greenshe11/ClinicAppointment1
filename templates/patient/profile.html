@@ -10,7 +10,7 @@
      <!-- Favicons-->
      <link rel="icon" href="{{ url_for('static',filename='assets/img/sample-icon.png')}}">
      <link rel="icon" href="{{ url_for('static',filename='assets/img/apple-touch-icon.png')}}">
-
+     <link rel="icon" href="{{ url_for('static',filename='assets/account-icon.png')}}">
      <!-- Fonts -->
      <link href="https://fonts.googleapis.com" rel="preconnect">
      <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
@@ -42,17 +42,26 @@
                          <h1 class="sitename">ISAT-U ClinicHub</h1>
                     </a>
 
-                    <!--Navigation Menu-->
-                    <nav id="navmenu" class="navmenu">
+                     <!--Navigation Menu-->
+                     <nav id="navmenu" class="navmenu">
                          <ul>
-                              <li><a href="/" class="">Home</a></li>
-                              <li><a href="/schedule" class="">Schedules</a></li>
-                              <li><a href="/profile" class="">Account</a></li>
-                              <li><a href="/chatbotpage" class="active">Make an Appointment</a></li>
-                         </ul>
+                          <li><a href="/" class="">Home</a></li>
+                          <li><a href="/schedule" class="">Requests</a></li>
+                          <li><a href="/profile" class="active">Account</a></li>
+                          <li id="appointment-btn" style="display: none"><a class="" href="/chatbotpage" ><b>Make an Appointment</b></a></li>
+                          
+                        </ul>
                          <i class="mobile-nav-toggle d-xl-none bi bi-list" id="menu-btn"></i>
                     </nav>
 
+                    <a class="cta-btn d-none d-sm-block" href="/chatbotpage" id="appointment-btn-2">Make an Appointment</a>
+                    <div style="margin-left: 20px; align-items: center; display:flex; justify-content:center" clas="d-none d-sm-block">
+                      <img style="height: 30px; width: 30px; object-fit: contain; border-width: 1px; background-color:white; border-style: solid; border-radius: 50px; border-color: white;" src="{{ url_for('static', filename='assets/account-icon.png')}}"/>
+                    
+                      <span id="user-category-display" style=" margin-left: 10px; margin-right: 10px; color:gray; padding: 5px; border-radius: 10px;"></span>
+                    
+                    </div>  
+                    
                   
                </div>
 
@@ -68,17 +77,14 @@
                <div class="row">
                     <div class="col-12">
                          <!-- Page title -->
-                         <button class="btn btn-danger" onclick="logout()">Log Out</button>
-                         <div class="my-5">
-                             
-                         </div>
+                         
                          <!-- Form START -->
                          <form class="file-upload">
                               <div class="row mb-5 gx-5">
                                    <!-- Contact detail -->
-                                   <div class="col-xxl-8 mb-5 mb-xxl-0">
+                                   <div class="col-xxl-12 mb-5 mb-xxl-0">
                                         <div class="bg-secondary-soft px-4 py-5 rounded">
-                                             <div class="row g-3">
+                                             <div class="row g-3" style="display:flex; align-items:center; justify-content:center;">
                                                   <h3>My Profile</h3>
                                                   <hr>
                                                   <h4 class="mb-4 mt-0">Information</h4>
@@ -108,20 +114,24 @@
                                                             <option value="student">student</option>
                                                             <option value="community">community</option>
                                                             <option value="faculty">faculty</option>
-                                                            <option value="staff">staff</option>
+                                                            <!---<option value="staff">staff</option>-->
                                                           </select>
                                                   </div>
                                                  
                                              </div> <!-- Row END -->
                                         </div>
-                                        <div style="display: flex; width: 100%; justify-content: right;">
-                                             <button class="btn btn-primary" id="apply" onclick="updateInfo()">Apply</button>
-                                             <button class="btn " style="margin-left: 20px;" onclick="renderData(event)">Cancel</button>
+                                        <div style="display: flex; width: 100%; justify-content:space-between; border-width:0px; padding-top: 10px; border-color: gray; border-top-width: 1px; border-style: solid;">
+                                             <button class="btn btn-danger" style="margin-left: 30px;"  onclick="logout()">Log Out</button>
+                        
+                                             <div style="display: flex;">
+                                                  <button class="btn btn-primary" id="apply" onclick="updateInfo()">Apply</button>
+                                                  <button class="btn " id="cancel" style="margin-left: 20px;" onclick="renderData(event)">Cancel</button>
+                                             </div>
+                                             
                                              
                                         </div>
                                    </div>
                                   
-                                   <hr>
                                    <!-- Upload profile -->
                                     <!--
                                    <div class="col-xxl-4">
@@ -143,6 +153,7 @@
                                    </div>-->
                               </div> <!-- Row END -->
                          </form> <!-- Form END -->
+                       
                </div>
           </section>
 
@@ -172,14 +183,16 @@
                import {getUserData} from '/static/pageScripts/session.js'
                let data = await getUserData()
                data = data[0]
-
                window.validateApply = () => {
+                    console.log('validated')
                     let result = false
                     const email = document.getElementById('email')
                     const firstName = document.getElementById('first-name')
                     const lastName = document.getElementById('last-name')
                     const contact = document.getElementById('contact')
                     const applyBtn = document.getElementById('apply')
+                    const cancelBtn = document.getElementById('cancel')
+                    
                     const memberType = document.getElementById('member-type')
                    
 
@@ -205,16 +218,24 @@
                          console.log('category changed')
                     }
                     console.log(result)
+                    
                     if (result){
                          applyBtn.removeAttribute('disabled')
+                         applyBtn.style.display = "block"
+                         cancelBtn.style.display = "block"
                     }else{
                          applyBtn.setAttribute('disabled', "true")
+                         applyBtn.style.display = "none"
+                         cancelBtn.style.display = "none"
                     }
                     result = false
 
 
 
                }
+               document.getElementById('apply').setAttribute('disabled',true)
+               document.getElementById('apply').style.display = "none"
+               document.getElementById('cancel').style.display = "none"
                const getTypeSelected = () => {
                     const memberType = document.getElementById('member-type')
                    
@@ -223,6 +244,7 @@
 
                const setDefaultType = (name) => {
                     const memberType = document.getElementById('member-type')
+                    
                     memberType.childNodes.forEach((element)=>{
                          if (element.nodeName == '#text'){return}
                          if (name==element.value){
@@ -309,6 +331,22 @@
                     }
                 }
                
+                async function applyProfile(){
+                  let data = await getUserData()
+                  data = data[0]
+                  console.log(data)
+                  
+                  if (data["PatientCategory"]=="staff"){
+                    // remove appointment button if staff
+                    document.getElementById("appointment-btn").remove()
+                    document.getElementById("appointment-btn-2").remove()
+          
+                  }
+          
+                  document.getElementById("user-category-display").innerHTML = data["PatientCategory"]
+                }
+          
+                applyProfile()
                async function updateInfo() {
                     const newData = {
                          Patient_ID: data.Patient_ID,

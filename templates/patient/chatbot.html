@@ -287,16 +287,25 @@
                          <h1 class="sitename">ISAT-U ClinicHub</h1>
                     </a>
 
-                    <!--Navigation Menu-->
-                    <nav id="navmenu" class="navmenu">
-                         <ul>
-                              <li><a href="/" class="">Home</a></li>
-                              <li><a href="/schedule" class="">Schedules</a></li>
-                              <li><a href="/profile" class="">Account</a></li>
-                              <li><a href="#" class="active">Make an Appointment</a></li>
-                         </ul>
-                         <i class="mobile-nav-toggle d-xl-none bi bi-list" id="menu-btn"></i>
-                    </nav>
+                     <!--Navigation Menu-->
+                     <nav id="navmenu" class="navmenu">
+                      <ul>
+                       <li><a href="/" class="">Home</a></li>
+                       <li><a href="/schedule" class="">Requests</a></li>
+                       <li><a href="/profile" class="">Account</a></li>
+                       <li id="appointment-btn" style="display: none"><a class="active" href="/chatbotpage" ><b>Make an Appointment</b></a></li>
+                       
+                     </ul>
+                      <i class="mobile-nav-toggle d-xl-none bi bi-list" id="menu-btn"></i>
+                      </nav>
+
+                      <a class="cta-btn d-none d-sm-block" href="/chatbotpage" id="appointment-btn-2">Make an Appointment</a>
+                      <div style="margin-left: 20px; align-items: center; display:flex; justify-content:center" clas="d-none d-sm-block">
+                        <img style="height: 30px; width: 30px; object-fit: contain; border-width: 1px; background-color:white; border-style: solid; border-radius: 50px; border-color: white;" src="{{ url_for('static', filename='assets/account-icon.png')}}"/>
+                      
+                        <span id="user-category-display" style=" margin-left: 10px; margin-right: 10px; color:gray; padding: 5px; border-radius: 10px;"></span>
+                      
+                      </div>  
 
                   
                </div>
@@ -513,7 +522,7 @@
              
             if (selected.month && selected.time){
                 disableFinishedChats()
-                createChatFromBot(`${selected.monthName} ${selected.day} ${selected.year} @ ${selected.timeName}. Is this correct?`);
+                createChatFromBot(`You will have an appointment on ${selected.monthName} ${selected.day} ${selected.year} @ ${selected.timeName}. Is this correct?`);
                 createChatFromUser(`<div style="display: flex; flex-direction: column" ><button onclick="chatSummaryStage()">Yes</button><button onclick="setAppointmentDateStage()">No</button></div>`)
                
     
@@ -885,16 +894,32 @@
                     </p>
                     <p><b>Additional Complaints: </b><span id="sum-complaints"></span>
                     <hr>
-                    <p><i><u>Check your info and input above</u> and press <b>Send Request</b> below. <br>If any of your account information is incorrect, navigate to <b>Menu  → Account</b> to edit your information. Once request is received by the staff, a confirmation SMS will be sent to your number. <br> You can navigate to <b>Menu  → Schedules</b> to see the status of all your appointments.
+                    <p><i><u>Check your info and input above</u> and press <b>Confirm</b> below. <br>If any of your account information is incorrect, navigate to <b>Menu  → Account</b> to edit your information. Once request is received by the staff, a confirmation SMS will be sent to your number. <br> You can navigate to <b>Menu  → Requests</b> to see the status of all your appointments. <br><br>We wil notify the nurse of your appointment.
                     </i>
                     </p>
                     
                </div>`)
-            createChatFromUser(`<div style="display: flex; flex-direction: column"><button id="cbp-send-request">Send Request</button><button onclick="location.reload(true)">Retry</button></div>`);
+            createChatFromUser(`<div style="display: flex; flex-direction: column"><button id="cbp-send-request">Confirm</button>`);
             renderData() 
+            //<button onclick="location.reload(true)">Retry</button></div>
         };
         
-
+        async function applyProfile(){
+          let data = await getUserData()
+          data = data[0]
+          console.log(data)
+          
+          if (data["PatientCategory"]=="staff"){
+            // remove appointment button if staff
+            document.getElementById("appointment-btn").remove()
+            document.getElementById("appointment-btn-2").remove()
+  
+          }
+  
+          document.getElementById("user-category-display").innerHTML = data["PatientCategory"]
+        }
+  
+        applyProfile()
     </script>
 </body>
 

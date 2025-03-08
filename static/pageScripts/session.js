@@ -28,6 +28,11 @@ export const getUserData = async () => {
     return resJson
 }
 
+export const getSession = async()=>{
+    const content = await fetch('/api/session')
+    const resJson = await content.json()
+    return resJson
+}
 export async function complaintsToSession(message) {
     
     const res = await fetch(`/api/session/add?complaints=${message}`)

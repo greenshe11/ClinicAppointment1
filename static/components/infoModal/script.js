@@ -7,6 +7,9 @@ import { createRecommendationSent, getSymptomsFromCodeArray} from "/static/pageS
 // GLOBALS
 let btn = null
 let dialogChat = null
+
+let firstName = ""
+let lastName = ""
 //
 
 export async function getUserData(userId){
@@ -33,9 +36,15 @@ export async function showModal(event){
    
     const symptomData = await getSymptomsFromDb(appointmentId)
     const symptomCodes = []
+    console.log(appointmentId,appointmentData)
     for (let i=0; i<symptomData.length; i++){
-        symptomCodes.push(symptomData[i].Symptoms_Code)
+        console.log(i,symptomData[i]["Appointment_ID"], appointmentData["Appointment_ID"])
+        if (symptomData[i]["Appointment_ID"]==appointmentData["Appointment_ID"]){
+            symptomCodes.push(symptomData[i].Symptoms_Code)
+        }
+       
     }
+    console.log("info", symptomData)
     const symptomNames = getSymptomsFromCodeArray(symptomCodes)
     console.log(symptomNames)
     const symptomResponse = createRecommendationSent(symptomNames)
@@ -49,6 +58,10 @@ export async function showModal(event){
         return `<span style="color: ${color[statusCode]}">${name[statusCode]}</span>`
     }
 
+    //global setting
+    firstName =  userInfo[0].PatientName
+    lastName = userInfo[0].PatientLastName
+    //
     document.getElementById('im-first-name').innerHTML = userInfo[0].PatientName
     document.getElementById('im-last-name').innerHTML = userInfo[0].PatientLastName
     document.getElementById('im-email').innerHTML = userInfo[0].PatientEmail
@@ -144,3 +157,47 @@ export async function InfoModal(element, elementButtons){
     btn = elementButtons
     document.getElementById('im-close-btn').onclick = onClickCloseCal
   }
+
+
+window.printInfo = (event) =>{
+    function printDiv(divId) {
+        const printContents = document.getElementById(divId)
+        const originalContents = document.body.innerHTML;
+  
+        
+        printContents.style.backgroundColor = "blue"
+        document.body.innerHTML = printContents.innerHTML;;
+        window.print();
+        
+        document.body.innerHTML = originalContents; // Restore the original page
+      }
+    printDiv("im-scrollview")
+}
+
+import {getSession} from '/static/pageScripts/session.js'
+async function removeUserFilterForPatients(){
+    console.log('filter',document.getElementById("info-filter"))
+    const session = await getSession()
+    console.log("SESSION", session)
+    if (!session["isStaff"]){
+        document.getElementById("info-filter").remove()
+    }
+}
+//remove see user records if a patient
+
+setTimeout(()=>{
+    removeUserFilterForPatients()
+},1000)
+window.filterUser = (event) => {
+    // element from mainstaff.html
+    
+    document.getElementById("first-name-filter").value = firstName
+    
+    document.getElementById("last-name-filter").value = lastName
+    document.getElementById("month-filter").value = "0"
+    document.getElementById("year-filter").value = ""
+    document.getElementById("status-filter").value = "-1"
+    onClickCloseCal()
+    window.useFilter()
+
+}

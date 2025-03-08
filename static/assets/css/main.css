@@ -1758,3 +1758,7 @@ section,
 .starter-section {
   /* Add your styles here */
 }
+
+#header{
+  background: linear-gradient(to right, #00008b, #87CEEB);
+}
